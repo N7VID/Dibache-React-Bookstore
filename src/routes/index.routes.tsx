@@ -11,8 +11,7 @@ import {
   PaymentPage,
   PaymentResultPage,
 } from "../pages";
-import { MainLayout } from "../layouts";
-import DashboardLayout from "../layouts/DashboardLayout/DashboardLayout";
+import { DashboardLayout, MainLayout } from "../layouts";
 
 export const router = createBrowserRouter([
   {

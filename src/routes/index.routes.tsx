@@ -1,17 +1,20 @@
 import { createBrowserRouter } from "react-router-dom";
 import { PATHS } from "../configs/paths.config";
 import {
+  AdminLoginPage,
   BookPage,
   BooksPage,
   CartPage,
   CategoryPage,
   HomePage,
   InventoryPage,
+  LoginPage,
   OrdersPage,
   PaymentPage,
   PaymentResultPage,
+  RegisterPage,
 } from "../pages";
-import { DashboardLayout, MainLayout } from "../layouts";
+import { AuthLayout, DashboardLayout, MainLayout } from "../layouts";
 
 export const router = createBrowserRouter([
   {
@@ -34,5 +37,18 @@ export const router = createBrowserRouter([
       { path: PATHS.INVENTORY, element: <InventoryPage /> },
       { path: PATHS.BOOKS, element: <BooksPage /> },
     ],
+  },
+  {
+    path: PATHS.LOGIN,
+    element: <AuthLayout />,
+    children: [
+      { index: true, element: <LoginPage /> },
+      { path: PATHS.ADMIN, element: <AdminLoginPage /> },
+    ],
+  },
+  {
+    path: PATHS.REGISTER,
+    element: <AuthLayout />,
+    children: [{ index: true, element: <RegisterPage /> }],
   },
 ]);

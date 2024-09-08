@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer {
+  .LayoutContainer {
+    @apply max-w-7xl mx-auto;
+  }
+}

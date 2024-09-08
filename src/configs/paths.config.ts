@@ -1,0 +1,16 @@
+export const PATHS = {
+  HOME: "/",
+  LOGIN: "/login",
+  ADMIN: "admin",
+  REGISTER: "register",
+  BOOKS: "books",
+  ORDERS: "orders",
+  INVENTORY: "inventory",
+  DASHBOARD: "/dashboard",
+  CART: "/cart",
+  BOOK: "/book/:id",
+  PAYMENT: "/payment",
+  CATEGORY: "/category/:id",
+  PAYMENT_RESULT: "/payment-result",
+  NOT_FOUND: "*",
+};

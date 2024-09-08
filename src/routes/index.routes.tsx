@@ -2,13 +2,17 @@ import { createBrowserRouter } from "react-router-dom";
 import { PATHS } from "../configs/paths.config";
 import {
   BookPage,
+  BooksPage,
   CartPage,
   CategoryPage,
   HomePage,
+  InventoryPage,
+  OrdersPage,
   PaymentPage,
   PaymentResultPage,
 } from "../pages";
 import { MainLayout } from "../layouts";
+import DashboardLayout from "../layouts/DashboardLayout/DashboardLayout";
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +25,15 @@ export const router = createBrowserRouter([
       { path: PATHS.BOOK, element: <BookPage /> },
       { path: PATHS.PAYMENT, element: <PaymentPage /> },
       { path: PATHS.PAYMENT_RESULT, element: <PaymentResultPage /> },
+    ],
+  },
+  {
+    path: PATHS.DASHBOARD,
+    element: <DashboardLayout />,
+    children: [
+      { index: true, element: <OrdersPage /> },
+      { path: PATHS.INVENTORY, element: <InventoryPage /> },
+      { path: PATHS.BOOKS, element: <BooksPage /> },
     ],
   },
 ]);

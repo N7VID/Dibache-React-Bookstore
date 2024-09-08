@@ -4,3 +4,7 @@ export { default as CategoryPage } from "./category-page/CategoryPage";
 export { default as CartPage } from "./cart-page/CartPage";
 export { default as PaymentPage } from "./payment-page/PaymentPage";
 export { default as PaymentResultPage } from "./payment-result-page/PaymentResultPage";
+export { default as InventoryPage } from "./inventory-page/InventoryPage";
+export { default as OrdersPage } from "./orders-page/OrdersPage";
+export { default as BooksPage } from "./books-page/BooksPage";
+export { default as NotFoundPage } from "./not-found-page/NotFoundPage";

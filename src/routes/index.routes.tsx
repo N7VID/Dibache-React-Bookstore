@@ -9,6 +9,7 @@ import {
   HomePage,
   InventoryPage,
   LoginPage,
+  NotFoundPage,
   OrdersPage,
   PaymentPage,
   PaymentResultPage,
@@ -50,5 +51,9 @@ export const router = createBrowserRouter([
     path: PATHS.REGISTER,
     element: <AuthLayout />,
     children: [{ index: true, element: <RegisterPage /> }],
+  },
+  {
+    path: PATHS.NOT_FOUND,
+    element: <NotFoundPage />,
   },
 ]);

@@ -7,3 +7,8 @@
     @apply max-w-7xl mx-auto;
   }
 }
+
+@font-face {
+  font-family: "yekan";
+  src: url("./assets/font/iranyekan/Qs_Iranyekan.ttf");
+}

@@ -7,8 +7,8 @@ import { UserIcon } from "../../assets/svg/UserIcon";
 export default function Header() {
   const navigate = useNavigate();
   return (
-    <header>
-      <div className="LayoutContainer flex items-center justify-center md:justify-between gap-0 sm:gap-4 md:-my-3">
+    <header className="shadow-header fixed w-full bg-white">
+      <div className="LayoutContainer flex items-center justify-center md:justify-between gap-0 sm:gap-4">
         <div className="flex items-center justify-between md:gap-4 gap-2">
           <div className="flex items-center">
             <Button
@@ -25,9 +25,9 @@ export default function Header() {
             </Button>
             <Link to={PATHS.HOME}>
               <img
-                src="/Dibache-logo.svg"
+                src="/Dibache-1.png"
                 alt="Dibache-logo"
-                className="w-36 mt-2"
+                className="w-32 my-2"
               />
             </Link>
           </div>

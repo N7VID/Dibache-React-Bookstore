@@ -24,7 +24,7 @@ export default function Footer() {
           </form>
         </div>
         <div className="flex justify-between items-center px-20 py-8">
-          <div className="flex flex-col gap-3 justify-center items-center">
+          <div className="flex flex-col gap-3">
             <ul className="flex gap-6 text-[13px]">
               <Link to={PATHS.HOME}>
                 <li className="text-[#777] hover:text-persian-green transition">

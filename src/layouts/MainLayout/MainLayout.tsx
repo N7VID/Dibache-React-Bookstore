@@ -6,7 +6,7 @@ export default function MainLayout() {
   return (
     <div className="flex flex-col min-h-screen font-yekan">
       <Header />
-      <main className="flex-grow bg-ghost-white">{<Outlet />}</main>
+      <main className="flex-grow bg-ghost-white pt-24">{<Outlet />}</main>
       <Footer />
     </div>
   );

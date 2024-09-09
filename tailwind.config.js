@@ -32,6 +32,7 @@ module.exports = {
       },
       boxShadow: {
         footer: "rgba(0, 0, 0, 0.15) 0px 5px 10px 0px",
+        header: "rgba(0, 0, 0, 0.15) 0px 4px 10px 0px",
       },
     },
   },

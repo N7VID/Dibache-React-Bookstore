@@ -8,9 +8,27 @@ module.exports = {
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    screens: {
+      xs: "300px",
+      sm: "480px",
+      mobile: "600px",
+      tablet: "640px",
+      md: "768px",
+      lg: "960px",
+      laptop: "1024px",
+      desktop: "1280px",
+      "2xl": "1440px",
+      "3xl": "1600px",
+    },
     extend: {
       fontFamily: {
         yekan: ["yekan", "sans"],
+      },
+      colors: {
+        "main-gray": "#EEE",
+        "ghost-white": "#FCFCFA",
+        "rich-black": "#1C1C1C",
+        "persian-green": "#00A693",
       },
     },
   },

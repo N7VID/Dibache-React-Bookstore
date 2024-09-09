@@ -4,7 +4,7 @@
 
 @layer {
   .LayoutContainer {
-    @apply max-w-7xl mx-auto;
+    @apply max-w-7xl desktop:mx-auto mx-4;
   }
 }
 

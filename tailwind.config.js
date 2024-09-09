@@ -30,6 +30,9 @@ module.exports = {
         "rich-black": "#1C1C1C",
         "persian-green": "#00A693",
       },
+      boxShadow: {
+        footer: "rgba(0, 0, 0, 0.15) 0px 5px 10px 0px",
+      },
     },
   },
   darkMode: "class",

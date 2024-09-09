@@ -4,9 +4,9 @@ import DashboardFooter from "./DashboardFooter";
 
 export default function DashboardLayout() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen font-yekan">
       <DashboardHeader />
-      <main className="flex-grow">{<Outlet />}</main>
+      <main className="flex-grow bg-ghost-white">{<Outlet />}</main>
       <DashboardFooter />
     </div>
   );

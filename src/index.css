@@ -4,6 +4,11 @@
 
 @layer {
   .LayoutContainer {
-    @apply max-w-7xl mx-auto;
+    @apply max-w-7xl desktop:mx-auto mx-4;
   }
+}
+
+@font-face {
+  font-family: "yekan";
+  src: url("./assets/font/iranyekan/Qs_Iranyekan.ttf");
 }

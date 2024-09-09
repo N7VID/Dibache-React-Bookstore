@@ -1,7 +1,9 @@
 export default function DashboardFooter() {
   return (
-    <footer>
-      <div className="LayoutContainer">DashboardFooter</div>
+    <footer className="bg-persian-green">
+      <div className="LayoutContainer text-white text-center text-sm">
+        © کلیه حقوق این سایت محفوظ و متعلق به فروشگاه اینترنتی کتاب دیباچه است.
+      </div>
     </footer>
   );
 }

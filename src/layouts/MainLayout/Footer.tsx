@@ -1,6 +1,7 @@
 import { Button, Input } from "@nextui-org/react";
 import { Link } from "react-router-dom";
 import { PATHS } from "../../configs/paths.config";
+import MobileNavbar from "../../components/MobileNavbar/MobileNavbar";
 
 export default function Footer() {
   return (
@@ -96,6 +97,7 @@ export default function Footer() {
           </div>
         </div>
       </div>
+      <MobileNavbar />
     </footer>
   );
 }

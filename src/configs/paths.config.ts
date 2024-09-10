@@ -2,7 +2,7 @@ export const PATHS = {
   HOME: "/",
   LOGIN: "/login",
   ADMIN: "admin",
-  REGISTER: "register",
+  REGISTER: "/register",
   BOOKS: "books",
   ORDERS: "orders",
   INVENTORY: "inventory",

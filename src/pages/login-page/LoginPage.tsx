@@ -40,6 +40,7 @@ export default function LoginPage() {
         const res = response as authResponse;
         Cookies.set("accessToken", res.token.accessToken);
         Cookies.set("refreshToken", res.token.refreshToken);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
         if (res.data.user.role === "ADMIN") {
           navigate(PATHS.DASHBOARD);
         } else {

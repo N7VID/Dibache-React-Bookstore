@@ -4,6 +4,7 @@ export const ENDPOINTS = {
     SIGNUP: "/api/auth/signup",
     LOGIN: "/api/auth/login",
     LOGOUT: "/api/auth/logout",
+    TOKEN: "api/auth/token",
   },
   PRODUCTS: "/api/products",
   CATEGORIES: "/api/categories",

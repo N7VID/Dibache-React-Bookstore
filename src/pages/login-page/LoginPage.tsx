@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { PATHS } from "../../configs/paths.config";
 import { usePostService } from "../../hooks/usePostService";
 import { FormData, schema } from "./schema";
-import { login } from "../../api/login.api";
+import { loginApi } from "../../api/login.api";
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { EyeSlashFilledIcon } from "../../assets/svg/EyeSlashFilledIcon";
@@ -28,9 +28,8 @@ export default function LoginPage() {
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   const { mutate, isPending } = usePostService({
-    mutationFn: login,
+    mutationFn: loginApi,
     mutationKey: ["Login"],
-    invalidate: [""],
   });
 
   const handleSubmitLogin: SubmitHandler<FormData> = (value: FormData) => {
@@ -49,14 +48,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="LayoutContainer pt-36">
+    <div className="LayoutContainer flex items-center min-h-[calc(100vh-25px)] justify-center pt-24 pb-4">
       <div className="bg-white sm:w-[400px] mx-auto rounded-lg border border-black py-12 cursor-default">
         <h2 className="sm:text-2xl xs:text-xl font-semibold text-center mb-14">
           ورود به حساب کاربری
         </h2>
         <form
           action=""
-          className="sm:w-80 mx-auto flex justify-center items-center flex-col gap-6"
+          className="sm:w-80 mx-auto flex justify-center items-center flex-col gap-4"
           onSubmit={handleSubmit(handleSubmitLogin)}
         >
           <Input

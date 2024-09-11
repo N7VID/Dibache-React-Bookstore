@@ -16,6 +16,7 @@ import {
   RegisterPage,
 } from "../pages";
 import { AuthLayout, DashboardLayout, MainLayout } from "../layouts";
+import PrivateRoutes from "./Private.routes";
 
 export const router = createBrowserRouter([
   {
@@ -23,11 +24,32 @@ export const router = createBrowserRouter([
     element: <MainLayout />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: PATHS.CART, element: <CartPage /> },
+      {
+        path: PATHS.CART,
+        element: (
+          <PrivateRoutes>
+            <CartPage />
+          </PrivateRoutes>
+        ),
+      },
       { path: PATHS.CATEGORY, element: <CategoryPage /> },
       { path: PATHS.BOOK, element: <BookPage /> },
-      { path: PATHS.PAYMENT, element: <PaymentPage /> },
-      { path: PATHS.PAYMENT_RESULT, element: <PaymentResultPage /> },
+      {
+        path: PATHS.PAYMENT,
+        element: (
+          <PrivateRoutes>
+            <PaymentPage />
+          </PrivateRoutes>
+        ),
+      },
+      {
+        path: PATHS.PAYMENT_RESULT,
+        element: (
+          <PrivateRoutes>
+            <PaymentResultPage />
+          </PrivateRoutes>
+        ),
+      },
     ],
   },
   {

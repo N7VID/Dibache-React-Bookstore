@@ -3,13 +3,15 @@ import { Button, Input, Spinner } from "@nextui-org/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { EyeSlashFilledIcon } from "../../assets/svg/EyeSlashFilledIcon";
 import { EyeFilledIcon } from "../../assets/svg/EyeFillesIcon";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PATHS } from "../../configs/paths.config";
 import { useState } from "react";
 import { RegisterFormData, schema } from "./schema";
 import { usePostService } from "../../hooks/usePostService";
 import { registerApi } from "../../api/register.api";
 import { AxiosError } from "axios";
+import { authResponse } from "../../types/authResponse";
+import Cookies from "js-cookie";
 
 interface ResponseMessage {
   status: string;
@@ -19,6 +21,7 @@ interface ResponseMessage {
 export default function RegisterPage() {
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
+  const navigate = useNavigate();
 
   const {
     handleSubmit,
@@ -37,7 +40,11 @@ export default function RegisterPage() {
   ) => {
     mutate(value, {
       onSuccess: (response) => {
-        console.log(response);
+        const res = response as authResponse;
+        Cookies.set("accessToken", res.token.accessToken);
+        Cookies.set("refreshToken", res.token.refreshToken);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        navigate(PATHS.HOME);
       },
       onError: (error) => {
         const e = error as AxiosError<ResponseMessage>;

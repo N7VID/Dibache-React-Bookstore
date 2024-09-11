@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Spinner } from "@nextui-org/react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PATHS } from "../../configs/paths.config";
 import { usePostService } from "../../hooks/usePostService";
 import { FormData, schema } from "./schema";
@@ -10,7 +10,8 @@ import { AxiosError } from "axios";
 import { useState } from "react";
 import { EyeSlashFilledIcon } from "../../assets/svg/EyeSlashFilledIcon";
 import { EyeFilledIcon } from "../../assets/svg/EyeFillesIcon";
-
+import Cookies from "js-cookie";
+import { authResponse } from "../../types/authResponse";
 interface ResponseMessage {
   status: string;
   message: string;
@@ -19,6 +20,7 @@ interface ResponseMessage {
 export default function LoginPage() {
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
+  const navigate = useNavigate();
 
   const {
     handleSubmit,
@@ -35,7 +37,14 @@ export default function LoginPage() {
   const handleSubmitLogin: SubmitHandler<FormData> = (value: FormData) => {
     mutate(value, {
       onSuccess: (response) => {
-        console.log(response);
+        const res = response as authResponse;
+        Cookies.set("accessToken", res.token.accessToken);
+        Cookies.set("refreshToken", res.token.refreshToken);
+        if (res.data.user.role === "ADMIN") {
+          navigate(PATHS.DASHBOARD);
+        } else {
+          navigate(PATHS.HOME);
+        }
       },
       onError: (error) => {
         const e = error as AxiosError<ResponseMessage>;

@@ -34,6 +34,9 @@ export default function MainDropDown({ onOpen }: props) {
       case "orders":
         console.log(key);
         break;
+      case "dashboard":
+        navigate(PATHS.DASHBOARD);
+        break;
       case "logout":
         onOpen();
         break;
@@ -64,7 +67,7 @@ export default function MainDropDown({ onOpen }: props) {
       <DropdownMenu
         aria-label="Static Actions"
         onAction={(key: Key) => handleDropDownItem(key)}
-        disabledKeys={["profile", "orders"]}
+        disabledKeys={["profile", "orders", "wishlist"]}
       >
         <DropdownItem
           key="profile"
@@ -86,19 +89,27 @@ export default function MainDropDown({ onOpen }: props) {
           </DropdownItem>
         ) : (
           <DropdownItem
-            key="cart"
-            className="relative"
-            textValue="cart"
+            key="wishlist"
             startContent={
-              <img src="/src/assets/svg/cart-black.svg" className="w-4" />
+              <img src="/src/assets/svg/heart-black.svg" className="w-4" />
             }
           >
-            سبد خرید
-            <div className="absolute top-1 right-[95px] w-[15.5px] h-[15.5px] text-[13px] flex justify-center items-center pb-[2px] rounded-full bg-badge-pink text-white p-1 font-thin">
-              1
-            </div>
+            لیست ها
           </DropdownItem>
         )}
+        <DropdownItem
+          key="cart"
+          className="relative"
+          textValue="cart"
+          startContent={
+            <img src="/src/assets/svg/cart-black.svg" className="w-4" />
+          }
+        >
+          سبد خرید
+          <div className="absolute top-1 right-[95px] w-[15.5px] h-[15.5px] text-[13px] flex justify-center items-center pb-[2px] rounded-full bg-badge-pink text-white p-1 font-thin">
+            1
+          </div>
+        </DropdownItem>
         <DropdownItem
           key="orders"
           startContent={

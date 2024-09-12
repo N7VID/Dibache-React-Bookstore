@@ -1,20 +1,30 @@
-import {
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  Input,
-  Tab,
-  Tabs,
-} from "@nextui-org/react";
+import { Button, Input, Tab, Tabs, useDisclosure } from "@nextui-org/react";
+import Cookies from "js-cookie";
 import { Link, useNavigate } from "react-router-dom";
 import { SearchIcon } from "../../assets/svg/SearchIcon";
+import NextUiModal from "../../components/NextUiModal/NextUiModal";
 import { PATHS } from "../../configs/paths.config";
-import { UserIcon } from "../../assets/svg/UserIcon";
+import { useLogout } from "../hooks/useLogout";
+import MainDropDown from "../MainLayout/components/MainDropDown";
+import DropDown from "./components/DropDown";
 
 export default function DashboardHeader() {
   const navigate = useNavigate();
+  const {
+    isOpen: isOpenLogout,
+    onOpen: onOpenLogout,
+    onOpenChange: onOpenChangeLogout,
+  } = useDisclosure();
+  const { refetch } = useLogout();
+
+  const handleActionModal = () => {
+    refetch().then(() => {
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
+      navigate(PATHS.HOME);
+    });
+  };
+
   return (
     <header>
       <div className="shadow-header fixed w-full bg-white">
@@ -53,37 +63,11 @@ export default function DashboardHeader() {
               }
             />
           </div>
-          <Dropdown className="font-yekan">
-            <DropdownTrigger>
-              <Button
-                variant="bordered"
-                startContent={
-                  <UserIcon className="text-black/70 dark:text-white/90" />
-                }
-                endContent={
-                  <img
-                    src="/src/assets/svg/chevron-down-mini-black.svg"
-                    alt="chevron-down-logo"
-                    className="w-4"
-                  />
-                }
-              >
-                ادمین سایت
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu aria-label="Static Actions">
-              <DropdownItem key="new">New file</DropdownItem>
-              <DropdownItem key="copy">Copy link</DropdownItem>
-              <DropdownItem key="profile">پروفایل</DropdownItem>
-              <DropdownItem key="logout" className="text-danger" color="danger">
-                خروج از حساب
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+          <MainDropDown onOpen={onOpenLogout} />
         </div>
       </div>
       <div className="bg-ghost-white">
-        <div className="flex LayoutContainer pt-24">
+        <div className="flex pt-24 justify-between items-center LayoutContainer">
           <Tabs
             aria-label="Options"
             onSelectionChange={(key) => {
@@ -97,8 +81,17 @@ export default function DashboardHeader() {
             <Tab key="inventory" title="موجودی" />
             <Tab key="users" title="کاربران" isDisabled />
           </Tabs>
+          <DropDown />
         </div>
       </div>
+      <NextUiModal
+        isOpen={isOpenLogout}
+        onOpenChange={onOpenChangeLogout}
+        onAction={() => handleActionModal()}
+        modalTitle="از حساب کاربری خارج می‌شوید؟"
+        modalBody="با خروج از حساب کاربری، به داشبورد مدیریت دسترسی نخواهید داشت. هروقت بخواهید می‌توانید مجددا وارد شوید."
+        buttonContent={["انصراف", "خروج از حساب"]}
+      />
     </header>
   );
 }

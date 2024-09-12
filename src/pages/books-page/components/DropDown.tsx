@@ -10,7 +10,16 @@ import { Key } from "react";
 import FolderPlus from "../../../assets/svg/FolderPlus";
 import DocumentPlus from "../../../assets/svg/DocumentPlus";
 
-export default function DropDown() {
+interface props {
+  onOpen: () => void;
+  setModalType: (type: string) => void;
+}
+
+export default function DropDown({ onOpen, setModalType }: props) {
+  function handleDropDownItem(key: Key) {
+    setModalType(`${key}`);
+    onOpen();
+  }
   return (
     <Dropdown className="font-yekan">
       <DropdownTrigger>

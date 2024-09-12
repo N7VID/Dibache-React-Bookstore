@@ -6,7 +6,6 @@ import NextUiModal from "../../components/NextUiModal/NextUiModal";
 import { PATHS } from "../../configs/paths.config";
 import { useLogout } from "../hooks/useLogout";
 import MainDropDown from "../MainLayout/components/MainDropDown";
-import DropDown from "./components/DropDown";
 
 export default function DashboardHeader() {
   const navigate = useNavigate();
@@ -81,7 +80,6 @@ export default function DashboardHeader() {
             <Tab key="inventory" title="موجودی" />
             <Tab key="users" title="کاربران" isDisabled />
           </Tabs>
-          <DropDown />
         </div>
       </div>
       <NextUiModal

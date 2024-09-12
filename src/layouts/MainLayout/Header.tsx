@@ -1,6 +1,5 @@
 import { Button, Input, useDisclosure } from "@nextui-org/react";
 import Cookies from "js-cookie";
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SearchIcon } from "../../assets/svg/SearchIcon";
 import { UserIcon } from "../../assets/svg/UserIcon";
@@ -13,15 +12,15 @@ export default function Header() {
   const navigate = useNavigate();
   const accessToken = Cookies.get("accessToken");
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [isQueryEnabled, setIsQueryEnabled] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const logout = useLogout(isQueryEnabled);
+
+  const { refetch } = useLogout();
 
   const handleActionModal = () => {
-    Cookies.remove("accessToken");
-    Cookies.remove("refreshToken");
-    setIsQueryEnabled(true);
-    navigate(PATHS.HOME);
+    refetch().then(() => {
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
+      navigate(PATHS.HOME);
+    });
   };
 
   return (

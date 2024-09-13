@@ -7,7 +7,9 @@ import {
   ModalHeader,
 } from "@nextui-org/react";
 import { ReactNode } from "react";
-import AddProductForm from "./AddProductForm";
+import AddProductForm from "./AddProductForm/AddProductForm";
+import AddCategoryForm from "./AddCategoryForm/AddCategoryForm";
+import AddSubcategoryForm from "./AddSubcategoryForm/AddSubcategoryForm";
 
 interface props {
   isOpen: boolean;
@@ -25,11 +27,11 @@ export default function FormModal({ isOpen, onOpenChange, type }: props) {
       break;
     case "category":
       modalTitle = "اضافه کردن مجموعه";
-      modalBody = <AddProductForm />;
+      modalBody = <AddCategoryForm />;
       break;
     case "sub-category":
       modalTitle = "اضافه کردن زیرمجموعه";
-      modalBody = <AddProductForm />;
+      modalBody = <AddSubcategoryForm />;
       break;
     default:
       break;
@@ -40,7 +42,10 @@ export default function FormModal({ isOpen, onOpenChange, type }: props) {
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         placement="top-center"
+        isDismissable={false}
+        isKeyboardDismissDisabled={true}
         className="font-yekan"
+        scrollBehavior="inside"
       >
         <ModalContent>
           {(onClose) => (

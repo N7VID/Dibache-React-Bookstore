@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { logout } from "../../api/logout.api";
+import { getLogout } from "../queryhooks/auth";
 
 export const useLogout = (isQueryEnabled: boolean = false) => {
   return useQuery({
     queryKey: ["Logout"],
-    queryFn: logout,
+    queryFn: getLogout,
     enabled: isQueryEnabled,
   });
 };

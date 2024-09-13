@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { SearchIcon } from "../../assets/svg/SearchIcon";
 import NextUiModal from "../../components/NextUiModal/NextUiModal";
 import { PATHS } from "../../configs/paths.config";
-import { useLogout } from "../hooks/useLogout";
+import { useLogout } from "../../hooks/useLogout";
 import MainDropDown from "../MainLayout/components/MainDropDown";
 
 export default function DashboardHeader() {

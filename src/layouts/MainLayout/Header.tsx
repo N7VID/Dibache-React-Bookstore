@@ -5,7 +5,7 @@ import { SearchIcon } from "../../assets/svg/SearchIcon";
 import { UserIcon } from "../../assets/svg/UserIcon";
 import NextUiModal from "../../components/NextUiModal/NextUiModal";
 import { PATHS } from "../../configs/paths.config";
-import { useLogout } from "../hooks/useLogout";
+import { useLogout } from "../../hooks/useLogout";
 import MainDropDown from "./components/MainDropDown";
 
 export default function Header() {

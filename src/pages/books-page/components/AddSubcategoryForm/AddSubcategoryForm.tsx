@@ -1,15 +1,24 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Select, SelectItem, Spinner } from "@nextui-org/react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { useGetServices } from "../../../../hooks/useGetServices";
-import { CategoriesResponse } from "../../../../types/categoriesResponse";
+import { usePostService } from "../../../../hooks/usePostService";
+import { postSubCategories } from "../../../../queryhooks/admin/subCategory";
 import { getCategories } from "../../../../queryhooks/getCategories";
+import { CategoriesResponse } from "../../../../types/categoriesResponse";
+import { AddSubcategorySchema, schema } from "./schema";
 
 export default function AddSubcategoryForm() {
   const {
     handleSubmit,
     formState: { errors },
     register,
-  } = useForm();
+  } = useForm<AddSubcategorySchema>({ resolver: zodResolver(schema) });
+
+  const { mutate, isPending } = usePostService({
+    mutationKey: ["PostSubcategories"],
+    mutationFn: postSubCategories,
+  });
 
   const { data: categoryData } = useGetServices<CategoriesResponse>({
     queryKey: ["GetCategories"],
@@ -22,8 +31,12 @@ export default function AddSubcategoryForm() {
       value: category._id,
     })) || [];
 
-  const handleSubmitSubcategoryForm = (values) => {
+  const handleSubmitSubcategoryForm: SubmitHandler<AddSubcategorySchema> = (
+    values: AddSubcategorySchema
+  ) => {
     console.log(values);
+
+    mutate(values);
   };
   return (
     <form
@@ -59,10 +72,10 @@ export default function AddSubcategoryForm() {
       <Button
         className="bg-persian-green text-white text-base sm:text-lg w-44 xs:w-64 sm:w-full"
         type="submit"
-        // isLoading={isPending}
+        isLoading={isPending}
         spinner={<Spinner color="default" size="sm" />}
       >
-        {/* {!isPending && "ثبت نام"} */}
+        {!isPending && "افزودن"}
       </Button>
     </form>
   );

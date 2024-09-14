@@ -1,16 +1,17 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Spinner } from "@nextui-org/react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { AddCategory } from "./schema";
+import { AddCategorySchema, addCategorySchema } from "./schema";
 
 export default function AddCategoryForm() {
   const {
     handleSubmit,
     formState: { errors },
     register,
-  } = useForm<AddCategory>();
+  } = useForm<AddCategorySchema>({ resolver: zodResolver(addCategorySchema) });
 
-  const handleSubmitAddCategoryForm: SubmitHandler<AddCategory> = (
-    values: AddCategory
+  const handleSubmitAddCategoryForm: SubmitHandler<AddCategorySchema> = (
+    values: AddCategorySchema
   ) => {
     console.log(values);
   };

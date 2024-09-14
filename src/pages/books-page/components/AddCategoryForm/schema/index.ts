@@ -1,8 +1,10 @@
 import { z } from "zod";
 
-export const schema = z.object({
+export const addCategorySchema = z.object({
   name: z.string().min(1, "نام دسته بندی را وارد کنید."),
-  icon: z.string().min(1, "آیکون دسته بندی را انتخاب کنید."),
+  icon: z.instanceof(File).refine((file) => file.size < 0, {
+    message: "آیکون دسته بندی را انتخاب کنید.",
+  }),
 });
 
-export type AddCategory = z.infer<typeof schema>;
+export type AddCategorySchema = z.infer<typeof addCategorySchema>;

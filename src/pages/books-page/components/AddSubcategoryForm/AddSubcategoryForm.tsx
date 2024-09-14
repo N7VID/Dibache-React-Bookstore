@@ -1,5 +1,8 @@
 import { Button, Input, Select, SelectItem, Spinner } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
+import { useGetServices } from "../../../../hooks/useGetServices";
+import { CategoriesResponse } from "../../../../types/categoriesResponse";
+import { getCategories } from "../../../../queryhooks/products";
 
 export default function AddSubcategoryForm() {
   const {
@@ -7,6 +10,17 @@ export default function AddSubcategoryForm() {
     formState: { errors },
     register,
   } = useForm();
+
+  const { data: categoryData } = useGetServices<CategoriesResponse>({
+    queryKey: ["GetCategories"],
+    queryFn: getCategories,
+  });
+
+  const categoriesItem =
+    categoryData?.data.categories?.map((category) => ({
+      label: category.name,
+      value: category._id,
+    })) || [];
 
   const handleSubmitSubcategoryForm = (values) => {
     console.log(values);
@@ -27,7 +41,6 @@ export default function AddSubcategoryForm() {
         {...register("name")}
       />
       <Select
-        items={[{ label: "hi" }, { label: "hello" }]}
         label="دسته بندی"
         size="sm"
         isInvalid={!!errors["category"]}
@@ -36,9 +49,11 @@ export default function AddSubcategoryForm() {
         className="max-w-xs"
         {...register("category")}
       >
-        {(example) => (
-          <SelectItem key={example.label}>{example.label}</SelectItem>
-        )}
+        {categoriesItem?.map((item) => (
+          <SelectItem key={item.value} value={item.value}>
+            {item.label}
+          </SelectItem>
+        ))}
       </Select>
 
       <Button

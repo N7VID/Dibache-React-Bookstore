@@ -3,13 +3,26 @@ import { Button, Input, Select, SelectItem, Spinner } from "@nextui-org/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import TextEditor from "../../../../components/TextEditor/TextEditor";
 import { AddProduct, schema } from "./schema";
+import { useGetServices } from "../../../../hooks/useGetServices";
+import { CategoriesResponse } from "../../../../types/categoriesResponse";
+import { getCategories } from "../../../../queryhooks/admin/products";
 
 export default function AddProductForm() {
   const {
     handleSubmit,
     formState: { errors },
     register,
-  } = useForm<AddProduct>({ resolver: zodResolver(schema) });
+  } = useForm<AddProduct>();
+
+  const { data: categoryData } = useGetServices<CategoriesResponse>({
+    queryKey: ["GetCategories"],
+    queryFn: getCategories,
+  });
+  const categoriesItem =
+    categoryData?.data.categories?.map((category) => ({
+      label: category.name,
+      value: category._id,
+    })) || [];
 
   const handleSubmitProductForm: SubmitHandler<AddProduct> = (
     value: AddProduct
@@ -32,7 +45,6 @@ export default function AddProductForm() {
         {...register("name")}
       />
       <Select
-        items={[{ label: "hi" }, { label: "hello" }]}
         label="دسته بندی"
         size="sm"
         isInvalid={!!errors["category"]}
@@ -40,25 +52,30 @@ export default function AddProductForm() {
         variant="bordered"
         className="max-w-xs"
         {...register("category")}
+        onChange={(e) => console.log(e.target.value)}
       >
-        {(example) => (
-          <SelectItem key={example.label}>{example.label}</SelectItem>
-        )}
+        {categoriesItem?.map((item) => (
+          <SelectItem key={item.value} value={item.value}>
+            {item.label}
+          </SelectItem>
+        ))}
       </Select>
       <Select
-        items={[{ label: "hi" }, { label: "hello" }]}
         label="زیر مجموعه"
         size="sm"
-        isInvalid={!!errors["subcategory"]}
-        errorMessage={`${errors["subcategory"]?.message}`}
-        {...register("subcategory")}
+        isInvalid={!!errors["category"]}
+        errorMessage={`${errors["category"]?.message}`}
         variant="bordered"
         className="max-w-xs"
+        {...register("category")}
       >
-        {(example) => (
-          <SelectItem key={example.label}>{example.label}</SelectItem>
-        )}
+        {categoriesItem?.map((item) => (
+          <SelectItem key={item.value} value={item.value}>
+            {item.label}
+          </SelectItem>
+        ))}
       </Select>
+
       <Input
         label={"انتشارات"}
         size="sm"

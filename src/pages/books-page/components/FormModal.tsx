@@ -7,8 +7,8 @@ import {
   ModalHeader,
 } from "@nextui-org/react";
 import { ReactNode } from "react";
-import AddProductForm from "./AddProductForm/AddProductForm";
 import AddCategoryForm from "./AddCategoryForm/AddCategoryForm";
+import AddProductForm from "./AddProductForm/AddProductForm";
 import AddSubcategoryForm from "./AddSubcategoryForm/AddSubcategoryForm";
 
 interface props {

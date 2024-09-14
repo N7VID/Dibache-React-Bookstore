@@ -1,7 +1,6 @@
-import { Button, Input, Tab, Tabs, useDisclosure } from "@nextui-org/react";
+import { Button, useDisclosure } from "@nextui-org/react";
 import Cookies from "js-cookie";
-import { Link, useNavigate } from "react-router-dom";
-import { SearchIcon } from "../../assets/svg/SearchIcon";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import NextUiModal from "../../components/NextUiModal/NextUiModal";
 import { PATHS } from "../../configs/paths.config";
 import { useLogout } from "../../hooks/useLogout";
@@ -50,36 +49,26 @@ export default function DashboardHeader() {
                 />
               </Link>
             </div>
-            <Input
-              isClearable
-              labelPlacement="inside"
-              placeholder="جستجو در دیباچه"
-              radius="full"
-              size="md"
-              className="sm:w-[450px] w-[210px]"
-              startContent={
-                <SearchIcon className="text-black/60 dark:text-white/90 cursor-pointer flex-shrink-0" />
-              }
-            />
+            <ul className="flex gap-8 px-4">
+              <li>
+                <NavLink to={PATHS.DASHBOARD}>سفارشات</NavLink>
+              </li>
+              <li>
+                <NavLink to={PATHS.BOOKS}> محصولات</NavLink>
+              </li>
+              <li>
+                <NavLink to={PATHS.INVENTORY}>موجودی</NavLink>
+              </li>
+              {/* <li>
+                <NavLink
+                  to={""}
+                >
+                  کاربران
+                </NavLink>
+              </li> */}
+            </ul>
           </div>
           <MainDropDown onOpen={onOpenLogout} />
-        </div>
-      </div>
-      <div className="bg-ghost-white">
-        <div className="flex pt-24 justify-between items-center LayoutContainer">
-          <Tabs
-            aria-label="Options"
-            onSelectionChange={(key) => {
-              if (key === "orders") navigate(PATHS.DASHBOARD);
-              else if (key === "books") navigate(PATHS.BOOKS);
-              else if (key === "inventory") navigate(PATHS.INVENTORY);
-            }}
-          >
-            <Tab key="orders" title="سفارشات" />
-            <Tab key="books" title="محصولات" />
-            <Tab key="inventory" title="موجودی" />
-            <Tab key="users" title="کاربران" isDisabled />
-          </Tabs>
         </div>
       </div>
       <NextUiModal

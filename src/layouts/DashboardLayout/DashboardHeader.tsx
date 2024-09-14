@@ -1,20 +1,28 @@
-import {
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  Input,
-  Tab,
-  Tabs,
-} from "@nextui-org/react";
-import { Link, useNavigate } from "react-router-dom";
-import { SearchIcon } from "../../assets/svg/SearchIcon";
+import { Button, useDisclosure } from "@nextui-org/react";
+import Cookies from "js-cookie";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import NextUiModal from "../../components/NextUiModal/NextUiModal";
 import { PATHS } from "../../configs/paths.config";
-import { UserIcon } from "../../assets/svg/UserIcon";
+import { useLogout } from "../../hooks/useLogout";
+import MainDropDown from "../MainLayout/components/MainDropDown";
 
 export default function DashboardHeader() {
   const navigate = useNavigate();
+  const {
+    isOpen: isOpenLogout,
+    onOpen: onOpenLogout,
+    onOpenChange: onOpenChangeLogout,
+  } = useDisclosure();
+  const { refetch } = useLogout();
+
+  const handleActionModal = () => {
+    refetch().then(() => {
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
+      navigate(PATHS.HOME);
+    });
+  };
+
   return (
     <header>
       <div className="shadow-header fixed w-full bg-white">
@@ -41,64 +49,36 @@ export default function DashboardHeader() {
                 />
               </Link>
             </div>
-            <Input
-              isClearable
-              labelPlacement="inside"
-              placeholder="جستجو در دیباچه"
-              radius="full"
-              size="md"
-              className="sm:w-[450px] w-[210px]"
-              startContent={
-                <SearchIcon className="text-black/60 dark:text-white/90 cursor-pointer flex-shrink-0" />
-              }
-            />
+            <ul className="flex gap-8 px-4">
+              <li>
+                <NavLink to={PATHS.DASHBOARD}>سفارشات</NavLink>
+              </li>
+              <li>
+                <NavLink to={PATHS.BOOKS}> محصولات</NavLink>
+              </li>
+              <li>
+                <NavLink to={PATHS.INVENTORY}>موجودی</NavLink>
+              </li>
+              {/* <li>
+                <NavLink
+                  to={""}
+                >
+                  کاربران
+                </NavLink>
+              </li> */}
+            </ul>
           </div>
-          <Dropdown className="font-yekan">
-            <DropdownTrigger>
-              <Button
-                variant="bordered"
-                startContent={
-                  <UserIcon className="text-black/70 dark:text-white/90" />
-                }
-                endContent={
-                  <img
-                    src="/src/assets/svg/chevron-down-mini-black.svg"
-                    alt="chevron-down-logo"
-                    className="w-4"
-                  />
-                }
-              >
-                ادمین سایت
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu aria-label="Static Actions">
-              <DropdownItem key="new">New file</DropdownItem>
-              <DropdownItem key="copy">Copy link</DropdownItem>
-              <DropdownItem key="profile">پروفایل</DropdownItem>
-              <DropdownItem key="logout" className="text-danger" color="danger">
-                خروج از حساب
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+          <MainDropDown onOpen={onOpenLogout} />
         </div>
       </div>
-      <div className="bg-ghost-white">
-        <div className="flex LayoutContainer pt-24">
-          <Tabs
-            aria-label="Options"
-            onSelectionChange={(key) => {
-              if (key === "orders") navigate(PATHS.DASHBOARD);
-              else if (key === "books") navigate(PATHS.BOOKS);
-              else if (key === "inventory") navigate(PATHS.INVENTORY);
-            }}
-          >
-            <Tab key="orders" title="سفارشات" />
-            <Tab key="books" title="محصولات" />
-            <Tab key="inventory" title="موجودی" />
-            <Tab key="users" title="کاربران" isDisabled />
-          </Tabs>
-        </div>
-      </div>
+      <NextUiModal
+        isOpen={isOpenLogout}
+        onOpenChange={onOpenChangeLogout}
+        onAction={() => handleActionModal()}
+        modalTitle="از حساب کاربری خارج می‌شوید؟"
+        modalBody="با خروج از حساب کاربری، به داشبورد مدیریت دسترسی نخواهید داشت. هروقت بخواهید می‌توانید مجددا وارد شوید."
+        buttonContent={["انصراف", "خروج از حساب"]}
+      />
     </header>
   );
 }

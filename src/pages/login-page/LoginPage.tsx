@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { PATHS } from "../../configs/paths.config";
 import { usePostService } from "../../hooks/usePostService";
 import { FormData, schema } from "./schema";
-import { loginApi } from "../../api/login.api";
+import { postLoginData } from "../../queryhooks/auth";
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { EyeSlashFilledIcon } from "../../assets/svg/EyeSlashFilledIcon";
@@ -30,7 +30,7 @@ export default function LoginPage() {
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   const { mutate, isPending } = usePostService({
-    mutationFn: loginApi,
+    mutationFn: postLoginData,
     mutationKey: ["Login"],
   });
 
@@ -40,6 +40,7 @@ export default function LoginPage() {
         const res = response as authResponse;
         Cookies.set("accessToken", res.token.accessToken);
         Cookies.set("refreshToken", res.token.refreshToken);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
         if (res.data.user.role === "ADMIN") {
           navigate(PATHS.DASHBOARD);
         } else {

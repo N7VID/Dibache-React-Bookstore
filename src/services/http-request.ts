@@ -1,7 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import { BASE_URL } from "../constants";
-import { refresh } from "../api/refresh.api";
+import { postRefreshToken } from "../queryhooks/auth";
 
 export const httpRequest = axios.create({
   baseURL: BASE_URL,
@@ -27,7 +27,7 @@ httpRequest.interceptors.response.use(
     const originRequest = error.config;
     const refreshToken = Cookies.get("refreshToken");
     if (status === 401 && refreshToken) {
-      return refresh({ refreshToken })
+      return postRefreshToken({ refreshToken })
         .then((res) => {
           Cookies.set("accessToken", res.token.accessToken);
           return httpRequest.request(originRequest);

@@ -8,7 +8,7 @@ import { PATHS } from "../../configs/paths.config";
 import { useState } from "react";
 import { RegisterFormData, schema } from "./schema";
 import { usePostService } from "../../hooks/usePostService";
-import { registerApi } from "../../api/register.api";
+import { postRegisterData } from "../../queryhooks/auth";
 import { AxiosError } from "axios";
 import { authResponse } from "../../types/authResponse";
 import Cookies from "js-cookie";
@@ -31,7 +31,7 @@ export default function RegisterPage() {
   } = useForm<RegisterFormData>({ resolver: zodResolver(schema) });
 
   const { mutate, isPending } = usePostService({
-    mutationFn: registerApi,
+    mutationFn: postRegisterData,
     mutationKey: ["Register"],
   });
 

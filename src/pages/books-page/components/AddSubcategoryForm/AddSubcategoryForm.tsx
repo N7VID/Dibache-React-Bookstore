@@ -2,7 +2,7 @@ import { Button, Input, Select, SelectItem, Spinner } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import { useGetServices } from "../../../../hooks/useGetServices";
 import { CategoriesResponse } from "../../../../types/categoriesResponse";
-import { getCategories } from "../../../../queryhooks/products";
+import { getCategories } from "../../../../queryhooks/getCategories";
 
 export default function AddSubcategoryForm() {
   const {

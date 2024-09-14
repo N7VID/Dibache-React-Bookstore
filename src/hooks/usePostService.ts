@@ -5,19 +5,19 @@ import {
 } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
 
-interface params {
+interface params<Data, Response> {
   mutationKey: string[];
-  mutationFn: (data: unknown) => Promise<unknown>;
+  mutationFn: (data: Data) => Promise<Response>;
   invalidate?: string[];
-  options?: UseMutationOptions<AxiosResponse, Error, unknown, unknown>;
+  options?: UseMutationOptions<AxiosResponse, Error, unknown>;
 }
 
-export const usePostService = ({
+export const usePostService = <Data, Response>({
   mutationKey,
   mutationFn,
   invalidate,
   ...options
-}: params) => {
+}: params<Data, Response>) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey,

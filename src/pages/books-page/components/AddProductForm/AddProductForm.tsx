@@ -7,10 +7,8 @@ import { useGetServices } from "../../../../hooks/useGetServices";
 import { CategoriesResponse } from "../../../../types/categoriesResponse";
 import { SubcategoriesResponse } from "../../../../types/subCategoriesResponse";
 import { AddProduct } from "./schema";
-import {
-  getCategories,
-  getSubcategories,
-} from "../../../../queryhooks/products";
+import { getCategories } from "../../../../queryhooks/getCategories";
+import { getSubcategories } from "../../../../queryhooks/getSubcategories";
 
 export default function AddProductForm() {
   const [subCategoriesItem, setSubCategoriesItem] = useState<

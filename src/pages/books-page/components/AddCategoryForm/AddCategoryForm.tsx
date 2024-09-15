@@ -1,7 +1,7 @@
 import { Button, Input, Spinner } from "@nextui-org/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { usePostService } from "../../../../hooks/usePostService";
-import { postCategories } from "../../../../queryhooks/admin/category";
+import { postCategories } from "../../../../queryhooks/admin/categories";
 import { CategoriesResponse } from "../../../../types/categoriesResponse";
 import { AddCategorySchema } from "./schema";
 

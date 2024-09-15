@@ -3,7 +3,7 @@ import { Button, Input, Select, SelectItem, Spinner } from "@nextui-org/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useGetServices } from "../../../../hooks/useGetServices";
 import { usePostService } from "../../../../hooks/usePostService";
-import { postSubCategories } from "../../../../queryhooks/admin/subCategory";
+import { postSubCategories } from "../../../../queryhooks/admin/subCategories";
 import { getCategories } from "../../../../queryhooks/getCategories";
 import { CategoriesResponse } from "../../../../types/categoriesResponse";
 import { AddSubcategorySchema, schema } from "./schema";

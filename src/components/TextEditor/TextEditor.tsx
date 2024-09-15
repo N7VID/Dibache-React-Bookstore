@@ -1,8 +1,18 @@
 import { Editor } from "@tinymce/tinymce-react";
+import { Editor as TinyMCEEditor } from "tinymce";
 
-export default function App() {
+interface TextEditorProps {
+  value: string;
+  onChange: (content: string) => void;
+}
+
+export default function TextEditor({ value, onChange }: TextEditorProps) {
   return (
     <Editor
+      value={value}
+      onEditorChange={(content: string, editor: TinyMCEEditor) =>
+        onChange(content)
+      }
       apiKey={import.meta.env.VITE_EDITOR_KEY}
       init={{
         plugins: [
@@ -31,7 +41,6 @@ export default function App() {
             Promise.reject("See docs to implement AI Assistant")
           ),
       }}
-      initialValue="جزئیات محصول را وارد کنید."
     />
   );
 }

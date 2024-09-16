@@ -13,7 +13,7 @@ export const schema = z.object({
   brand: z.string().min(1, "نام انتشارات کتاب را وارد کنید."),
   quantity: z.number().min(1, "تعداد موجودی کتاب را وارد کنید"),
   price: z.number().min(1, "قیمت واحد کتاب را به تومان وارد کنید."),
-  discount: z.number().min(1, "مقدار تخفیف واحد کتاب را به تومان وارد کنید."),
+  discount: z.number().min(1, "مقدار تخفیف کتاب را به تومان وارد کنید."),
   thumbnail: fileListSchema,
   images: fileListSchema,
   description: z.string().min(1, "جزئیات محصول را وارد کنید."),

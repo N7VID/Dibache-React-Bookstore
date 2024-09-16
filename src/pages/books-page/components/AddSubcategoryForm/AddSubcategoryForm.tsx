@@ -8,11 +8,16 @@ import { getCategories } from "../../../../queryhooks/getCategories";
 import { CategoriesResponse } from "../../../../types/categoriesResponse";
 import { AddSubcategorySchema, schema } from "./schema";
 
-export default function AddSubcategoryForm() {
+export default function AddSubcategoryForm({
+  onClose,
+}: {
+  onClose: () => void;
+}) {
   const {
     handleSubmit,
     formState: { errors },
     register,
+    reset,
   } = useForm<AddSubcategorySchema>({ resolver: zodResolver(schema) });
 
   const { mutate, isPending } = usePostService({
@@ -41,7 +46,7 @@ export default function AddSubcategoryForm() {
   return (
     <form
       action=""
-      className="sm:w-80 mx-auto flex justify-center items-center flex-col gap-2"
+      className="sm:w-80 mx-auto flex justify-center items-center flex-col gap-2 py-8"
       onSubmit={handleSubmit(handleSubmitSubcategoryForm)}
     >
       <Input
@@ -69,14 +74,27 @@ export default function AddSubcategoryForm() {
         ))}
       </Select>
 
-      <Button
-        className="bg-persian-green text-white text-base sm:text-lg w-44 xs:w-64 sm:w-full"
-        type="submit"
-        isLoading={isPending}
-        spinner={<Spinner color="default" size="sm" />}
-      >
-        {!isPending && "افزودن"}
-      </Button>
+      <div className="flex gap-3 mt-6 w-full">
+        <Button
+          className="text-base sm:text-lg w-full"
+          variant="bordered"
+          color="danger"
+          onClick={() => {
+            reset();
+            onClose();
+          }}
+        >
+          انصراف
+        </Button>
+        <Button
+          className="bg-persian-green text-white text-base sm:text-lg w-full"
+          type="submit"
+          isLoading={isPending}
+          spinner={<Spinner color="default" size="sm" />}
+        >
+          {!isPending && "افزودن"}
+        </Button>
+      </div>
     </form>
   );
 }

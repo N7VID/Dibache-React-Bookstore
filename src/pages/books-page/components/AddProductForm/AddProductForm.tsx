@@ -9,9 +9,10 @@ import { getCategories } from "../../../../queryhooks/getCategories";
 import { getSubcategories } from "../../../../queryhooks/getSubcategories";
 import { CategoriesResponse } from "../../../../types/categoriesResponse";
 import { SubcategoriesResponse } from "../../../../types/subCategoriesResponse";
-import { AddProduct } from "./schema";
+import { AddProduct, schema } from "./schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-export default function AddProductForm() {
+export default function AddProductForm({ onClose }: { onClose: () => void }) {
   const [subCategoriesItem, setSubCategoriesItem] = useState<
     { label: string; value: string }[]
   >([]);
@@ -20,9 +21,20 @@ export default function AddProductForm() {
     handleSubmit,
     formState: { errors },
     register,
-    setValue,
     control,
-  } = useForm<AddProduct>();
+    reset,
+  } = useForm<AddProduct>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      name: "",
+      category: "",
+      subcategory: "",
+      brand: "",
+      quantity: 1,
+      price: 0,
+      discount: 0,
+    },
+  });
 
   const { data: categoryData } = useGetServices<CategoriesResponse>({
     queryKey: ["GetCategories"],
@@ -46,7 +58,7 @@ export default function AddProductForm() {
       ?.filter((item) => item.category === categoryId)
       .map((item) => ({ label: item.name, value: item._id }));
     setSubCategoriesItem(filteredSubcategories || []);
-    setValue("category", categoryId);
+    return categoryId;
   };
 
   const { mutate, isPending } = usePostService({
@@ -63,7 +75,7 @@ export default function AddProductForm() {
   return (
     <form
       action=""
-      className="sm:w-80 mx-auto flex justify-center items-center flex-col gap-2"
+      className="sm:w-80 mx-auto flex justify-center items-center flex-col gap-2 py-8"
       onSubmit={handleSubmit(handleSubmitProductForm)}
     >
       <Input
@@ -82,8 +94,7 @@ export default function AddProductForm() {
         errorMessage={`${errors["category"]?.message}`}
         variant="bordered"
         className="max-w-xs"
-        {...register("category")}
-        onChange={handleSubCategories}
+        {...register("category", { onChange: handleSubCategories })}
       >
         {categoriesItem?.map((item) => (
           <SelectItem key={item.value} value={item.value}>
@@ -125,7 +136,9 @@ export default function AddProductForm() {
         isInvalid={!!errors["quantity"]}
         errorMessage={`${errors["quantity"]?.message}`}
         variant="bordered"
-        {...register("quantity")}
+        {...register("quantity", {
+          onChange: (e) => Number(e.target.value),
+        })}
       />
       <Input
         label={"قیمت واحد"}
@@ -135,7 +148,9 @@ export default function AddProductForm() {
         isInvalid={!!errors["price"]}
         errorMessage={`${errors["price"]?.message}`}
         variant="bordered"
-        {...register("price")}
+        {...register("price", {
+          onChange: (e) => Number(e.target.value),
+        })}
       />
       <Input
         label={"تخفیف"}
@@ -145,7 +160,9 @@ export default function AddProductForm() {
         isInvalid={!!errors["discount"]}
         errorMessage={`${errors["discount"]?.message}`}
         variant="bordered"
-        {...register("discount")}
+        {...register("discount", {
+          onChange: (e) => Number(e.target.value),
+        })}
       />
       <Input
         label={"تصویر پیش نمایش"}
@@ -179,14 +196,27 @@ export default function AddProductForm() {
       {errors.description && (
         <p className="text-red-500 text-sm">{errors.description.message}</p>
       )}
-      <Button
-        className="bg-persian-green text-white text-base sm:text-lg w-44 xs:w-64 sm:w-full"
-        type="submit"
-        isLoading={isPending}
-        spinner={<Spinner color="default" size="sm" />}
-      >
-        {!isPending && "افزودن"}
-      </Button>
+      <div className="flex gap-3 mt-6 w-full">
+        <Button
+          className="text-base sm:text-lg w-full"
+          variant="bordered"
+          color="danger"
+          onClick={() => {
+            reset();
+            onClose();
+          }}
+        >
+          انصراف
+        </Button>
+        <Button
+          className="bg-persian-green text-white text-base sm:text-lg w-full"
+          type="submit"
+          isLoading={isPending}
+          spinner={<Spinner color="default" size="sm" />}
+        >
+          {!isPending && "افزودن"}
+        </Button>
+      </div>
     </form>
   );
 }

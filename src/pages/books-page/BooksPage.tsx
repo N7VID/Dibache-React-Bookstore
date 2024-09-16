@@ -25,13 +25,8 @@ import FormModal from "./components/FormModal";
 export default function BooksPage() {
   const [modalType, setModalType] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const limit = searchParams.get("limit") || "5";
-
-  const {
-    isOpen: isOpenAdd,
-    onOpen: onOpenAdd,
-    onOpenChange: onOpenChangeAdd,
-  } = useDisclosure();
 
   const params: { page: number; limit: number } = {
     page: Number(searchParams.get("page")) || 1,
@@ -57,7 +52,7 @@ export default function BooksPage() {
 
   return (
     <div className="LayoutContainer pt-[100px]">
-      <DropDown onOpen={onOpenAdd} setModalType={setModalType} />
+      <DropDown onOpen={onOpen} setModalType={setModalType} />
       <Table
         aria-label="Example static collection table"
         className="py-6 cursor-default"
@@ -142,8 +137,9 @@ export default function BooksPage() {
         </TableBody>
       </Table>
       <FormModal
-        isOpen={isOpenAdd}
-        onOpenChange={onOpenChangeAdd}
+        isOpen={isOpen}
+        onClose={onClose}
+        onOpenChange={onOpenChange}
         type={modalType}
       />
     </div>

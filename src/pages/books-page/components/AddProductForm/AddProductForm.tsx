@@ -52,6 +52,7 @@ export default function AddProductForm() {
   const { mutate, isPending } = usePostService({
     mutationKey: ["PostProducts"],
     mutationFn: postProducts,
+    invalidate: ["GetProducts"],
   });
 
   const handleSubmitProductForm: SubmitHandler<AddProduct> = (

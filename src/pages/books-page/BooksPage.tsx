@@ -96,9 +96,9 @@ export default function BooksPage() {
             <TableRow key={item._id} className="border-b-1">
               <TableCell>
                 <img
-                  src={`http://${item?.images?.[0]}`}
+                  src={`http://localhost:8000/images/products/thumbnails/${item?.thumbnail}`}
                   alt={item.name}
-                  className="w-10"
+                  className="w-16"
                 />
               </TableCell>
               <TableCell>{item.name}</TableCell>

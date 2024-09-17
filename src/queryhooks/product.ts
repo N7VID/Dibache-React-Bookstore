@@ -2,9 +2,9 @@ import { ENDPOINTS } from "../constants";
 import { httpRequest } from "../services/http-request";
 
 interface ParamsType {
-  limit?: number;
+  limit: string;
   page: number;
-  sort?: string;
+  sort: string | null;
 }
 
 export const getProducts = async (searchParams: ParamsType) => {

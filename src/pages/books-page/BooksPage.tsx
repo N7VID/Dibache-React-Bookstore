@@ -26,11 +26,18 @@ export default function BooksPage() {
   const [modalType, setModalType] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const limit = searchParams.get("limit") || "5";
 
-  const params: { page: number; limit: number } = {
+  const limit = searchParams.get("limit") || "5";
+  const sort = searchParams.get("sort") || "createdAt";
+
+  const params: {
+    page: number;
+    limit: string;
+    sort: string | null;
+  } = {
     page: Number(searchParams.get("page")) || 1,
-    limit: Number(searchParams.get("limit")) || 5,
+    limit,
+    sort,
   };
 
   const { data, isLoading } = useGetServices<getProductsResponse>({
@@ -48,6 +55,24 @@ export default function BooksPage() {
   let items: ProductsEntity[] = [];
   if (data?.data.products?.length) {
     items = data.data.products;
+  }
+
+  function handleNameOrderColumn() {
+    const currentParams = Object.fromEntries([...searchParams]);
+    const newSort = currentParams.sort === "name" ? "-name" : "name";
+    setSearchParams({ ...currentParams, sort: newSort });
+  }
+
+  function handleCategoryOrderColumn() {
+    const currentParams = Object.fromEntries([...searchParams]);
+    const newSort =
+      currentParams.sort === "category" ? "-category" : "category";
+    setSearchParams({ ...currentParams, sort: newSort });
+  }
+
+  function handlePageChange(page: number) {
+    const currentParams = Object.fromEntries([...searchParams]);
+    setSearchParams({ ...currentParams, page: page.toString(), limit });
   }
 
   return (
@@ -69,9 +94,7 @@ export default function BooksPage() {
                 color="primary"
                 page={Number(searchParams.get("page")) || 1}
                 total={pages}
-                onChange={(page) =>
-                  setSearchParams({ page: page.toString(), limit })
-                }
+                onChange={(page) => handlePageChange(page)}
               />
             </div>
           ) : null
@@ -79,12 +102,12 @@ export default function BooksPage() {
       >
         <TableHeader>
           <TableColumn key="thumbnail">تصویر</TableColumn>
-          <TableColumn key="name" allowsSorting>
+          <TableColumn key="name" allowsSorting onClick={handleNameOrderColumn}>
             نام کتاب
           </TableColumn>
           <TableColumn
             key="category"
-            onClick={() => alert("cliced")}
+            onClick={handleCategoryOrderColumn}
             allowsSorting
           >
             دسته بندی

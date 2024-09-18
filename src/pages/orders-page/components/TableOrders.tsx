@@ -9,25 +9,39 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import { OrdersEntity } from "../../../types/ordersResponse";
-import { renderItem } from "../../../utils/paginationRenderItem";
 import { useMemo } from "react";
+import { OrdersEntity, OrdersResponse } from "../../../types/ordersResponse";
+import { renderItem } from "../../../utils/paginationRenderItem";
+
+interface Params {
+  data: OrdersResponse | undefined;
+  searchParams: URLSearchParams;
+  isLoading: boolean;
+  handlePageChange: (page: number) => void;
+  handlePriceSorting: () => void;
+  handleCreatedAtSorting: () => void;
+}
 
 export default function TableOrders({
   data,
   searchParams,
-  items,
   isLoading,
   handlePageChange,
-  ordersCount,
-}) {
-  const total = data?.total - ordersCount;
+  handlePriceSorting,
+  handleCreatedAtSorting,
+}: Params) {
   const rowsPerPage = data?.per_page ? data?.per_page : 5;
   const pages = useMemo(() => {
-    return data?.total ? Math.ceil(total / rowsPerPage) : 0;
-  }, [data?.total, rowsPerPage, total]);
+    return data?.total ? Math.ceil(data.total / rowsPerPage) : 0;
+  }, [data?.total, rowsPerPage]);
   const loadingState =
     isLoading || data?.data.orders?.length === 0 ? "loading" : "idle";
+
+  let items: OrdersEntity[] = [];
+  if (data?.data.orders?.length) {
+    items = data.data.orders;
+  }
+
   return (
     <Table
       aria-label="Example static collection table"
@@ -55,10 +69,20 @@ export default function TableOrders({
         <TableColumn key="username" className="text-center">
           نام کاربر
         </TableColumn>
-        <TableColumn key="name" allowsSorting className="text-center">
+        <TableColumn
+          key="name"
+          allowsSorting
+          className="text-center"
+          onClick={handlePriceSorting}
+        >
           مجموع مبلغ
         </TableColumn>
-        <TableColumn key="category" allowsSorting className="text-center">
+        <TableColumn
+          key="category"
+          allowsSorting
+          className="text-center"
+          onClick={handleCreatedAtSorting}
+        >
           زمان ثبت سفارش
         </TableColumn>
         <TableColumn key="action" className="text-center">
@@ -66,7 +90,7 @@ export default function TableOrders({
         </TableColumn>
       </TableHeader>
       <TableBody loadingContent={<Spinner />} loadingState={loadingState}>
-        {items.map((item: OrdersEntity) => {
+        {items.map((item) => {
           const createdAt = data?.data.orders?.[0].createdAt;
           const faDate = createdAt
             ? new Date(createdAt).toLocaleDateString("fa-IR")

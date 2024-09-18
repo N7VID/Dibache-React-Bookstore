@@ -2,13 +2,15 @@ import { Tab, Tabs } from "@nextui-org/react";
 import { useSearchParams } from "react-router-dom";
 import { useGetServices } from "../../hooks/useGetServices";
 import { getOrders } from "../../queryhooks/admin/orders";
-import { OrdersEntity, OrdersResponse } from "../../types/ordersResponse";
+import { OrdersResponse } from "../../types/ordersResponse";
 import TableOrders from "./components/TableOrders";
 
 export default function OrdersPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+
   const limit = searchParams.get("limit") || "5";
   const sort = searchParams.get("sort") || "createdAt";
+
   const params: {
     page: number;
     limit: string;
@@ -19,52 +21,76 @@ export default function OrdersPage() {
     sort,
   };
 
-  const { data, isLoading } = useGetServices<OrdersResponse>({
-    queryKey: ["GetOrders", params],
-    queryFn: () => getOrders(params),
-  });
+  const { data: ordersData, isLoading: isLoadingOrdersData } =
+    useGetServices<OrdersResponse>({
+      queryKey: ["GetOrders", params],
+      queryFn: () => getOrders(params),
+    });
+
+  const { data: deliveredOrdersData, isLoading: isLoadingDeliveredOrders } =
+    useGetServices<OrdersResponse>({
+      queryKey: ["GetDeliveredOrders", params],
+      queryFn: () => getOrders(params, true),
+    });
+
+  const { data: waitingOrdersData, isLoading: isLoadingWaitingOrders } =
+    useGetServices<OrdersResponse>({
+      queryKey: ["GetWaitingOrders", params],
+      queryFn: () => getOrders(params, false),
+    });
 
   function handlePageChange(page: number) {
     const currentParams = Object.fromEntries([...searchParams]);
     setSearchParams({ ...currentParams, page: page.toString(), limit });
   }
 
-  let waitingOrders: OrdersEntity[] = [];
-  let waitingOrdersCount: number = 0;
-  let deliveredOrdersCount: number = 0;
-  let deliveredOrders: OrdersEntity[] = [];
-  if (data?.data.orders?.length) {
-    waitingOrders = data.data.orders.filter(
-      (item) => item.deliveryStatus === false
-    );
-    waitingOrdersCount = waitingOrders.length;
-    deliveredOrders = data.data.orders.filter(
-      (item) => item.deliveryStatus === true
-    );
-    deliveredOrdersCount = deliveredOrders.length;
+  function handlePriceOrderColumn() {
+    const currentParams = Object.fromEntries([...searchParams]);
+    const newSort =
+      currentParams.sort === "totalPrice" ? "-totalPrice" : "totalPrice";
+    setSearchParams({ ...currentParams, sort: newSort });
   }
+
+  function handleCreatedAtOrderColumn() {
+    const currentParams = Object.fromEntries([...searchParams]);
+    const newSort =
+      currentParams.sort === "createdAt" ? "-createdAt" : "createdAt";
+    setSearchParams({ ...currentParams, sort: newSort });
+  }
+
+  console.log(ordersData);
 
   return (
     <div className="LayoutContainer pt-[100px]">
       <Tabs aria-label="Options">
         <Tab key="waiting" title="سفارش های در انتظار ارسال">
           <TableOrders
-            ordersCount={deliveredOrdersCount}
-            data={data}
-            isLoading={isLoading}
+            data={waitingOrdersData}
+            isLoading={isLoadingWaitingOrders}
             searchParams={searchParams}
-            items={waitingOrders}
             handlePageChange={handlePageChange}
+            handleCreatedAtSorting={handleCreatedAtOrderColumn}
+            handlePriceSorting={handlePriceOrderColumn}
           />
         </Tab>
         <Tab key="delivered" title="سفارش های تحویل شده">
           <TableOrders
-            ordersCount={waitingOrdersCount}
-            data={data}
-            isLoading={isLoading}
+            data={deliveredOrdersData}
+            isLoading={isLoadingDeliveredOrders}
             searchParams={searchParams}
             handlePageChange={handlePageChange}
-            items={deliveredOrders}
+            handleCreatedAtSorting={handleCreatedAtOrderColumn}
+            handlePriceSorting={handlePriceOrderColumn}
+          />
+        </Tab>
+        <Tab key="all" title="همه سفارشات">
+          <TableOrders
+            data={ordersData}
+            isLoading={isLoadingOrdersData}
+            searchParams={searchParams}
+            handlePageChange={handlePageChange}
+            handleCreatedAtSorting={handleCreatedAtOrderColumn}
+            handlePriceSorting={handlePriceOrderColumn}
           />
         </Tab>
       </Tabs>

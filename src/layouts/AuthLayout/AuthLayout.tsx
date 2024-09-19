@@ -1,13 +1,16 @@
 import { Outlet } from "react-router-dom";
 import AuthHeader from "./AuthHeader";
 import AuthFooter from "./AuthFooter";
+import ProtectedRoutes from "../../routes/Protected.routes";
 
 export default function AuthLayout() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <AuthHeader />
-      <main className="flex-grow">{<Outlet />}</main>
-      <AuthFooter />
-    </div>
+    <ProtectedRoutes>
+      <div className="flex flex-col min-h-screen font-yekan">
+        <AuthHeader />
+        <main className="flex-grow bg-ghost-white">{<Outlet />}</main>
+        <AuthFooter />
+      </div>
+    </ProtectedRoutes>
   );
 }

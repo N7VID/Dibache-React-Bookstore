@@ -1,5 +1,4 @@
 import { Editor } from "@tinymce/tinymce-react";
-import { Editor as TinyMCEEditor } from "tinymce";
 
 interface TextEditorProps {
   value: string;
@@ -10,9 +9,7 @@ export default function TextEditor({ value, onChange }: TextEditorProps) {
   return (
     <Editor
       value={value}
-      onEditorChange={(content: string, editor: TinyMCEEditor) =>
-        onChange(content)
-      }
+      onEditorChange={(content: string) => onChange(content)}
       apiKey={import.meta.env.VITE_EDITOR_KEY}
       init={{
         plugins: [
@@ -36,7 +33,10 @@ export default function TextEditor({ value, onChange }: TextEditorProps) {
           { value: "First.Name", title: "First Name" },
           { value: "Email", title: "Email" },
         ],
-        ai_request: (request, respondWith) =>
+        ai_request: (
+          _request: unknown,
+          respondWith: { string: (arg0: () => Promise<never>) => unknown }
+        ) =>
           respondWith.string(() =>
             Promise.reject("See docs to implement AI Assistant")
           ),

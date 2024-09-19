@@ -58,12 +58,10 @@ export default function OrdersPage() {
     setSearchParams({ ...currentParams, sort: newSort });
   }
 
-  console.log(ordersData);
-
   return (
     <div className="LayoutContainer pt-[100px]">
       <Tabs aria-label="Options">
-        <Tab key="waiting" title="سفارش های در انتظار ارسال">
+        <Tab key="waiting" title="در انتظار ارسال">
           <TableOrders
             data={waitingOrdersData}
             isLoading={isLoadingWaitingOrders}
@@ -73,7 +71,7 @@ export default function OrdersPage() {
             handlePriceSorting={handlePriceOrderColumn}
           />
         </Tab>
-        <Tab key="delivered" title="سفارش های تحویل شده">
+        <Tab key="delivered" title="تحویل شده">
           <TableOrders
             data={deliveredOrdersData}
             isLoading={isLoadingDeliveredOrders}

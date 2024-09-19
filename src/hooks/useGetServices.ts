@@ -4,7 +4,7 @@ import { AxiosResponse } from "axios";
 interface Params<Response> {
   queryKey: unknown[];
   queryFn: (data: unknown) => Promise<Response>;
-  options?: UseQueryOptions<AxiosResponse, Error, unknown>;
+  options?: UseQueryOptions<Response, Error, AxiosResponse>;
 }
 export const useGetServices = <Response>({
   queryKey,

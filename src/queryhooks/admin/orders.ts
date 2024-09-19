@@ -18,3 +18,9 @@ export const getOrders = async (
   const response = await httpRequest.get(url, { params });
   return response.data;
 };
+
+export const getOrdersById = async (id: string) => {
+  const url = `${ENDPOINTS.ORDERS}/${id}`;
+  const response = await httpRequest.get(url);
+  return response.data;
+};

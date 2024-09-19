@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import { useMemo, useState } from "react";
+import { ChangeEvent, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useGetServices } from "../../hooks/useGetServices";
 import { getProducts } from "../../queryhooks/product";
@@ -83,7 +83,11 @@ export default function InventoryPage() {
     }
   }
 
-  function handleOnChange(e, id, field: "price" | "quantity") {
+  function handleOnChange(
+    e: ChangeEvent<HTMLInputElement>,
+    id: string,
+    field: "price" | "quantity"
+  ) {
     setEditMode((prev) =>
       prev.map((item) =>
         item.id === id ? { ...item, [field]: Number(e.target.value) } : item
@@ -96,7 +100,7 @@ export default function InventoryPage() {
     setEditMode([]);
   }
 
-  function handleCancel(id) {
+  function handleCancel(id: string) {
     setEditMode((prev) => prev.filter((data) => data.id !== id));
   }
 
@@ -158,7 +162,9 @@ export default function InventoryPage() {
         </TableHeader>
         <TableBody loadingContent={<Spinner />} loadingState={loadingState}>
           {items.map((item: ProductsEntity) => {
-            const isEditing = editMode.find((data) => data.id === item._id);
+            const isEditing: EditModeType | undefined = editMode.find(
+              (data) => data.id === item._id
+            );
             return (
               <TableRow key={item._id} className="border-b-1">
                 <TableCell>
@@ -172,7 +178,7 @@ export default function InventoryPage() {
                 <TableCell>
                   {isEditing ? (
                     <Input
-                      value={isEditing.price}
+                      value={isEditing.price.toString()}
                       className="w-32"
                       type="number"
                       onChange={(e) => handleOnChange(e, item._id, "price")}
@@ -197,7 +203,7 @@ export default function InventoryPage() {
                 <TableCell>
                   {isEditing ? (
                     <Input
-                      value={isEditing.quantity}
+                      value={isEditing.quantity.toString()}
                       className="w-32"
                       type="number"
                       onChange={(e) => handleOnChange(e, item._id, "quantity")}

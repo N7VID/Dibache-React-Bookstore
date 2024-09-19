@@ -15,7 +15,7 @@ export default function AddCategoryForm({ onClose }: { onClose: () => void }) {
   } = useForm<AddCategorySchema>({ resolver: zodResolver(addCategorySchema) });
 
   const { mutate, isPending } = usePostService<
-    { name: string; icon: FileList },
+    { name: string; icon?: FileList },
     CategoriesResponse
   >({
     mutationKey: ["PostCategories"],

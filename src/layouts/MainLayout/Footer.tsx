@@ -5,7 +5,7 @@ import MobileNavbar from "../../components/MobileNavbar/MobileNavbar";
 
 export default function Footer() {
   return (
-    <footer className="shadow-footer shadow-black">
+    <footer className="shadow-footer shadow-black fixed w-full bg-white bottom-0">
       <div className="LayoutContainer md:flex flex-col justify-center hidden">
         <div className="flex flex-col justify-center items-center py-14 border-b-2 gap-6">
           <h3 className="cursor-default">

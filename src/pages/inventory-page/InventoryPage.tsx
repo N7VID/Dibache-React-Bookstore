@@ -92,9 +92,8 @@ export default function InventoryPage() {
   }
 
   function handleSave() {
-    // Here you would send the updated data to your backend
     console.log("Saving data:", editMode);
-    setEditMode([]); // Clear edit mode after saving
+    setEditMode([]);
   }
 
   function handleCancel(id) {
@@ -107,8 +106,11 @@ export default function InventoryPage() {
         disabled={editMode.length === 0}
         onClick={handleSave}
         variant={editMode.length === 0 ? "bordered" : "solid"}
-        className={editMode.length === 0 ? "text-black" : "text-white"}
-        color="success"
+        className={
+          editMode.length === 0
+            ? "text-black bg-default-100"
+            : "text-white bg-persian-green/80"
+        }
       >
         ذخیره تغییرات
       </Button>
@@ -124,7 +126,7 @@ export default function InventoryPage() {
                 showControls
                 size="sm"
                 showShadow
-                radius="full"
+                radius="md"
                 color="primary"
                 page={Number(searchParams.get("page")) || 1}
                 total={pages}

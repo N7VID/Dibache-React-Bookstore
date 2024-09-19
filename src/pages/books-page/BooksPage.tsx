@@ -90,7 +90,7 @@ export default function BooksPage() {
                 showControls
                 size="sm"
                 showShadow
-                radius="full"
+                radius="md"
                 color="primary"
                 page={Number(searchParams.get("page")) || 1}
                 total={pages}

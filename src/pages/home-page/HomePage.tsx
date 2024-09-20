@@ -1,6 +1,6 @@
 import { Button } from "@nextui-org/react";
+import { A11y, Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -38,42 +38,52 @@ export default function HomePage() {
         </h2>
         <section className="py-8">
           <Swiper
-            modules={[Navigation, Pagination, Scrollbar, A11y]}
-            // spaceBetween={5}
+            modules={[Navigation, Pagination, A11y, Autoplay]}
             slidesPerView={3}
-            navigation
+            // navigation
             pagination={{ clickable: true }}
             scrollbar={{ draggable: true }}
-            onSwiper={(swiper) => console.log(swiper)}
-            onSlideChange={() => console.log("slide change")}
+            autoplay={{
+              delay: 5000,
+              disableOnInteraction: false,
+            }}
+            className="w-[1100px]"
           >
             <SwiperSlide>
-              <img
-                src="/src/assets/images/Ad-4.png"
-                alt=""
-                className="rounded-xl w-96"
-              />
+              <div className="flex justify-center items-center">
+                <img
+                  src="/src/assets/images/Ad-4.png"
+                  alt=""
+                  className="rounded-xl w-[350px]"
+                />
+              </div>
             </SwiperSlide>
             <SwiperSlide>
-              <img
-                src="/src/assets/images/Ad-3.png"
-                alt=""
-                className="rounded-xl w-96"
-              />
+              <div className="flex justify-center items-center">
+                <img
+                  src="/src/assets/images/Ad-3.png"
+                  alt=""
+                  className="rounded-xl w-[350px]"
+                />
+              </div>
             </SwiperSlide>
             <SwiperSlide>
-              <img
-                src="/src/assets/images/Ad-2.png"
-                alt=""
-                className="rounded-xl w-96"
-              />
+              <div className="flex justify-center items-center">
+                <img
+                  src="/src/assets/images/Ad-2.png"
+                  alt=""
+                  className="rounded-xl w-[350px]"
+                />
+              </div>
             </SwiperSlide>
             <SwiperSlide>
-              <img
-                src="/src/assets/images/Ad-1.png"
-                alt=""
-                className="rounded-xl w-96"
-              />
+              <div className="flex justify-center items-center">
+                <img
+                  src="/src/assets/images/Ad-1.png"
+                  alt=""
+                  className="rounded-xl w-[350px]"
+                />
+              </div>
             </SwiperSlide>
           </Swiper>
         </section>

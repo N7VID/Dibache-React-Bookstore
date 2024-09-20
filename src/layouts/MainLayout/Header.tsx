@@ -25,7 +25,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="shadow-header fixed w-full bg-white">
+      <header className="shadow-header fixed w-full bg-white z-50">
         <div className="LayoutContainer flex items-center justify-center md:justify-between gap-0 sm:gap-4">
           <div className="flex items-center justify-between md:gap-4 gap-2">
             <div className="flex items-center">

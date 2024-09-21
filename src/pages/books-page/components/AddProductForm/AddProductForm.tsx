@@ -23,6 +23,7 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
     register,
     control,
     reset,
+    setValue,
   } = useForm<AddProduct>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -136,9 +137,7 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
         isInvalid={!!errors["quantity"]}
         errorMessage={`${errors["quantity"]?.message}`}
         variant="bordered"
-        {...register("quantity", {
-          onChange: (e) => Number(e.target.value),
-        })}
+        {...register("quantity", { valueAsNumber: true })}
       />
       <Input
         label={"قیمت واحد"}
@@ -148,9 +147,7 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
         isInvalid={!!errors["price"]}
         errorMessage={`${errors["price"]?.message}`}
         variant="bordered"
-        {...register("price", {
-          onChange: (e) => Number(e.target.value),
-        })}
+        {...register("price", { valueAsNumber: true })}
       />
       <Input
         label={"تخفیف"}
@@ -160,9 +157,7 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
         isInvalid={!!errors["discount"]}
         errorMessage={`${errors["discount"]?.message}`}
         variant="bordered"
-        {...register("discount", {
-          onChange: (e) => Number(e.target.value),
-        })}
+        {...register("discount", { valueAsNumber: true })}
       />
       <Input
         label={"تصویر پیش نمایش"}

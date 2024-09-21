@@ -1,4 +1,13 @@
-import { Button, Input, useDisclosure } from "@nextui-org/react";
+import {
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Input,
+  NavbarItem,
+  useDisclosure,
+} from "@nextui-org/react";
 import Cookies from "js-cookie";
 import { Link, useNavigate } from "react-router-dom";
 import { SearchIcon } from "../../assets/svg/SearchIcon";
@@ -7,6 +16,15 @@ import NextUiModal from "../../components/NextUiModal/NextUiModal";
 import { PATHS } from "../../configs/paths.config";
 import { useLogout } from "../../hooks/useLogout";
 import MainDropDown from "./components/MainDropDown";
+import ListIcon from "../../assets/svg/ListIcon";
+import BookIcon from "../../assets/svg/BookIcon";
+import { useGetServices } from "../../hooks/useGetServices";
+import { getCategories } from "../../queryhooks/getCategories";
+import {
+  CategoriesEntity,
+  CategoriesResponse,
+} from "../../types/categoriesResponse";
+import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -14,6 +32,18 @@ export default function Header() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const { refetch } = useLogout();
+
+  const { data } = useGetServices<CategoriesResponse>({
+    queryKey: ["GetCategoriesMenu"],
+    queryFn: getCategories,
+  });
+
+  let items: CategoriesEntity[] = [];
+  if (data?.data.categories) {
+    items = data?.data.categories;
+  }
+
+  // const handleDropDownItemCategory = (id: string) => {};
 
   const handleActionModal = () => {
     refetch().then(() => {
@@ -76,6 +106,53 @@ export default function Header() {
               ورود به حساب کاربری
             </Button>
           )}
+        </div>
+        <div className="LayoutContainer flex gap-8">
+          <Dropdown backdrop="opaque" closeOnSelect={false}>
+            <DropdownTrigger>
+              <Button
+                disableRipple
+                className="p-0 bg-transparent data-[hover=true]:bg-transparent"
+                startContent={<ListIcon />}
+                radius="sm"
+                size="lg"
+                variant="light"
+              >
+                دسته بندی ها
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Main Categories">
+              {items.map((category) => (
+                <DropdownItem className="font-yekan">
+                  <Dropdown key={category._id} placement="right">
+                    <DropdownTrigger>
+                      <Button
+                        disableRipple
+                        className="p-0 w-full bg-transparent data-[hover=true]:bg-transparent"
+                        radius="sm"
+                        variant="light"
+                      >
+                        {category.name}
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu aria-label="Subcategories">
+                      <DropdownItem>{category.slugname}</DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+          <Button
+            disableRipple
+            className="p-0 bg-transparent data-[hover=true]:bg-transparent"
+            startContent={<BookIcon />}
+            radius="sm"
+            size="lg"
+            variant="light"
+          >
+            جدیدترین کتاب ها
+          </Button>
         </div>
         <NextUiModal
           isOpen={isOpen}

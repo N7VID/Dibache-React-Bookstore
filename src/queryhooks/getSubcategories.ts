@@ -6,3 +6,9 @@ export const getSubcategories = async () => {
   const response = await httpRequest.get(url);
   return response.data;
 };
+
+export const getSubcategoriesByCategoryId = async (id: string) => {
+  const url = `${ENDPOINTS.SUBCATEGORIES}?category=${id}`;
+  const response = await httpRequest.get(url);
+  return response.data;
+};

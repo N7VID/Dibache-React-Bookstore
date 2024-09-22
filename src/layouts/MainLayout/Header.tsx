@@ -5,31 +5,51 @@ import {
   DropdownMenu,
   DropdownTrigger,
   Input,
-  NavbarItem,
   useDisclosure,
 } from "@nextui-org/react";
 import Cookies from "js-cookie";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import BookIcon from "../../assets/svg/BookIcon";
+import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
+import ListIcon from "../../assets/svg/ListIcon";
 import { SearchIcon } from "../../assets/svg/SearchIcon";
 import { UserIcon } from "../../assets/svg/UserIcon";
 import NextUiModal from "../../components/NextUiModal/NextUiModal";
 import { PATHS } from "../../configs/paths.config";
-import { useLogout } from "../../hooks/useLogout";
-import MainDropDown from "./components/MainDropDown";
-import ListIcon from "../../assets/svg/ListIcon";
-import BookIcon from "../../assets/svg/BookIcon";
 import { useGetServices } from "../../hooks/useGetServices";
+import { useLogout } from "../../hooks/useLogout";
 import { getCategories } from "../../queryhooks/getCategories";
+import { getSubcategoriesByCategoryId } from "../../queryhooks/getSubcategories";
 import {
   CategoriesEntity,
   CategoriesResponse,
 } from "../../types/categoriesResponse";
-import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
+import {
+  SubcategoriesEntity,
+  SubcategoriesResponse,
+} from "../../types/subCategoriesResponse";
+import MainDropDown from "./components/MainDropDown";
 
 export default function Header() {
   const navigate = useNavigate();
   const accessToken = Cookies.get("accessToken");
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [categoryId, setCategoryId] = useState("");
+  const [isMainDropdownOpen, setMainDropdownOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<null | string>(null);
+
+  const toggleMainDropdown = () => {
+    setMainDropdownOpen(!isMainDropdownOpen);
+  };
+
+  const toggleDropdown = (categoryId: string) => {
+    if (openDropdown === categoryId) {
+      setOpenDropdown(null);
+    } else {
+      setOpenDropdown(categoryId);
+    }
+  };
 
   const { refetch } = useLogout();
 
@@ -38,12 +58,20 @@ export default function Header() {
     queryFn: getCategories,
   });
 
+  const { data: subCategoriesData } = useGetServices<SubcategoriesResponse>({
+    queryKey: ["GetSubCategoriesMenu", categoryId],
+    queryFn: () => getSubcategoriesByCategoryId(categoryId),
+  });
+
   let items: CategoriesEntity[] = [];
   if (data?.data.categories) {
     items = data?.data.categories;
   }
 
-  // const handleDropDownItemCategory = (id: string) => {};
+  let subcategoriesItem: SubcategoriesEntity[] = [];
+  if (subCategoriesData?.data.subcategories) {
+    subcategoriesItem = subCategoriesData.data.subcategories;
+  }
 
   const handleActionModal = () => {
     refetch().then(() => {
@@ -108,7 +136,12 @@ export default function Header() {
           )}
         </div>
         <div className="LayoutContainer flex gap-8">
-          <Dropdown backdrop="opaque" closeOnSelect={false}>
+          <Dropdown
+            backdrop="opaque"
+            closeOnSelect={false}
+            isOpen={isMainDropdownOpen}
+            onClose={() => setMainDropdownOpen(false)}
+          >
             <DropdownTrigger>
               <Button
                 disableRipple
@@ -117,26 +150,59 @@ export default function Header() {
                 radius="sm"
                 size="lg"
                 variant="light"
+                onClick={toggleMainDropdown}
               >
                 دسته بندی ها
               </Button>
             </DropdownTrigger>
             <DropdownMenu aria-label="Main Categories">
               {items.map((category) => (
-                <DropdownItem className="font-yekan">
-                  <Dropdown key={category._id} placement="right">
+                <DropdownItem
+                  className="font-yekan"
+                  key={category._id}
+                  textValue={category.name}
+                >
+                  <Dropdown
+                    key={category._id}
+                    placement="left"
+                    closeOnSelect={false}
+                    isOpen={openDropdown === category._id}
+                    onClose={() => setOpenDropdown(null)}
+                  >
                     <DropdownTrigger>
                       <Button
                         disableRipple
-                        className="p-0 w-full bg-transparent data-[hover=true]:bg-transparent"
+                        className="p-0 w-full bg-transparent data-[hover=true]:bg-transparent text-medium"
                         radius="sm"
                         variant="light"
+                        onClick={() => {
+                          setCategoryId(category._id);
+                          toggleDropdown(category._id);
+                        }}
                       >
-                        {category.name}
+                        <div className="w-full flex justify-between items-center">
+                          {category.name}
+                          <ChevronLeftIcon />
+                        </div>
                       </Button>
                     </DropdownTrigger>
-                    <DropdownMenu aria-label="Subcategories">
-                      <DropdownItem>{category.slugname}</DropdownItem>
+                    <DropdownMenu
+                      aria-label="Subcategories"
+                      className="font-yekan"
+                    >
+                      {subcategoriesItem.map((subCategory) => (
+                        <DropdownItem
+                          key={subCategory._id}
+                          textValue={subCategory.name}
+                          onClick={() => {
+                            navigate(`/category/${category._id}`);
+                            setMainDropdownOpen(false);
+                            setOpenDropdown(null);
+                          }}
+                        >
+                          {subCategory.name}
+                        </DropdownItem>
+                      ))}
                     </DropdownMenu>
                   </Dropdown>
                 </DropdownItem>

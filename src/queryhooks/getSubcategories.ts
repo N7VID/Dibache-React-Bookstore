@@ -8,7 +8,9 @@ export const getSubcategories = async () => {
 };
 
 export const getSubcategoriesByCategoryId = async (id: string) => {
-  const url = `${ENDPOINTS.SUBCATEGORIES}?category=${id}`;
-  const response = await httpRequest.get(url);
-  return response.data;
+  if (id) {
+    const url = `${ENDPOINTS.SUBCATEGORIES}?category=${id}`;
+    const response = await httpRequest.get(url);
+    return response.data;
+  }
 };

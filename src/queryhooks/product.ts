@@ -5,6 +5,7 @@ interface ParamsType {
   limit?: string;
   page?: number;
   sort?: string | null;
+  category?: string;
 }
 
 export const getProducts = async (searchParams?: ParamsType) => {

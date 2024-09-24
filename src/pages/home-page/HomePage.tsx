@@ -1,12 +1,29 @@
-import { Button } from "@nextui-org/react";
-import { A11y, Autoplay, Navigation, Pagination } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
-
+import { Button, Spinner } from "@nextui-org/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { A11y, Autoplay, Navigation, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import NextUiCard from "../../components/NextUiCard/NextUiCard";
+import { useGetServices } from "../../hooks/useGetServices";
+import { getProducts } from "../../queryhooks/product";
+import { getProductsResponse, ProductsEntity } from "../../types/productType";
+import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
+import { Link } from "react-router-dom";
 
 export default function HomePage() {
+  const { data: firstCategoryData, isLoading } =
+    useGetServices<getProductsResponse>({
+      queryKey: ["GetFirstCategoryBooks"],
+      queryFn: () =>
+        getProducts({ limit: "6", category: "66e6bf415611008189a0bd30" }),
+    });
+
+  let firstCategoryItems: ProductsEntity[] = [];
+  if (firstCategoryData?.data.products) {
+    firstCategoryItems = firstCategoryData.data.products;
+  }
+
   return (
     <>
       <section className="h-[120px] mobile:h-[150px] md:h-[300px] w-full bg-persian-green flex justify-center items-center cursor-default px-4">
@@ -36,18 +53,16 @@ export default function HomePage() {
         <h2 className="text-xl font-bold text-center pt-8">
           خرید آسان کتاب در دسته‌بندی‌های مختلف از دیباچه
         </h2>
-        <section className="py-8">
+        <section className="py-8 px-[80px]">
           <Swiper
             modules={[Navigation, Pagination, A11y, Autoplay]}
             slidesPerView={3}
-            // navigation
             pagination={{ clickable: true }}
             scrollbar={{ draggable: true }}
             autoplay={{
               delay: 5000,
               disableOnInteraction: false,
             }}
-            className="w-[1100px]"
           >
             <SwiperSlide>
               <div className="flex justify-center items-center">
@@ -86,6 +101,30 @@ export default function HomePage() {
               </div>
             </SwiperSlide>
           </Swiper>
+        </section>
+        <section className="py-8">
+          <div className="flex justify-between items-center px-6">
+            <h3 className="font-semibold text-lg">
+              داستان و رمان هایی که باید بخوانید
+            </h3>
+            <Link to={`/category/66e6bf415611008189a0bd30`}>
+              <span className="text-persian-green font-semibold flex justify-between items-center gap-2">
+                مشاهده همه
+                <ChevronLeftIcon className="size-4" />
+              </span>
+            </Link>
+          </div>
+          <div className="flex justify-center flex-wrap items-center gap-4 py-8">
+            {isLoading ? (
+              <Spinner size="lg" color="current" />
+            ) : (
+              <>
+                {firstCategoryItems.map((item) => (
+                  <NextUiCard key={item._id} item={item} />
+                ))}
+              </>
+            )}
+          </div>
         </section>
       </div>
     </>

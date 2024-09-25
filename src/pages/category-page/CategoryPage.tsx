@@ -1,6 +1,6 @@
 import { Select, SelectItem, Spinner } from "@nextui-org/react";
-import { ChangeEvent, useState } from "react";
-import { useParams } from "react-router-dom";
+import { ChangeEvent } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
 import NextUiCard from "../../components/NextUiCard/NextUiCard";
 import { useGetServices } from "../../hooks/useGetServices";
 import { getProducts } from "../../queryhooks/product";
@@ -8,10 +8,15 @@ import { getProductsResponse, ProductsEntity } from "../../types/productType";
 
 export default function CategoryPage() {
   const { id } = useParams();
-  const [sort, setSort] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams({
+    sort: "createdAt",
+  });
+  const sort = searchParams.get("sort");
+
   const { data, isLoading } = useGetServices<getProductsResponse>({
     queryKey: ["GetCategoryBooks", sort],
-    queryFn: () => getProducts({ limit: "0", category: id, sort }),
+    queryFn: () =>
+      getProducts({ limit: "0", category: id, sort: sort || "createdAt" }),
   });
 
   let items: ProductsEntity[] = [];
@@ -30,15 +35,17 @@ export default function CategoryPage() {
     return result;
   }, {} as { [key: string]: typeof items });
 
+  function handleSortType(event: ChangeEvent<HTMLSelectElement>) {
+    setSearchParams({ sort: event.target.value });
+  }
+
   function handleSortOrder(event: ChangeEvent<HTMLSelectElement>) {
-    setSort((prev) => {
-      const field = prev?.replace("-", "") ?? "";
-      if (event.target.value === "desc") {
-        return `-${field}`;
-      } else {
-        return field;
-      }
-    });
+    const field = sort?.replace("-", "") ?? "";
+    if (event.target.value === "desc") {
+      setSearchParams({ sort: `-${field}` });
+    } else {
+      setSearchParams({ sort: field });
+    }
   }
 
   return (
@@ -53,7 +60,8 @@ export default function CategoryPage() {
             size="sm"
             label={"فیلتر"}
             className="w-48"
-            onChange={(e) => setSort(e.target.value)}
+            onChange={(event) => handleSortType(event)}
+            selectedKeys={sort ? [sort.replace("-", "")] : undefined}
           >
             <SelectItem key={"name"} className="font-yekan">
               نام
@@ -70,13 +78,16 @@ export default function CategoryPage() {
             <SelectItem key={"discount"} className="font-yekan">
               تخفیف
             </SelectItem>
+            <SelectItem key={"createdAt"} className="font-yekan">
+              تاریخ ایجاد
+            </SelectItem>
           </Select>
           <Select
             size="sm"
             label={"ترتیب"}
             className="w-36"
-            isDisabled={!sort}
             onChange={(event) => handleSortOrder(event)}
+            selectedKeys={[sort?.includes("-") ? "desc" : "asc"]}
           >
             <SelectItem key={"asc"} className="font-yekan">
               صعودی

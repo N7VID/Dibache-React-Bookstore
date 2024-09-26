@@ -1,6 +1,7 @@
-import { Select, SelectItem, Spinner } from "@nextui-org/react";
+import { Input, Select, SelectItem, Spinner } from "@nextui-org/react";
 import { ChangeEvent } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
+import { SearchIcon } from "../../assets/svg/SearchIcon";
 import NextUiCard from "../../components/NextUiCard/NextUiCard";
 import { useGetServices } from "../../hooks/useGetServices";
 import { getProducts } from "../../queryhooks/product";
@@ -10,8 +11,11 @@ export default function CategoryPage() {
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams({
     sort: "createdAt",
+    q: "",
   });
+  const currentParams = Object.fromEntries([...searchParams]);
   const sort = searchParams.get("sort");
+  const q = searchParams.get("q");
 
   const { data, isLoading } = useGetServices<getProductsResponse>({
     queryKey: ["GetCategoryBooks", sort],
@@ -55,10 +59,22 @@ export default function CategoryPage() {
           دسته بندی {categoryName}
         </h3>
         <div className="flex items-center flex-col gap-4 md:flex-row">
-          <span className="font-bold text-sm">فیلتر بر اساس</span>
+          <Input
+            isClearable
+            labelPlacement="inside"
+            placeholder="جستجو در دسته بندی"
+            className="w-64"
+            value={q || ""}
+            onChange={(e) =>
+              setSearchParams({ ...currentParams, q: e.target.value })
+            }
+            startContent={
+              <SearchIcon className="text-black/60 dark:text-white/90 cursor-default flex-shrink-0" />
+            }
+          />
           <Select
             size="sm"
-            label={"فیلتر"}
+            label={"فیلتر بر اساس"}
             className="w-48"
             onChange={(event) => handleSortType(event)}
             selectedKeys={sort ? [sort.replace("-", "")] : undefined}

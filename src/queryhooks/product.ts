@@ -13,3 +13,9 @@ export const getProducts = async (searchParams?: ParamsType) => {
   const response = await httpRequest.get(url, { params: searchParams });
   return response.data;
 };
+
+export const getProductsById = async (id: string) => {
+  const url = `${ENDPOINTS.PRODUCTS}/${id}`;
+  const response = await httpRequest.get(url);
+  return response.data;
+};

@@ -65,6 +65,10 @@ export default function BookPage() {
       });
   };
 
+  const ProductDescription = ({ description }: { description: string }) => {
+    return <div dangerouslySetInnerHTML={{ __html: description }} />;
+  };
+
   return (
     <div className="LayoutContainer cursor-default pb-8">
       <div className="py-4">
@@ -85,7 +89,7 @@ export default function BookPage() {
           <BreadcrumbItem>{name?.[0]}</BreadcrumbItem>
         </Breadcrumbs>
       </div>
-      <section className="flex items-center justify-between gap-8 pb-4">
+      <section className="flex items-center justify-between gap-8 pb-8">
         <div className="flex items-center justify-center gap-8">
           <div className="w-[380px]">
             <Swiper
@@ -222,6 +226,16 @@ export default function BookPage() {
               </div>
             </CardFooter>
           </Card>
+        </div>
+      </section>
+      <section className="flex flex-col pb-4 gap-4">
+        <div>
+          <h3 className="text-lg font-semibold">معرفی {name?.[0]}</h3>
+        </div>
+        <div className="max-w-[980px]">
+          {data?.data.product.description && (
+            <ProductDescription description={data.data.product.description} />
+          )}
         </div>
       </section>
     </div>

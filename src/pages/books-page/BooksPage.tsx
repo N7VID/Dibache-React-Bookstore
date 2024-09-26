@@ -11,7 +11,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { DeleteIcon } from "../../assets/svg/DeleteIcon";
 import { EditIcon } from "../../assets/svg/EditIcon";
 import { EyeIcon } from "../../assets/svg/EyeIcon";
@@ -124,7 +124,10 @@ export default function BooksPage() {
                   className="w-16"
                 />
               </TableCell>
-              <TableCell>{item.name}</TableCell>
+              <TableCell>
+                {" "}
+                <Link to={`/book/${item._id}`}>{item.name}</Link>
+              </TableCell>
               <TableCell>{`${item.category.name} / ${item.subcategory.name}`}</TableCell>
               <TableCell>
                 <div className="relative flex items-center gap-4 flex-col sm:flex-row">
@@ -132,9 +135,11 @@ export default function BooksPage() {
                     content="جزئیات"
                     className="font-yekan cursor-default"
                   >
-                    <span className="text-lg text-default-900 cursor-pointer active:opacity-50">
-                      <EyeIcon />
-                    </span>
+                    <Link to={`/book/${item._id}`}>
+                      <span className="text-lg text-default-900 cursor-pointer active:opacity-50">
+                        <EyeIcon />
+                      </span>
+                    </Link>
                   </Tooltip>
                   <Tooltip
                     content="ویرایش"

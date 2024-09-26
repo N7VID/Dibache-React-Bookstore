@@ -74,24 +74,39 @@ export default function BookPage() {
       <div className="py-4">
         <Breadcrumbs separator={<ChevronLeftIcon className="size-3" />}>
           <BreadcrumbItem>
-            <Link to={PATHS.HOME}>دیباچه</Link>
+            <Link
+              to={PATHS.HOME}
+              className="text-[11px] tablet:text-[14px] lg:text-base"
+            >
+              دیباچه
+            </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
-            <Link to={`/category/${data?.data.product.category._id}`}>
+            <Link
+              to={`/category/${data?.data.product.category._id}`}
+              className="text-[11px] tablet:text-[14px] lg:text-base"
+            >
               {data?.data.product.category.name}
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
-            <Link to={`/category/${data?.data.product.category._id}`}>
+            <Link
+              to={`/category/${data?.data.product.category._id}`}
+              className="text-[11px] tablet:text-[14px] lg:text-base"
+            >
               {data?.data.product.subcategory.name}
             </Link>
           </BreadcrumbItem>
-          <BreadcrumbItem>{name?.[0]}</BreadcrumbItem>
+          <BreadcrumbItem>
+            <span className="text-[11px] tablet:text-[14px] lg:text-base">
+              {name?.[0]}
+            </span>
+          </BreadcrumbItem>
         </Breadcrumbs>
       </div>
-      <section className="flex items-center justify-between gap-8 pb-8">
-        <div className="flex items-center justify-center gap-8">
-          <div className="w-[380px]">
+      <section className="flex flex-col laptop:flex-row items-center justify-between gap-16 laptop:gap-8 pb-16 laptop:pb-8">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+          <div className="sm:w-[380px] w-[220px]">
             <Swiper
               modules={[Navigation, Pagination, A11y, Autoplay]}
               slidesPerView={1}
@@ -104,18 +119,20 @@ export default function BookPage() {
                     <img
                       src={`http://${image}`}
                       alt={name?.[0]}
-                      className="w-[350px] rounded-lg"
+                      className="sm:w-[350px] w-[200px] rounded-lg"
                     />
                   </div>
                 </SwiperSlide>
               ))}
             </Swiper>
           </div>
-          <div className="flex flex-col justify-between gap-28">
+          <div className="flex flex-col justify-between gap-8 laptop:gap-28">
             <div>
-              <h1 className="text-xl font-bold pb-4">{name?.[0]}</h1>
-              <div className="flex flex-col gap-3 text-base">
-                <div className="flex gap-2 items-center">
+              <h1 className="text-sm sm:text-[18px] lg:text-xl font-bold pb-4">
+                {name?.[0]}
+              </h1>
+              <div className="flex flex-col gap-3 text-[12px] mobile:text-base">
+                <div className="flex gap-2 items-center ">
                   <span className="text-key-gray">نویسنده:</span>
                   <span className="text-value-gray border-b-1 border-value-gray">
                     {name?.[1]}
@@ -142,9 +159,9 @@ export default function BookPage() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center mobile:gap-4 gap-1">
               <Button
-                className="border-persian-green text-persian-green"
+                className="border-persian-green text-persian-green w-44 text-[12px] mobile:text-base mobile:w-auto"
                 variant="bordered"
                 startContent={<HeartIcon />}
               >
@@ -164,7 +181,7 @@ export default function BookPage() {
         <div>
           <Card shadow="sm">
             <CardHeader className="justify-center">
-              <h4 className="text-persian-green py-2 text-[18px]">
+              <h4 className="text-persian-green py-2 mobile:text-[18px] text-sm">
                 خرید کالای فیزیکی
               </h4>
             </CardHeader>
@@ -172,18 +189,18 @@ export default function BookPage() {
             <CardBody>
               <div className="flex flex-col justify-between items-center p-4 gap-8">
                 <div className="flex justify-between items-center w-full">
-                  <span>قیمت:</span>
+                  <span className="text-sm mobile:text-base">قیمت:</span>
                   <Badge
                     content={`${toPersianNumber(discountPercent)}%`}
-                    className="bg-red-500 text-white size-8 text-[13px]"
+                    className="bg-red-500 text-white mobile:size-8 size-6 text-[10px] mobile:text-[13px]"
                     placement="top-left"
                   >
                     <div className="flex flex-col">
-                      <span className="text-key-gray line-through text-[13px] pl-6">
+                      <span className="text-key-gray line-through text-[10px] pl-6 mobile:text-[13px]">
                         {toPersianNumber(price)}
                       </span>
                       <div>
-                        <span className="font-semibold text-[18px]">
+                        <span className="font-semibold text-base mobile:text-[18px]">
                           {toPersianNumber(endPrice)}
                         </span>{" "}
                         <span className="text-[12px]">تومان</span>
@@ -192,7 +209,7 @@ export default function BookPage() {
                   </Badge>
                 </div>
                 <Button
-                  className="bg-persian-green text-white"
+                  className="bg-persian-green text-white w-44 text-[13px] mobile:text-base mobile:w-auto"
                   variant="solid"
                   startContent={<ShoppingCart />}
                 >
@@ -202,37 +219,37 @@ export default function BookPage() {
             </CardBody>
             <Divider className="bg-persian-green p-[0.8px]" />
             <CardFooter>
-              <div className="flex flex-col gap-2 py-2 px-4">
-                <div className="flex gap-2">
+              <div className="flex flex-col gap-2 py-2 px-4 text-[9px] mobile:text-[13px]">
+                <div className="flex gap-2 items-center">
                   <span>
-                    <ShieldCheckIcon />
+                    <ShieldCheckIcon className="size-4 mobile:size-5" />
                   </span>
-                  <span className="text-[13px]">
-                    گارانتی اصالت و سلامت فیزیکی کالا
-                  </span>
+                  <span>گارانتی اصالت و سلامت فیزیکی کالا</span>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                   <span>
-                    <TruckIcon />
+                    <TruckIcon className="size-4 mobile:size-5" />
                   </span>
-                  <span className="text-[13px]">امکان تحویل اکسپرس</span>
+                  <span>امکان تحویل اکسپرس</span>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                   <span>
-                    <ChatBubbleLeftRightIcon />
+                    <ChatBubbleLeftRightIcon className="size-4 mobile:size-5" />
                   </span>
-                  <span className="text-[13px]">پشتیبانی شبانه روزی</span>
+                  <span>پشتیبانی شبانه روزی</span>
                 </div>
               </div>
             </CardFooter>
           </Card>
         </div>
       </section>
-      <section className="flex flex-col pb-4 gap-4">
+      <section className="flex flex-col pb-4 gap-4 laptop:px-0 mobile:mp-6 px-4">
         <div>
-          <h3 className="text-lg font-semibold">معرفی {name?.[0]}</h3>
+          <h3 className="text-sm mobile:text-lg font-semibold">
+            معرفی {name?.[0]}
+          </h3>
         </div>
-        <div className="max-w-[980px]">
+        <div className="max-w-[980px] text-[11px] mobile:text-base">
           {data?.data.product.description && (
             <ProductDescription description={data.data.product.description} />
           )}

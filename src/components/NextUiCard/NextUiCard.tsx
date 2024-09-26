@@ -49,7 +49,7 @@ export default function NextUiCard({ item }: Props) {
       <CardFooter className="pb-0 pt-2 px-4 flex-col items-start gap-2">
         <Tooltip
           content={item.name}
-          className="font-yekan text-sm bg-persian-green text-white cursor-default"
+          className="font-yekan text-[10px] bg-persian-green text-white cursor-default"
         >
           <Link to={`/book/${item._id}`}>
             <h4 className="text-[13px] font-bold text-ellipsis whitespace-nowrap overflow-hidden w-40">

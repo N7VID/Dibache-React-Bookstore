@@ -29,9 +29,14 @@ export default function BooksPage() {
   const [modalType, setModalType] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const [selectedItem, setSelectedItem] = useState({
+  const [selectedItem, setSelectedItem] = useState<{
+    id: string;
+    name: string;
+    item?: ProductsEntity | null;
+  }>({
     id: "",
     name: "",
+    item: null,
   });
   const {
     isOpen: isOpenDeleteModal,
@@ -79,26 +84,31 @@ export default function BooksPage() {
     const newSort = currentParams.sort === "name" ? "-name" : "name";
     setSearchParams({ ...currentParams, sort: newSort });
   }
-
   function handleCategoryOrderColumn() {
     const currentParams = Object.fromEntries([...searchParams]);
     const newSort =
       currentParams.sort === "category" ? "-category" : "category";
     setSearchParams({ ...currentParams, sort: newSort });
   }
-
   function handlePageChange(page: number) {
     const currentParams = Object.fromEntries([...searchParams]);
     setSearchParams({ ...currentParams, page: page.toString(), limit });
   }
-  const handleActionModal = () => {
+
+  function handleActionModal() {
     if (selectedItem) {
       mutate(selectedItem.id);
     }
-  };
+  }
   function handleDeleteButton(id: string, name: string) {
     onOpenDeleteModal();
     setSelectedItem({ id, name });
+  }
+
+  function handleEditButton(item: ProductsEntity) {
+    onOpen();
+    setModalType("edit");
+    if (item) setSelectedItem((prev) => ({ ...prev, item }));
   }
 
   return (
@@ -171,7 +181,10 @@ export default function BooksPage() {
                     content="ویرایش"
                     className="font-yekan cursor-default"
                   >
-                    <span className="text-lg text-default-900 cursor-pointer active:opacity-50">
+                    <span
+                      className="text-lg text-default-900 cursor-pointer active:opacity-50"
+                      onClick={() => handleEditButton(item)}
+                    >
                       <EditIcon />
                     </span>
                   </Tooltip>
@@ -194,6 +207,7 @@ export default function BooksPage() {
         </TableBody>
       </Table>
       <FormModal
+        item={selectedItem?.item}
         isOpen={isOpen}
         onClose={onClose}
         onOpenChange={onOpenChange}

@@ -2,18 +2,22 @@ import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
 import AddProductForm from "./AddProductForm/AddProductForm";
 import AddCategoryForm from "./AddCategoryForm/AddCategoryForm";
 import AddSubcategoryForm from "./AddSubcategoryForm/AddSubcategoryForm";
+import { ProductsEntity } from "../../../types/productType";
+import EditProductForm from "./EditProductForm/EditProductForm";
 
 interface props {
   isOpen: boolean;
   onOpenChange: () => void;
   onClose: () => void;
   type: string;
+  item?: ProductsEntity | null | undefined;
 }
 export default function FormModal({
   isOpen,
   onOpenChange,
   onClose,
   type,
+  item,
 }: props) {
   const handleFormModalType = (type: string) => {
     switch (type) {
@@ -21,6 +25,11 @@ export default function FormModal({
         return {
           modalTitle: "اضافه کردن محصول",
           modalBody: <AddProductForm onClose={onClose} />,
+        };
+      case "edit":
+        return {
+          modalTitle: "ویرایش محصول",
+          modalBody: <EditProductForm onClose={onClose} item={item} />,
         };
       case "category":
         return {
@@ -42,7 +51,7 @@ export default function FormModal({
         placement="top-center"
         isDismissable={false}
         isKeyboardDismissDisabled={true}
-        className="font-yekan"
+        className="font-yekan cursor-default"
         scrollBehavior="inside"
       >
         <ModalContent>

@@ -29,3 +29,9 @@ export const postProducts = async (data: AddProduct) => {
   });
   return response.data;
 };
+
+export const deleteProducts = async (id: string) => {
+  const url = `${ENDPOINTS.PRODUCTS}/${id}`;
+  const response = await httpRequest.delete(url);
+  return response.data;
+};

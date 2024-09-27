@@ -22,6 +22,8 @@ import { renderItem } from "../../utils/paginationRenderItem";
 import DropDown from "./components/DropDown";
 import FormModal from "./components/FormModal";
 import NextUiModal from "../../components/NextUiModal/NextUiModal";
+import { useDeleteServices } from "../../hooks/useDeleteServices";
+import { deleteProducts } from "../../queryhooks/admin/products";
 
 export default function BooksPage() {
   const [modalType, setModalType] = useState("");
@@ -55,6 +57,11 @@ export default function BooksPage() {
     queryFn: () => getProducts(params),
   });
 
+  const { mutate } = useDeleteServices({
+    mutationKey: ["DeleteProducts"],
+    mutationFn: deleteProducts,
+  });
+
   const rowsPerPage = data?.per_page ? data?.per_page : 5;
   const pages = useMemo(() => {
     return data?.total ? Math.ceil(data.total / rowsPerPage) : 0;
@@ -86,7 +93,7 @@ export default function BooksPage() {
   }
   const handleActionModal = () => {
     if (selectedItem) {
-      console.log(selectedItem);
+      mutate(selectedItem.id);
     }
   };
   function handleDeleteButton(id: string, name: string) {

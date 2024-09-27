@@ -21,11 +21,21 @@ import { getProductsResponse, ProductsEntity } from "../../types/productType";
 import { renderItem } from "../../utils/paginationRenderItem";
 import DropDown from "./components/DropDown";
 import FormModal from "./components/FormModal";
+import NextUiModal from "../../components/NextUiModal/NextUiModal";
 
 export default function BooksPage() {
   const [modalType, setModalType] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const [selectedItem, setSelectedItem] = useState({
+    id: "",
+    name: "",
+  });
+  const {
+    isOpen: isOpenDeleteModal,
+    onOpen: onOpenDeleteModal,
+    onOpenChange: onOpenChangeModal,
+  } = useDisclosure();
 
   const limit = searchParams.get("limit") || "5";
   const sort = searchParams.get("sort") || "createdAt";
@@ -73,6 +83,15 @@ export default function BooksPage() {
   function handlePageChange(page: number) {
     const currentParams = Object.fromEntries([...searchParams]);
     setSearchParams({ ...currentParams, page: page.toString(), limit });
+  }
+  const handleActionModal = () => {
+    if (selectedItem) {
+      console.log(selectedItem);
+    }
+  };
+  function handleDeleteButton(id: string, name: string) {
+    onOpenDeleteModal();
+    setSelectedItem({ id, name });
   }
 
   return (
@@ -154,7 +173,10 @@ export default function BooksPage() {
                     content="حذف کتاب"
                     className="font-yekan cursor-default"
                   >
-                    <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                    <span
+                      className="text-lg text-danger cursor-pointer active:opacity-50"
+                      onClick={() => handleDeleteButton(item._id, item.name)}
+                    >
                       <DeleteIcon />
                     </span>
                   </Tooltip>
@@ -169,6 +191,14 @@ export default function BooksPage() {
         onClose={onClose}
         onOpenChange={onOpenChange}
         type={modalType}
+      />
+      <NextUiModal
+        isOpen={isOpenDeleteModal}
+        onOpenChange={onOpenChangeModal}
+        onAction={handleActionModal}
+        modalTitle={`حذف ${selectedItem.name.split("اثر")[0]}؟`}
+        modalBody="این عملیات حذف دائمی داده‌ها را به همراه دارد و قابل برگشت نیست. همچنین تمامی اطلاعات مرتبط با این آیتم نیز از دست خواهند رفت."
+        buttonContent={["انصراف", "حذف کتاب"]}
       />
     </div>
   );

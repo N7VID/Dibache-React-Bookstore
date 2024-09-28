@@ -4,6 +4,8 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import TextEditor from "../../../../components/TextEditor/TextEditor";
 import { useGetServices } from "../../../../hooks/useGetServices";
+import { usePatchServices } from "../../../../hooks/usePatchServices";
+import { patchProducts } from "../../../../queryhooks/admin/products";
 import { getCategories } from "../../../../queryhooks/getCategories";
 import { getSubcategories } from "../../../../queryhooks/getSubcategories";
 import { CategoriesResponse } from "../../../../types/categoriesResponse";
@@ -58,6 +60,18 @@ export default function EditProductForm({ onClose, item }: Params) {
     queryFn: getSubcategories,
   });
 
+  const { mutate, isPending } = usePatchServices({
+    mutationKey: ["PatchProducts"],
+    mutationFn: patchProducts,
+    invalidate: ["GetProducts"],
+    options: {
+      onSuccess: () => {
+        reset();
+        onClose();
+      },
+    },
+  });
+
   const categoriesItem =
     categoryData?.data.categories?.map((category) => ({
       label: category.name,
@@ -76,7 +90,9 @@ export default function EditProductForm({ onClose, item }: Params) {
   const handleSubmitProductForm: SubmitHandler<EditProduct> = (
     value: EditProduct
   ) => {
-    // mutate(value);
+    if (item) {
+      mutate({ data: value, id: item._id });
+    }
   };
   return (
     <form
@@ -212,6 +228,7 @@ export default function EditProductForm({ onClose, item }: Params) {
           <div className="flex items-center justify-between gap-2 overflow-x-auto">
             {item?.images?.map((image) => (
               <img
+                key={image}
                 src={`http://${image}`}
                 alt="thumbnail-preview"
                 className="rounded-md w-20"
@@ -248,10 +265,10 @@ export default function EditProductForm({ onClose, item }: Params) {
         <Button
           className="bg-persian-green text-white text-base sm:text-lg w-full"
           type="submit"
-          //   isLoading={isPending}
+          isLoading={isPending}
           spinner={<Spinner color="default" size="sm" />}
         >
-          {/* {!isPending && "ویرایش"} */}
+          {!isPending && "ویرایش"}
         </Button>
       </div>
     </form>

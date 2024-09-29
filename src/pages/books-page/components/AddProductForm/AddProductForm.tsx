@@ -70,7 +70,7 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
       onSuccess() {
         onClose();
         reset();
-        toast.success(`کتاب با موفقیت ایجاد شد.`);
+        toast.success(`کتاب با موفقیت اضافه شد.`);
       },
       onError(error) {
         toast.error(error.message, { rtl: false });

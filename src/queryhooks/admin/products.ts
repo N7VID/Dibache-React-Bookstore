@@ -54,7 +54,7 @@ export const patchProducts = async ({
   formData.append("discount", data.discount.toString());
   formData.append("brand", data.brand);
   formData.append("description", data.description);
-  if (data.thumbnail) {
+  if (data.thumbnail.length !== 0) {
     formData.append("thumbnail", data.thumbnail[0]);
   }
   if (data.images && data.images.length > 0) {

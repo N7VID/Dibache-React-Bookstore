@@ -7,6 +7,7 @@ import { postSubCategories } from "../../../../queryhooks/admin/subCategories";
 import { getCategories } from "../../../../queryhooks/getCategories";
 import { CategoriesResponse } from "../../../../types/categoriesResponse";
 import { AddSubcategorySchema, schema } from "./schema";
+import { toast } from "react-toastify";
 
 export default function AddSubcategoryForm({
   onClose,
@@ -23,6 +24,16 @@ export default function AddSubcategoryForm({
   const { mutate, isPending } = usePostService({
     mutationKey: ["PostSubcategories"],
     mutationFn: postSubCategories,
+    options: {
+      onSuccess() {
+        onClose();
+        reset();
+        toast.success(`زیر مجموعه با موفقیت اضافه شد.`);
+      },
+      onError(error) {
+        toast.error(error.message, { rtl: false });
+      },
+    },
   });
 
   const { data: categoryData } = useGetServices<CategoriesResponse>({
@@ -39,8 +50,6 @@ export default function AddSubcategoryForm({
   const handleSubmitSubcategoryForm: SubmitHandler<AddSubcategorySchema> = (
     values: AddSubcategorySchema
   ) => {
-    console.log(values);
-
     mutate(values);
   };
   return (
@@ -68,7 +77,11 @@ export default function AddSubcategoryForm({
         {...register("category")}
       >
         {categoriesItem?.map((item) => (
-          <SelectItem key={item.value} value={item.value}>
+          <SelectItem
+            key={item.value}
+            value={item.value}
+            className="font-yekan"
+          >
             {item.label}
           </SelectItem>
         ))}

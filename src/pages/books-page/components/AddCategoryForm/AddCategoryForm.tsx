@@ -5,6 +5,7 @@ import { usePostService } from "../../../../hooks/usePostService";
 import { postCategories } from "../../../../queryhooks/admin/categories";
 import { CategoriesResponse } from "../../../../types/categoriesResponse";
 import { addCategorySchema, AddCategorySchema } from "./schema";
+import { toast } from "react-toastify";
 
 export default function AddCategoryForm({ onClose }: { onClose: () => void }) {
   const {
@@ -20,6 +21,16 @@ export default function AddCategoryForm({ onClose }: { onClose: () => void }) {
   >({
     mutationKey: ["PostCategories"],
     mutationFn: postCategories,
+    options: {
+      onSuccess() {
+        onClose();
+        reset();
+        toast.success(`دسته بندی با موفقیت اضافه شد.`);
+      },
+      onError(error) {
+        toast.error(error.message, { rtl: false });
+      },
+    },
   });
 
   const handleSubmitAddCategoryForm: SubmitHandler<AddCategorySchema> = (

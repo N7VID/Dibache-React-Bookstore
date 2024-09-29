@@ -1,19 +1,30 @@
-import { useMutation, UseMutationOptions } from "@tanstack/react-query";
-import { AxiosResponse } from "axios";
+import {
+  useMutation,
+  UseMutationOptions,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 interface Params<Response> {
-  mutationKey: unknown[];
+  mutationKey: string[];
   mutationFn: (id: string) => Promise<Response>;
-  options?: Omit<
-    UseMutationOptions<Response, Error, AxiosResponse>,
-    "mutationKey"
-  >;
+  invalidate?: string[];
+  options?: Omit<UseMutationOptions<Response, Error, string>, "mutationKey">;
 }
 
-export const useDeleteServices = ({
+export const useDeleteServices = <Response>({
   mutationKey,
   mutationFn,
-  ...options
+  invalidate,
+  options,
 }: Params<Response>) => {
-  return useMutation({ mutationKey, mutationFn, ...options });
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey,
+    mutationFn,
+    onSuccess: (data, variables, context) => {
+      if (invalidate) queryClient.invalidateQueries({ queryKey: invalidate });
+      if (options?.onSuccess) options.onSuccess(data, variables, context);
+    },
+    ...options,
+  });
 };

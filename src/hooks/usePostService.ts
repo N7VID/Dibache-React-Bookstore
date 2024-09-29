@@ -3,13 +3,12 @@ import {
   UseMutationOptions,
   useQueryClient,
 } from "@tanstack/react-query";
-import { AxiosResponse } from "axios";
 
 interface params<Data, Response> {
   mutationKey: string[];
   mutationFn: (data: Data) => Promise<Response>;
   invalidate?: string[];
-  options?: UseMutationOptions<AxiosResponse, Error, unknown>;
+  options?: Omit<UseMutationOptions<Response, Error, Data>, "mutationKey">;
 }
 
 export const usePostService = <Data, Response>({
@@ -22,8 +21,10 @@ export const usePostService = <Data, Response>({
   return useMutation({
     mutationKey,
     mutationFn,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: invalidate });
+    onSuccess: (data, variables, context) => {
+      if (invalidate) queryClient.invalidateQueries({ queryKey: invalidate });
+      if (options?.options?.onSuccess)
+        options.options.onSuccess(data, variables, context);
     },
     ...options,
   });

@@ -11,6 +11,7 @@ import { CategoriesResponse } from "../../../../types/categoriesResponse";
 import { SubcategoriesResponse } from "../../../../types/subCategoriesResponse";
 import { AddProduct, schema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "react-toastify";
 
 export default function AddProductForm({ onClose }: { onClose: () => void }) {
   const [subCategoriesItem, setSubCategoriesItem] = useState<
@@ -65,6 +66,16 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
     mutationKey: ["PostProducts"],
     mutationFn: postProducts,
     invalidate: ["GetProducts"],
+    options: {
+      onSuccess() {
+        onClose();
+        reset();
+        toast.success(`کتاب با موفقیت ایجاد شد.`);
+      },
+      onError(error) {
+        toast.error(error.message, { rtl: false });
+      },
+    },
   });
 
   const handleSubmitProductForm: SubmitHandler<AddProduct> = (

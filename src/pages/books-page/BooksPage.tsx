@@ -24,6 +24,7 @@ import FormModal from "./components/FormModal";
 import NextUiModal from "../../components/NextUiModal/NextUiModal";
 import { useDeleteServices } from "../../hooks/useDeleteServices";
 import { deleteProducts } from "../../queryhooks/admin/products";
+import { toast } from "react-toastify";
 
 export default function BooksPage() {
   const [modalType, setModalType] = useState("");
@@ -65,6 +66,15 @@ export default function BooksPage() {
   const { mutate } = useDeleteServices({
     mutationKey: ["DeleteProducts"],
     mutationFn: deleteProducts,
+    invalidate: ["GetProducts"],
+    options: {
+      onSuccess() {
+        toast.success(`کتاب با موفقیت حذف شد.`);
+      },
+      onError(error) {
+        toast.error(error.message, { rtl: false });
+      },
+    },
   });
 
   const rowsPerPage = data?.per_page ? data?.per_page : 5;

@@ -12,6 +12,7 @@ import { CategoriesResponse } from "../../../../types/categoriesResponse";
 import { ProductsEntity } from "../../../../types/productType";
 import { SubcategoriesResponse } from "../../../../types/subCategoriesResponse";
 import { EditProduct, schema } from "./schema";
+import { toast } from "react-toastify";
 
 interface Params {
   onClose: () => void;
@@ -66,8 +67,12 @@ export default function EditProductForm({ onClose, item }: Params) {
     invalidate: ["GetProducts"],
     options: {
       onSuccess: () => {
+        toast.success(`کتاب مورد نظر با موفقیت ویرایش شد.`);
         reset();
         onClose();
+      },
+      onError: (error) => {
+        toast.success(error.message, { rtl: false });
       },
     },
   });

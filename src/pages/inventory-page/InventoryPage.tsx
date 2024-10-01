@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import { ChangeEvent, KeyboardEvent, useMemo, useState } from "react";
+import { ChangeEvent, KeyboardEvent, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useGetServices } from "../../hooks/useGetServices";
 import { getProducts } from "../../queryhooks/product";
@@ -38,6 +38,8 @@ export default function InventoryPage() {
   const [changeList, setChangeList] = useState<EditBodyType[]>([]);
   const limit = searchParams.get("limit") || "5";
   const sort = searchParams.get("sort") || "createdAt";
+  const quantityInputRef = useRef<HTMLInputElement | null>(null);
+  const priceInputRef = useRef<HTMLInputElement | null>(null);
 
   const params: {
     page: number;
@@ -79,6 +81,19 @@ export default function InventoryPage() {
   }
   function handlePageChange(page: number) {
     setSearchParams({ ...currentParams, page: page.toString(), limit });
+  }
+
+  function handleOnClickQuantity(id: string, quantity: number) {
+    setEditQuantity((prev) => [...prev, { id: id, value: quantity }]);
+    setTimeout(() => {
+      quantityInputRef.current?.focus();
+    }, 0);
+  }
+  function handleOnClickPrice(id: string, price: number) {
+    setEditPrice((prev) => [...prev, { id: id, value: price }]);
+    setTimeout(() => {
+      priceInputRef.current?.focus();
+    }, 0);
   }
 
   function handleOnChange(
@@ -242,6 +257,7 @@ export default function InventoryPage() {
                 <TableCell>
                   {price ? (
                     <Input
+                      ref={priceInputRef}
                       dir="ltr"
                       value={price.value.toString()}
                       className="w-28"
@@ -252,12 +268,7 @@ export default function InventoryPage() {
                     />
                   ) : (
                     <span
-                      onClick={() =>
-                        setEditPrice((prev) => [
-                          ...prev,
-                          { id: item._id, value: item.price },
-                        ])
-                      }
+                      onClick={() => handleOnClickPrice(item._id, item.price)}
                       className="cursor-pointer"
                     >
                       {toPersianNumber(item.price)}
@@ -267,6 +278,7 @@ export default function InventoryPage() {
                 <TableCell>
                   {quantity ? (
                     <Input
+                      ref={quantityInputRef}
                       dir="ltr"
                       value={quantity.value.toString()}
                       className="w-28"
@@ -278,10 +290,7 @@ export default function InventoryPage() {
                   ) : (
                     <span
                       onClick={() =>
-                        setEditQuantity((prev) => [
-                          ...prev,
-                          { id: item._id, value: item.quantity },
-                        ])
+                        handleOnClickQuantity(item._id, item.quantity)
                       }
                       className="cursor-pointer"
                     >

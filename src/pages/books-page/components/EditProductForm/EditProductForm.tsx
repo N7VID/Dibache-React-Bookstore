@@ -1,19 +1,25 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Select, SelectItem, Spinner } from "@nextui-org/react";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import TextEditor from "../../../../components/TextEditor/TextEditor";
 import { useGetServices } from "../../../../hooks/useGetServices";
-import { usePostService } from "../../../../hooks/usePostService";
-import { postProducts } from "../../../../queryhooks/admin/products";
+import { usePatchServices } from "../../../../hooks/usePatchServices";
+import { patchProducts } from "../../../../queryhooks/admin/products";
 import { getCategories } from "../../../../queryhooks/getCategories";
 import { getSubcategories } from "../../../../queryhooks/getSubcategories";
 import { CategoriesResponse } from "../../../../types/categoriesResponse";
+import { ProductsEntity } from "../../../../types/productType";
 import { SubcategoriesResponse } from "../../../../types/subCategoriesResponse";
-import { AddProduct, schema } from "./schema";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { EditProduct, schema } from "./schema";
 import { toast } from "react-toastify";
 
-export default function AddProductForm({ onClose }: { onClose: () => void }) {
+interface Params {
+  onClose: () => void;
+  item: ProductsEntity | null | undefined;
+}
+
+export default function EditProductForm({ onClose, item }: Params) {
   const [subCategoriesItem, setSubCategoriesItem] = useState<
     { label: string; value: string }[]
   >([]);
@@ -23,19 +29,27 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
     formState: { errors },
     register,
     control,
+    setValue,
     reset,
-  } = useForm<AddProduct>({
+  } = useForm<EditProduct>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: "",
-      category: "",
-      subcategory: "",
-      brand: "",
-      quantity: 1,
-      price: 0,
-      discount: 0,
+      name: item?.name,
+      category: item?.category._id,
+      subcategory: item?.subcategory._id,
+      brand: item?.brand,
+      quantity: item?.quantity,
+      price: item?.price,
+      discount: item?.discount,
     },
   });
+
+  useEffect(() => {
+    if (item) {
+      setValue("category", item.category?._id);
+      setValue("subcategory", item.subcategory?._id);
+    }
+  }, [item, setValue]);
 
   const { data: categoryData } = useGetServices<CategoriesResponse>({
     queryKey: ["GetCategories"],
@@ -45,6 +59,22 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
   const { data: subCategoryData } = useGetServices<SubcategoriesResponse>({
     queryKey: ["GetSubcategories"],
     queryFn: getSubcategories,
+  });
+
+  const { mutate, isPending } = usePatchServices({
+    mutationKey: ["PatchProducts"],
+    mutationFn: patchProducts,
+    invalidate: ["GetProducts"],
+    options: {
+      onSuccess: () => {
+        toast.success(`کتاب مورد نظر با موفقیت ویرایش شد.`);
+        reset();
+        onClose();
+      },
+      onError: (error) => {
+        toast.success(error.message, { rtl: false });
+      },
+    },
   });
 
   const categoriesItem =
@@ -62,26 +92,12 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
     return categoryId;
   };
 
-  const { mutate, isPending } = usePostService({
-    mutationKey: ["PostProducts"],
-    mutationFn: postProducts,
-    invalidate: ["GetProducts"],
-    options: {
-      onSuccess() {
-        onClose();
-        reset();
-        toast.success(`کتاب با موفقیت اضافه شد.`);
-      },
-      onError(error) {
-        toast.error(error.message, { rtl: false });
-      },
-    },
-  });
-
-  const handleSubmitProductForm: SubmitHandler<AddProduct> = (
-    value: AddProduct
+  const handleSubmitProductForm: SubmitHandler<EditProduct> = (
+    value: EditProduct
   ) => {
-    mutate(value);
+    if (item) {
+      mutate({ data: value, id: item._id });
+    }
   };
   return (
     <form
@@ -105,7 +121,10 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
         errorMessage={`${errors["category"]?.message}`}
         variant="bordered"
         className="max-w-xs"
-        {...register("category", { onChange: handleSubCategories })}
+        value={item?.category._id}
+        {...register("category", {
+          onChange: handleSubCategories,
+        })}
       >
         {categoriesItem?.map((item) => (
           <SelectItem
@@ -125,6 +144,7 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
         errorMessage={`${errors["subcategory"]?.message}`}
         variant="bordered"
         className="max-w-xs"
+        value={item?.subcategory._id}
         {...register("subcategory")}
       >
         {subCategoriesItem?.map((item) => (
@@ -176,32 +196,57 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
         variant="bordered"
         {...register("discount", { valueAsNumber: true })}
       />
-      <Input
-        label={"تصویر پیش نمایش"}
-        size="sm"
-        type="file"
-        className="w-44 xs:w-64 sm:w-full"
-        isInvalid={!!errors["thumbnail"]}
-        errorMessage={`${errors["thumbnail"]?.message}`}
-        variant="bordered"
-        {...register("thumbnail")}
-      />
-      <Input
-        label={"تصاویر"}
-        size="sm"
-        multiple
-        type="file"
-        className="w-44 xs:w-64 sm:w-full"
-        isInvalid={!!errors["images"]}
-        errorMessage={`${errors["images"]?.message}`}
-        variant="bordered"
-        {...register("images")}
-      />
+      <div className="flex flex-col justify-center items-center w-full">
+        <Input
+          label={"تصویر پیش نمایش"}
+          size="sm"
+          type="file"
+          className="w-44 xs:w-64 sm:w-full"
+          isInvalid={!!errors["thumbnail"]}
+          errorMessage={`${errors["thumbnail"]?.message}`}
+          variant="bordered"
+          {...register("thumbnail")}
+        />
+        <div className="flex border-2 border-[#e0e0e0] rounded-md w-full flex-col justify-center items-center gap-1 py-1">
+          <span className="text-[10px]">تصویر بارگزاری شده</span>
+          <img
+            src={`http://localhost:8000/images/products/thumbnails/${item?.thumbnail}`}
+            alt="thumbnail-preview"
+            className="rounded-md w-32"
+          />
+        </div>
+      </div>
+      <div className="flex flex-col w-full mb-4">
+        <Input
+          label={"تصاویر"}
+          size="sm"
+          multiple
+          type="file"
+          className="w-44 xs:w-64 sm:w-full"
+          isInvalid={!!errors["images"]}
+          errorMessage={`${errors["images"]?.message}`}
+          variant="bordered"
+          {...register("images")}
+        />
+        <div className="flex border-2 border-[#e0e0e0] rounded-md w-full justify-center flex-col items-center gap-1 py-1">
+          <span className="text-[10px]">تصاویر بارگزاری شده</span>
+          <div className="flex items-center justify-between gap-2 overflow-x-auto">
+            {item?.images?.map((image) => (
+              <img
+                key={image}
+                src={`http://${image}`}
+                alt="thumbnail-preview"
+                className="rounded-md w-20"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
       <div className="w-full">
         <Controller
           control={control}
           name="description"
-          defaultValue=""
+          defaultValue={item?.description}
           render={({ field }) => (
             <TextEditor value={field.value} onChange={field.onChange} />
           )}
@@ -228,7 +273,7 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
           isLoading={isPending}
           spinner={<Spinner color="default" size="sm" />}
         >
-          {!isPending && "افزودن"}
+          {!isPending && "ویرایش"}
         </Button>
       </div>
     </form>

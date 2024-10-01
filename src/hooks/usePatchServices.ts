@@ -4,20 +4,24 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
-interface params<Data, Response> {
+interface Params<T, Response> {
   mutationKey: string[];
-  mutationFn: (data: Data) => Promise<Response>;
+  mutationFn: ({ data, id }: { data: T; id: string }) => Promise<Response>;
   invalidate?: string[];
-  options?: Omit<UseMutationOptions<Response, Error, Data>, "mutationKey">;
+  options?: Omit<
+    UseMutationOptions<Response, Error, { data: T; id: string }>,
+    "mutationKey"
+  >;
 }
 
-export const usePostService = <Data, Response>({
+export const usePatchServices = <T, Response>({
   mutationKey,
   mutationFn,
   invalidate,
   ...options
-}: params<Data, Response>) => {
+}: Params<T, Response>) => {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationKey,
     mutationFn,

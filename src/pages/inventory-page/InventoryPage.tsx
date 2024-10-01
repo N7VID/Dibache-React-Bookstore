@@ -10,23 +10,31 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import { ChangeEvent, useMemo, useState } from "react";
+import { ChangeEvent, KeyboardEvent, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useGetServices } from "../../hooks/useGetServices";
 import { getProducts } from "../../queryhooks/product";
 import { getProductsResponse, ProductsEntity } from "../../types/productType";
 import { renderItem } from "../../utils/paginationRenderItem";
+import { httpRequest } from "../../services/http-request";
+import { ENDPOINTS } from "../../constants";
+import { toPersianNumber } from "../../utils/toPersianNumber";
 
 interface EditModeType {
   id: string;
-  price: number;
-  quantity: number;
+  value: number | string;
+}
+
+interface EditBodyType {
+  id: string;
+  body: { quantity?: number | string; price?: number | string };
 }
 
 export default function InventoryPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [editMode, setEditMode] = useState<EditModeType[]>([]);
-
+  const [editQuantity, setEditQuantity] = useState<EditModeType[]>([]);
+  const [editPrice, setEditPrice] = useState<EditModeType[]>([]);
+  const [changeList, setChangeList] = useState<EditBodyType[]>([]);
   const limit = searchParams.get("limit") || "5";
   const sort = searchParams.get("sort") || "createdAt";
 
@@ -40,7 +48,7 @@ export default function InventoryPage() {
     sort,
   };
 
-  const { data, isLoading } = useGetServices<getProductsResponse>({
+  const { data, isLoading, refetch } = useGetServices<getProductsResponse>({
     queryKey: ["GetProducts", params],
     queryFn: () => getProducts(params),
   });
@@ -58,29 +66,18 @@ export default function InventoryPage() {
     items = data.data.products;
   }
 
+  const currentParams = Object.fromEntries([...searchParams]);
   function handlePriceOrderColumn() {
-    const currentParams = Object.fromEntries([...searchParams]);
     const newSort = currentParams.sort === "price" ? "-price" : "price";
     setSearchParams({ ...currentParams, sort: newSort });
   }
-
   function handleInventoryOrderColumn() {
-    const currentParams = Object.fromEntries([...searchParams]);
     const newSort =
       currentParams.sort === "quantity" ? "-quantity" : "quantity";
     setSearchParams({ ...currentParams, sort: newSort });
   }
-
   function handlePageChange(page: number) {
-    const currentParams = Object.fromEntries([...searchParams]);
     setSearchParams({ ...currentParams, page: page.toString(), limit });
-  }
-
-  function handleEditData(id: string, price: number, quantity: number) {
-    const existing = editMode.find((data) => data.id === id);
-    if (!existing) {
-      setEditMode((prev) => [...prev, { id, price, quantity }]);
-    }
   }
 
   function handleOnChange(
@@ -88,30 +85,96 @@ export default function InventoryPage() {
     id: string,
     field: "price" | "quantity"
   ) {
-    setEditMode((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, [field]: Number(e.target.value) } : item
-      )
-    );
+    if (field === "quantity") {
+      setEditQuantity((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, value: +e.target.value } : item
+        )
+      );
+    } else {
+      setEditPrice((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, value: +e.target.value } : item
+        )
+      );
+    }
+  }
+
+  function handleKeyDown(
+    e: KeyboardEvent<HTMLInputElement>,
+    id: string,
+    field: "price" | "quantity"
+  ) {
+    if (e.key === "Enter") {
+      const value = Number(e.currentTarget.value);
+      setChangeList((prev) => {
+        const updatedList = [...prev];
+        const existingIndex = updatedList.findIndex((item) => item.id === id);
+        if (existingIndex > -1) {
+          updatedList[existingIndex].body[field] = value;
+        } else {
+          updatedList.push({ id, body: { [field]: value } });
+        }
+        return updatedList;
+      });
+    }
+    if (e.key === "Escape") {
+      handleCancel(id, field);
+    }
   }
 
   function handleSave() {
-    console.log("Saving data:", editMode);
-    setEditMode([]);
+    const promiseList = changeList.map((item) =>
+      httpRequest.patch(`${ENDPOINTS.PRODUCTS}/${item.id}`, item.body)
+    );
+    Promise.all(promiseList)
+      .then(() => {
+        refetch();
+        setEditPrice([]);
+        setEditQuantity([]);
+        setChangeList([]);
+      })
+      .catch((error) => console.log(error.message));
   }
 
-  function handleCancel(id: string) {
-    setEditMode((prev) => prev.filter((data) => data.id !== id));
+  function handleCancel(id: string, field: "price" | "quantity") {
+    const price = editPrice.find((price) => price.id === id);
+    const quantity = editQuantity.find((quantity) => quantity.id === id);
+    console.log(price, quantity);
+
+    if (field === "price") {
+      setEditPrice((prev) => prev.filter((data) => data.id !== id));
+      setChangeList((prev) =>
+        prev
+          .map((data) =>
+            data.id === id
+              ? { ...data, body: { ...data.body, price: undefined } }
+              : data
+          )
+          .filter((data) => data.body.quantity || data.body.price !== undefined)
+      );
+    } else {
+      setEditQuantity((prev) => prev.filter((data) => data.id !== id));
+      setChangeList((prev) =>
+        prev
+          .map((data) =>
+            data.id === id
+              ? { ...data, body: { ...data.body, quantity: undefined } }
+              : data
+          )
+          .filter((data) => data.body.price || data.body.quantity !== undefined)
+      );
+    }
   }
 
   return (
     <div className="LayoutContainer pt-[100px]">
       <Button
-        disabled={editMode.length === 0}
+        disabled={changeList.length === 0}
         onClick={handleSave}
-        variant={editMode.length === 0 ? "bordered" : "solid"}
+        variant={changeList.length === 0 ? "bordered" : "solid"}
         className={
-          editMode.length === 0
+          changeList.length === 0
             ? "text-black bg-default-100"
             : "text-white bg-persian-green/80"
         }
@@ -162,8 +225,11 @@ export default function InventoryPage() {
         </TableHeader>
         <TableBody loadingContent={<Spinner />} loadingState={loadingState}>
           {items.map((item: ProductsEntity) => {
-            const isEditing: EditModeType | undefined = editMode.find(
-              (data) => data.id === item._id
+            const quantity = editQuantity.find(
+              (quantity) => quantity.id === item._id
+            );
+            const price = editPrice.find(
+              (quantity) => quantity.id === item._id
             );
             return (
               <TableRow key={item._id} className="border-b-1">
@@ -176,52 +242,52 @@ export default function InventoryPage() {
                 </TableCell>
                 <TableCell>{item.name}</TableCell>
                 <TableCell>
-                  {isEditing ? (
+                  {price ? (
                     <Input
-                      value={isEditing.price.toString()}
-                      className="w-32"
+                      dir="ltr"
+                      value={price.value.toString()}
+                      className="w-28"
                       type="number"
                       onChange={(e) => handleOnChange(e, item._id, "price")}
                       size="sm"
-                      onKeyDown={(e) => {
-                        if (e.key === "Escape") {
-                          handleCancel(item._id);
-                        }
-                      }}
+                      onKeyDown={(e) => handleKeyDown(e, item._id, "price")}
                     />
                   ) : (
                     <span
                       onClick={() =>
-                        handleEditData(item._id, item.price, item.quantity)
+                        setEditPrice((prev) => [
+                          ...prev,
+                          { id: item._id, value: item.price },
+                        ])
                       }
                       className="cursor-pointer"
                     >
-                      {item.price}
+                      {toPersianNumber(item.price)}
                     </span>
                   )}
                 </TableCell>
                 <TableCell>
-                  {isEditing ? (
+                  {quantity ? (
                     <Input
-                      value={isEditing.quantity.toString()}
-                      className="w-32"
+                      dir="ltr"
+                      value={quantity.value.toString()}
+                      className="w-28"
                       type="number"
                       onChange={(e) => handleOnChange(e, item._id, "quantity")}
                       size="sm"
-                      onKeyDown={(e) => {
-                        if (e.key === "Escape") {
-                          handleCancel(item._id);
-                        }
-                      }}
+                      onKeyDown={(e) => handleKeyDown(e, item._id, "quantity")}
                     />
                   ) : (
                     <span
                       onClick={() =>
-                        handleEditData(item._id, item.price, item.quantity)
+                        setEditQuantity((prev) => [
+                          ...prev,
+                          { id: item._id, value: item.quantity },
+                        ])
                       }
                       className="cursor-pointer"
                     >
-                      {item.quantity}
+                      {toPersianNumber(item.quantity)}
                     </span>
                   )}
                 </TableCell>

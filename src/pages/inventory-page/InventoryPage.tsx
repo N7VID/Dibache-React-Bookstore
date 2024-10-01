@@ -19,6 +19,7 @@ import { renderItem } from "../../utils/paginationRenderItem";
 import { httpRequest } from "../../services/http-request";
 import { ENDPOINTS } from "../../constants";
 import { toPersianNumber } from "../../utils/toPersianNumber";
+import { toast } from "react-toastify";
 
 interface EditModeType {
   id: string;
@@ -133,15 +134,12 @@ export default function InventoryPage() {
         setEditPrice([]);
         setEditQuantity([]);
         setChangeList([]);
+        toast.success("مقادیر با موفقیت ویرایش شد.");
       })
-      .catch((error) => console.log(error.message));
+      .catch((error) => toast.error(error.message, { rtl: false }));
   }
 
   function handleCancel(id: string, field: "price" | "quantity") {
-    const price = editPrice.find((price) => price.id === id);
-    const quantity = editQuantity.find((quantity) => quantity.id === id);
-    console.log(price, quantity);
-
     if (field === "price") {
       setEditPrice((prev) => prev.filter((data) => data.id !== id));
       setChangeList((prev) =>

@@ -18,11 +18,20 @@ export default function HomePage() {
       queryFn: () =>
         getProducts({ limit: "6", category: "66e6bf415611008189a0bd30" }),
     });
+  const { data: secondCategoryData, isLoading: secondCategoryIsLoading } =
+    useGetServices<getProductsResponse>({
+      queryKey: ["GetSecondCategoryBooks"],
+      queryFn: () =>
+        getProducts({ limit: "6", category: "66e6a3a95611008189a0bd14" }),
+    });
 
   let firstCategoryItems: ProductsEntity[] = [];
-  if (firstCategoryData?.data.products) {
+  let secondCategoryItems: ProductsEntity[] = [];
+  if (firstCategoryData?.data.products)
     firstCategoryItems = firstCategoryData.data.products;
-  }
+
+  if (secondCategoryData?.data.products)
+    secondCategoryItems = secondCategoryData?.data?.products;
 
   return (
     <>
@@ -120,6 +129,30 @@ export default function HomePage() {
             ) : (
               <>
                 {firstCategoryItems.map((item) => (
+                  <NextUiCard key={item._id} item={item} />
+                ))}
+              </>
+            )}
+          </div>
+        </section>
+        <section className="py-8">
+          <div className="flex justify-between items-center px-6">
+            <h3 className="font-semibold text-lg">
+              سفری به درون ذهن با کتاب‌های روانشناسی
+            </h3>
+            <Link to={`/category/66e6a3a95611008189a0bd14`}>
+              <span className="text-persian-green font-semibold flex justify-between items-center gap-2">
+                مشاهده همه
+                <ChevronLeftIcon className="size-4" />
+              </span>
+            </Link>
+          </div>
+          <div className="flex justify-center flex-wrap items-center gap-4 py-8">
+            {secondCategoryIsLoading ? (
+              <Spinner size="lg" color="current" />
+            ) : (
+              <>
+                {secondCategoryItems?.map((item) => (
                   <NextUiCard key={item._id} item={item} />
                 ))}
               </>

@@ -27,6 +27,7 @@ import TruckIcon from "../../assets/svg/TruckIconIcon";
 import { toPersianNumber } from "../../utils/toPersianNumber";
 import ShoppingCart from "../../assets/svg/ShoppingCartIcon";
 import ChatBubbleLeftRightIcon from "../../assets/svg/ChatBubbleLeftRightIcon";
+import { toast } from "react-toastify";
 
 export default function BookPage() {
   const { id } = useParams();
@@ -58,10 +59,10 @@ export default function BookPage() {
     navigator.clipboard
       .writeText(currentUrl)
       .then(() => {
-        alert("URL copied to clipboard!");
+        toast.success("با موفقیت کپی شد.");
       })
-      .catch((err) => {
-        console.error("Failed to copy: ", err);
+      .catch((error) => {
+        toast.error(`Failed to copy: ${error}`, { rtl: false });
       });
   };
 

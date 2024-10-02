@@ -119,7 +119,7 @@ export default function BookPage() {
                     <img
                       src={`http://${image}`}
                       alt={name?.[0]}
-                      className="sm:w-[350px] w-[200px] rounded-lg"
+                      className="sm:w-[350px] w-[200px] rounded-lg max-h-[400px] object-contain"
                     />
                   </div>
                 </SwiperSlide>

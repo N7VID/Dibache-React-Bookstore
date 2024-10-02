@@ -39,7 +39,7 @@ export default function NextUiCard({ item }: Props) {
           >
             <Image
               alt="Card background"
-              className="object-cover rounded-xl"
+              className="object-cover rounded-xl h-40"
               src={`http://${thumbnail}`}
               width={270}
             />

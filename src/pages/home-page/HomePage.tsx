@@ -76,6 +76,24 @@ export default function HomePage() {
             <SwiperSlide>
               <div className="flex justify-center items-center">
                 <img
+                  src="/src/assets/images/Ad-5.png"
+                  alt=""
+                  className="rounded-xl w-[350px]"
+                />
+              </div>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div className="flex justify-center items-center">
+                <img
+                  src="/src/assets/images/Ad-6.png"
+                  alt=""
+                  className="rounded-xl w-[350px]"
+                />
+              </div>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div className="flex justify-center items-center">
+                <img
                   src="/src/assets/images/Ad-4.png"
                   alt=""
                   className="rounded-xl w-[350px]"

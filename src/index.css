@@ -23,3 +23,15 @@
   color: #10171d;
   font-size: 0.875rem !important;
 }
+
+.swiper-pagination-bullet {
+  background-color: #00a693 !important;
+}
+.swiper-button-next,
+.swiper-button-prev {
+  transform: scale(0.35);
+  border-radius: 50%;
+  background-color: white;
+  padding: 40px !important;
+  color: #00a693 !important;
+}

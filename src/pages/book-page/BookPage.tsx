@@ -112,6 +112,7 @@ export default function BookPage() {
               slidesPerView={1}
               pagination={{ clickable: true }}
               scrollbar={{ draggable: true }}
+              navigation
             >
               {images?.map((image) => (
                 <SwiperSlide>

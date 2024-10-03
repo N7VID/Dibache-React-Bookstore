@@ -21,6 +21,12 @@ export default function OrdersPage() {
     sort,
   };
 
+  const handleSelectionChange = () => {
+    if (searchParams.size !== 0) {
+      setSearchParams("");
+    }
+  };
+
   const { data: ordersData, isLoading: isLoadingOrdersData } =
     useGetServices<OrdersResponse>({
       queryKey: ["GetOrders", params],
@@ -60,7 +66,7 @@ export default function OrdersPage() {
 
   return (
     <div className="LayoutContainer pt-[100px]">
-      <Tabs aria-label="Options">
+      <Tabs aria-label="Options" onSelectionChange={handleSelectionChange}>
         <Tab key="waiting" title="در انتظار ارسال">
           <TableOrders
             data={waitingOrdersData}

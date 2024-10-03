@@ -11,7 +11,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { DeleteIcon } from "../../assets/svg/DeleteIcon";
 import { EditIcon } from "../../assets/svg/EditIcon";
 import { EyeIcon } from "../../assets/svg/EyeIcon";
@@ -21,11 +21,29 @@ import { getProductsResponse, ProductsEntity } from "../../types/productType";
 import { renderItem } from "../../utils/paginationRenderItem";
 import DropDown from "./components/DropDown";
 import FormModal from "./components/FormModal";
+import NextUiModal from "../../components/NextUiModal/NextUiModal";
+import { useDeleteServices } from "../../hooks/useDeleteServices";
+import { deleteProducts } from "../../queryhooks/admin/products";
+import { toast } from "react-toastify";
 
 export default function BooksPage() {
   const [modalType, setModalType] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const [selectedItem, setSelectedItem] = useState<{
+    id: string;
+    name: string;
+    item?: ProductsEntity | null;
+  }>({
+    id: "",
+    name: "",
+    item: null,
+  });
+  const {
+    isOpen: isOpenDeleteModal,
+    onOpen: onOpenDeleteModal,
+    onOpenChange: onOpenChangeModal,
+  } = useDisclosure();
 
   const limit = searchParams.get("limit") || "5";
   const sort = searchParams.get("sort") || "createdAt";
@@ -45,6 +63,20 @@ export default function BooksPage() {
     queryFn: () => getProducts(params),
   });
 
+  const { mutate } = useDeleteServices({
+    mutationKey: ["DeleteProducts"],
+    mutationFn: deleteProducts,
+    invalidate: ["GetProducts"],
+    options: {
+      onSuccess() {
+        toast.success(`کتاب با موفقیت حذف شد.`);
+      },
+      onError(error) {
+        toast.error(error.message, { rtl: false });
+      },
+    },
+  });
+
   const rowsPerPage = data?.per_page ? data?.per_page : 5;
   const pages = useMemo(() => {
     return data?.total ? Math.ceil(data.total / rowsPerPage) : 0;
@@ -62,17 +94,31 @@ export default function BooksPage() {
     const newSort = currentParams.sort === "name" ? "-name" : "name";
     setSearchParams({ ...currentParams, sort: newSort });
   }
-
   function handleCategoryOrderColumn() {
     const currentParams = Object.fromEntries([...searchParams]);
     const newSort =
       currentParams.sort === "category" ? "-category" : "category";
     setSearchParams({ ...currentParams, sort: newSort });
   }
-
   function handlePageChange(page: number) {
     const currentParams = Object.fromEntries([...searchParams]);
     setSearchParams({ ...currentParams, page: page.toString(), limit });
+  }
+
+  function handleActionModal() {
+    if (selectedItem) {
+      mutate(selectedItem.id);
+    }
+  }
+  function handleDeleteButton(id: string, name: string) {
+    onOpenDeleteModal();
+    setSelectedItem({ id, name });
+  }
+
+  function handleEditButton(item: ProductsEntity) {
+    onOpen();
+    setModalType("edit");
+    if (item) setSelectedItem((prev) => ({ ...prev, item }));
   }
 
   return (
@@ -124,7 +170,10 @@ export default function BooksPage() {
                   className="w-16"
                 />
               </TableCell>
-              <TableCell>{item.name}</TableCell>
+              <TableCell>
+                {" "}
+                <Link to={`/book/${item._id}`}>{item.name}</Link>
+              </TableCell>
               <TableCell>{`${item.category.name} / ${item.subcategory.name}`}</TableCell>
               <TableCell>
                 <div className="relative flex items-center gap-4 flex-col sm:flex-row">
@@ -132,15 +181,20 @@ export default function BooksPage() {
                     content="جزئیات"
                     className="font-yekan cursor-default"
                   >
-                    <span className="text-lg text-default-900 cursor-pointer active:opacity-50">
-                      <EyeIcon />
-                    </span>
+                    <Link to={`/book/${item._id}`}>
+                      <span className="text-lg text-default-900 cursor-pointer active:opacity-50">
+                        <EyeIcon />
+                      </span>
+                    </Link>
                   </Tooltip>
                   <Tooltip
                     content="ویرایش"
                     className="font-yekan cursor-default"
                   >
-                    <span className="text-lg text-default-900 cursor-pointer active:opacity-50">
+                    <span
+                      className="text-lg text-default-900 cursor-pointer active:opacity-50"
+                      onClick={() => handleEditButton(item)}
+                    >
                       <EditIcon />
                     </span>
                   </Tooltip>
@@ -149,7 +203,10 @@ export default function BooksPage() {
                     content="حذف کتاب"
                     className="font-yekan cursor-default"
                   >
-                    <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                    <span
+                      className="text-lg text-danger cursor-pointer active:opacity-50"
+                      onClick={() => handleDeleteButton(item._id, item.name)}
+                    >
                       <DeleteIcon />
                     </span>
                   </Tooltip>
@@ -160,10 +217,19 @@ export default function BooksPage() {
         </TableBody>
       </Table>
       <FormModal
+        item={selectedItem?.item}
         isOpen={isOpen}
         onClose={onClose}
         onOpenChange={onOpenChange}
         type={modalType}
+      />
+      <NextUiModal
+        isOpen={isOpenDeleteModal}
+        onOpenChange={onOpenChangeModal}
+        onAction={handleActionModal}
+        modalTitle={`حذف ${selectedItem.name.split("اثر")[0]}؟`}
+        modalBody="این عملیات حذف دائمی داده‌ها را به همراه دارد و قابل برگشت نیست. همچنین تمامی اطلاعات مرتبط با این آیتم نیز از دست خواهند رفت."
+        buttonContent={["انصراف", "حذف کتاب"]}
       />
     </div>
   );

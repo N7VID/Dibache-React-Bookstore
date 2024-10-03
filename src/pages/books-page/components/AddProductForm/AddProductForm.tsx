@@ -11,6 +11,7 @@ import { CategoriesResponse } from "../../../../types/categoriesResponse";
 import { SubcategoriesResponse } from "../../../../types/subCategoriesResponse";
 import { AddProduct, schema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "react-toastify";
 
 export default function AddProductForm({ onClose }: { onClose: () => void }) {
   const [subCategoriesItem, setSubCategoriesItem] = useState<
@@ -65,6 +66,16 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
     mutationKey: ["PostProducts"],
     mutationFn: postProducts,
     invalidate: ["GetProducts"],
+    options: {
+      onSuccess() {
+        onClose();
+        reset();
+        toast.success(`کتاب با موفقیت اضافه شد.`);
+      },
+      onError(error) {
+        toast.error(error.message, { rtl: false });
+      },
+    },
   });
 
   const handleSubmitProductForm: SubmitHandler<AddProduct> = (
@@ -97,7 +108,11 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
         {...register("category", { onChange: handleSubCategories })}
       >
         {categoriesItem?.map((item) => (
-          <SelectItem key={item.value} value={item.value}>
+          <SelectItem
+            key={item.value}
+            value={item.value}
+            className="font-yekan"
+          >
             {item.label}
           </SelectItem>
         ))}
@@ -113,12 +128,15 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
         {...register("subcategory")}
       >
         {subCategoriesItem?.map((item) => (
-          <SelectItem key={item.value} value={item.value}>
+          <SelectItem
+            key={item.value}
+            value={item.value}
+            className="font-yekan"
+          >
             {item.label}
           </SelectItem>
         ))}
       </Select>
-
       <Input
         label={"انتشارات"}
         size="sm"
@@ -136,9 +154,7 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
         isInvalid={!!errors["quantity"]}
         errorMessage={`${errors["quantity"]?.message}`}
         variant="bordered"
-        {...register("quantity", {
-          onChange: (e) => Number(e.target.value),
-        })}
+        {...register("quantity", { valueAsNumber: true })}
       />
       <Input
         label={"قیمت واحد"}
@@ -148,9 +164,7 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
         isInvalid={!!errors["price"]}
         errorMessage={`${errors["price"]?.message}`}
         variant="bordered"
-        {...register("price", {
-          onChange: (e) => Number(e.target.value),
-        })}
+        {...register("price", { valueAsNumber: true })}
       />
       <Input
         label={"تخفیف"}
@@ -160,9 +174,7 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
         isInvalid={!!errors["discount"]}
         errorMessage={`${errors["discount"]?.message}`}
         variant="bordered"
-        {...register("discount", {
-          onChange: (e) => Number(e.target.value),
-        })}
+        {...register("discount", { valueAsNumber: true })}
       />
       <Input
         label={"تصویر پیش نمایش"}
@@ -185,14 +197,16 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
         variant="bordered"
         {...register("images")}
       />
-      <Controller
-        control={control}
-        name="description"
-        defaultValue=""
-        render={({ field }) => (
-          <TextEditor value={field.value} onChange={field.onChange} />
-        )}
-      />
+      <div className="w-full">
+        <Controller
+          control={control}
+          name="description"
+          defaultValue=""
+          render={({ field }) => (
+            <TextEditor value={field.value} onChange={field.onChange} />
+          )}
+        />
+      </div>
       {errors.description && (
         <p className="text-red-500 text-sm">{errors.description.message}</p>
       )}

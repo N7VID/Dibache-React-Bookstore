@@ -23,9 +23,12 @@ module.exports = {
     extend: {
       fontFamily: {
         yekan: ["yekan", "sans"],
+        vazir: ["vazir", "sans"],
       },
       colors: {
         "main-gray": "#EEE",
+        "key-gray": "#969696",
+        "value-gray": "#666666",
         "ghost-white": "#FCFCFA",
         "rich-black": "#1C1C1C",
         "persian-green": "#00A693",
@@ -34,6 +37,7 @@ module.exports = {
       boxShadow: {
         footer: "rgba(0, 0, 0, 0.15) 0px 5px 10px 0px",
         header: "rgba(0, 0, 0, 0.15) 0px 4px 10px 0px",
+        box: "rgba(0, 0, 0, 0.09) 0px 3px 12px;",
       },
     },
   },

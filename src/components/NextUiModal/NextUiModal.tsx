@@ -26,7 +26,11 @@ export default function NextUiModal({
 }: props) {
   return (
     <>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} className="font-yekan">
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        className="font-yekan cursor-default"
+      >
         <ModalContent>
           {(onClose) => (
             <>
@@ -42,6 +46,7 @@ export default function NextUiModal({
                 </Button>
                 <Button
                   color="primary"
+                  className="bg-persian-green"
                   onPress={() => {
                     onAction();
                     onClose();

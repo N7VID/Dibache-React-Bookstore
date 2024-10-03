@@ -5,6 +5,7 @@ import NextUiModal from "../../components/NextUiModal/NextUiModal";
 import { PATHS } from "../../configs/paths.config";
 import { useLogout } from "../../hooks/useLogout";
 import MainDropDown from "../MainLayout/components/MainDropDown";
+import { toast } from "react-toastify";
 
 export default function DashboardHeader() {
   const navigate = useNavigate();
@@ -16,11 +17,14 @@ export default function DashboardHeader() {
   const { refetch } = useLogout();
 
   const handleActionModal = () => {
-    refetch().then(() => {
-      Cookies.remove("accessToken");
-      Cookies.remove("refreshToken");
-      navigate(PATHS.HOME);
-    });
+    refetch()
+      .then(() => {
+        Cookies.remove("accessToken");
+        Cookies.remove("refreshToken");
+        navigate(PATHS.HOME);
+        toast.info("از حساب کاربری خود خارج شدید.");
+      })
+      .catch((error) => toast.error(error, { rtl: false }));
   };
 
   return (

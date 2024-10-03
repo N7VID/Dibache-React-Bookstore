@@ -18,7 +18,7 @@ export default function CategoryPage() {
   const q = searchParams.get("q");
 
   const { data, isLoading } = useGetServices<getProductsResponse>({
-    queryKey: ["GetCategoryBooks", sort],
+    queryKey: ["GetCategoryBooks", sort, id],
     queryFn: () =>
       getProducts({ limit: "0", category: id, sort: sort || "createdAt" }),
   });

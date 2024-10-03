@@ -12,6 +12,7 @@ import { postRegisterData } from "../../queryhooks/auth";
 import { AxiosError } from "axios";
 import { authResponse } from "../../types/authResponse";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 
 interface ResponseMessage {
   status: string;
@@ -45,6 +46,9 @@ export default function RegisterPage() {
         Cookies.set("refreshToken", res.token.refreshToken);
         localStorage.setItem("user", JSON.stringify(res.data.user));
         navigate(PATHS.HOME);
+        toast.success(
+          `${res.data.user.firstname} ${res.data.user.lastname} عزیز خوش آمدید!`
+        );
       },
       onError: (error) => {
         const e = error as AxiosError<ResponseMessage>;

@@ -11,6 +11,27 @@ import { getProductsResponse, ProductsEntity } from "../../types/productType";
 import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
 import { Link } from "react-router-dom";
 
+const firstSlider = [
+  { src: "/src/assets/images/Ad-5.png" },
+  { src: "/src/assets/images/Ad-6.png" },
+  { src: "/src/assets/images/Ad-4.png" },
+  { src: "/src/assets/images/Ad-3.png" },
+  { src: "/src/assets/images/Ad-2.png" },
+  { src: "/src/assets/images/Ad-1.png" },
+];
+const secondSlider = [
+  {
+    src: "/src/assets/images/Cat-1.png",
+    path: "/category/66e6bf415611008189a0bd30",
+  },
+  {
+    src: "/src/assets/images/Cat-2.png",
+    path: "/category/66e6a3a95611008189a0bd14",
+  },
+  { src: "/src/assets/images/Cat-3.png", path: "" },
+  { src: "/src/assets/images/Cat-4.png", path: "" },
+];
+
 export default function HomePage() {
   const { data: firstCategoryData, isLoading } =
     useGetServices<getProductsResponse>({
@@ -18,11 +39,20 @@ export default function HomePage() {
       queryFn: () =>
         getProducts({ limit: "6", category: "66e6bf415611008189a0bd30" }),
     });
+  const { data: secondCategoryData, isLoading: secondCategoryIsLoading } =
+    useGetServices<getProductsResponse>({
+      queryKey: ["GetSecondCategoryBooks"],
+      queryFn: () =>
+        getProducts({ limit: "6", category: "66e6a3a95611008189a0bd14" }),
+    });
 
   let firstCategoryItems: ProductsEntity[] = [];
-  if (firstCategoryData?.data.products) {
+  let secondCategoryItems: ProductsEntity[] = [];
+  if (firstCategoryData?.data.products)
     firstCategoryItems = firstCategoryData.data.products;
-  }
+
+  if (secondCategoryData?.data.products)
+    secondCategoryItems = secondCategoryData?.data?.products;
 
   return (
     <>
@@ -53,7 +83,7 @@ export default function HomePage() {
         <h2 className="text-xl font-bold text-center pt-8">
           خرید آسان کتاب در دسته‌بندی‌های مختلف از دیباچه
         </h2>
-        <section className="py-8 px-[80px]">
+        <section className="py-8 px-[50px]">
           <Swiper
             modules={[Navigation, Pagination, A11y, Autoplay]}
             slidesPerView={3}
@@ -64,42 +94,17 @@ export default function HomePage() {
               disableOnInteraction: false,
             }}
           >
-            <SwiperSlide>
-              <div className="flex justify-center items-center">
-                <img
-                  src="/src/assets/images/Ad-4.png"
-                  alt=""
-                  className="rounded-xl w-[350px]"
-                />
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="flex justify-center items-center">
-                <img
-                  src="/src/assets/images/Ad-3.png"
-                  alt=""
-                  className="rounded-xl w-[350px]"
-                />
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="flex justify-center items-center">
-                <img
-                  src="/src/assets/images/Ad-2.png"
-                  alt=""
-                  className="rounded-xl w-[350px]"
-                />
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="flex justify-center items-center">
-                <img
-                  src="/src/assets/images/Ad-1.png"
-                  alt=""
-                  className="rounded-xl w-[350px]"
-                />
-              </div>
-            </SwiperSlide>
+            {firstSlider.map((slide, index) => (
+              <SwiperSlide key={index}>
+                <div className="flex justify-center items-center">
+                  <img
+                    src={slide.src}
+                    alt=""
+                    className="rounded-xl w-[350px]"
+                  />
+                </div>
+              </SwiperSlide>
+            ))}
           </Swiper>
         </section>
         <section className="py-8">
@@ -125,6 +130,59 @@ export default function HomePage() {
               </>
             )}
           </div>
+        </section>
+        <section className="py-8">
+          <div className="flex justify-between items-center px-6">
+            <h3 className="font-semibold text-lg">
+              سفری به درون ذهن با کتاب‌های روانشناسی
+            </h3>
+            <Link to={`/category/66e6a3a95611008189a0bd14`}>
+              <span className="text-persian-green font-semibold flex justify-between items-center gap-2">
+                مشاهده همه
+                <ChevronLeftIcon className="size-4" />
+              </span>
+            </Link>
+          </div>
+          <div className="flex justify-center flex-wrap items-center gap-4 py-8">
+            {secondCategoryIsLoading ? (
+              <Spinner size="lg" color="current" />
+            ) : (
+              <>
+                {secondCategoryItems?.map((item) => (
+                  <NextUiCard key={item._id} item={item} />
+                ))}
+              </>
+            )}
+          </div>
+        </section>
+        <h2 className="text-xl font-bold text-center pt-8">
+          دسته بندی متنوع کتاب ها در دیباچه
+        </h2>
+        <section className="py-8 pb-[100px] px-[50px]">
+          <Swiper
+            modules={[Navigation, Pagination, A11y, Autoplay]}
+            slidesPerView={3}
+            pagination={{ clickable: true }}
+            scrollbar={{ draggable: true }}
+            autoplay={{
+              delay: 5000,
+              disableOnInteraction: false,
+            }}
+          >
+            {secondSlider.map((slide, index) => (
+              <SwiperSlide key={index}>
+                <div className="flex justify-center items-center">
+                  <Link to={slide.path}>
+                    <img
+                      src={slide.src}
+                      alt="Cat-1"
+                      className="rounded-xl w-[350px]"
+                    />
+                  </Link>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </section>
       </div>
     </>

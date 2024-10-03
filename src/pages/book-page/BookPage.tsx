@@ -27,6 +27,7 @@ import TruckIcon from "../../assets/svg/TruckIconIcon";
 import { toPersianNumber } from "../../utils/toPersianNumber";
 import ShoppingCart from "../../assets/svg/ShoppingCartIcon";
 import ChatBubbleLeftRightIcon from "../../assets/svg/ChatBubbleLeftRightIcon";
+import { toast } from "react-toastify";
 
 export default function BookPage() {
   const { id } = useParams();
@@ -58,10 +59,10 @@ export default function BookPage() {
     navigator.clipboard
       .writeText(currentUrl)
       .then(() => {
-        alert("URL copied to clipboard!");
+        toast.success("با موفقیت کپی شد.");
       })
-      .catch((err) => {
-        console.error("Failed to copy: ", err);
+      .catch((error) => {
+        toast.error(`Failed to copy: ${error}`, { rtl: false });
       });
   };
 
@@ -112,6 +113,7 @@ export default function BookPage() {
               slidesPerView={1}
               pagination={{ clickable: true }}
               scrollbar={{ draggable: true }}
+              navigation
             >
               {images?.map((image) => (
                 <SwiperSlide>
@@ -119,7 +121,7 @@ export default function BookPage() {
                     <img
                       src={`http://${image}`}
                       alt={name?.[0]}
-                      className="sm:w-[350px] w-[200px] rounded-lg"
+                      className="sm:w-[350px] w-[200px] rounded-lg max-h-[400px] object-contain"
                     />
                   </div>
                 </SwiperSlide>

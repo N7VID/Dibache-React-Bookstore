@@ -30,6 +30,7 @@ import {
   SubcategoriesResponse,
 } from "../../types/subCategoriesResponse";
 import MainDropDown from "./components/MainDropDown";
+import { toast } from "react-toastify";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -74,11 +75,14 @@ export default function Header() {
   }
 
   const handleActionModal = () => {
-    refetch().then(() => {
-      Cookies.remove("accessToken");
-      Cookies.remove("refreshToken");
-      navigate(PATHS.HOME);
-    });
+    refetch()
+      .then(() => {
+        Cookies.remove("accessToken");
+        Cookies.remove("refreshToken");
+        navigate(PATHS.HOME);
+        toast.info("از حساب کاربری خود خارج شدید.");
+      })
+      .catch((error) => toast.error(error, { rtl: false }));
   };
 
   return (

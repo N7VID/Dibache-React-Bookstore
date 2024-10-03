@@ -94,8 +94,8 @@ export default function HomePage() {
               disableOnInteraction: false,
             }}
           >
-            {firstSlider.map((slide) => (
-              <SwiperSlide>
+            {firstSlider.map((slide, index) => (
+              <SwiperSlide key={index}>
                 <div className="flex justify-center items-center">
                   <img
                     src={slide.src}
@@ -169,8 +169,8 @@ export default function HomePage() {
               disableOnInteraction: false,
             }}
           >
-            {secondSlider.map((slide) => (
-              <SwiperSlide>
+            {secondSlider.map((slide, index) => (
+              <SwiperSlide key={index}>
                 <div className="flex justify-center items-center">
                   <Link to={slide.path}>
                     <img

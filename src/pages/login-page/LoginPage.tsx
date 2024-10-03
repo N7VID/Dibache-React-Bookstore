@@ -12,6 +12,7 @@ import { EyeSlashFilledIcon } from "../../assets/svg/EyeSlashFilledIcon";
 import { EyeFilledIcon } from "../../assets/svg/EyeFillesIcon";
 import Cookies from "js-cookie";
 import { authResponse } from "../../types/authResponse";
+import { toast } from "react-toastify";
 interface ResponseMessage {
   status: string;
   message: string;
@@ -46,10 +47,23 @@ export default function LoginPage() {
         } else {
           navigate(PATHS.HOME);
         }
+        toast.success(
+          `${res.data.user.firstname} ${res.data.user.lastname} عزیز خوش آمدید!`
+        );
       },
       onError: (error) => {
-        const e = error as AxiosError<ResponseMessage>;
-        console.log(e?.response?.data?.message);
+        const axiosError = error as AxiosError<ResponseMessage>;
+        if (axiosError.response) {
+          console.log("Error response data:", axiosError.response.data);
+          toast.error(axiosError.response.data.message, {
+            rtl: false,
+          });
+        } else {
+          console.error("Error:", axiosError.message);
+          toast.error("An unexpected error occurred", {
+            rtl: false,
+          });
+        }
       },
       onSettled: () => {
         reset();

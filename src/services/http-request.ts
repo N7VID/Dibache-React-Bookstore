@@ -1,7 +1,8 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import { BASE_URL } from "../constants";
-import { postRefreshToken } from "../queryhooks/auth";
+import { logout, postRefreshToken } from "../queryhooks/auth";
+import { PATHS } from "../configs/paths.config";
 
 export const httpRequest = axios.create({
   baseURL: BASE_URL,
@@ -33,6 +34,7 @@ httpRequest.interceptors.response.use(
           return httpRequest.request(originRequest);
         })
         .catch((error) => {
+          logout({ href: PATHS.LOGIN });
           return Promise.reject(error);
         });
     }

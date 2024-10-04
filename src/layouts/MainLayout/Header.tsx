@@ -31,6 +31,7 @@ import {
 } from "../../types/subCategoriesResponse";
 import MainDropDown from "./components/MainDropDown";
 import { toast } from "react-toastify";
+import { logout } from "../../queryhooks/auth";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -77,9 +78,7 @@ export default function Header() {
   const handleActionModal = () => {
     refetch()
       .then(() => {
-        Cookies.remove("accessToken");
-        Cookies.remove("refreshToken");
-        navigate(PATHS.HOME);
+        logout({ href: PATHS.HOME });
         toast.info("از حساب کاربری خود خارج شدید.");
       })
       .catch((error) => toast.error(error, { rtl: false }));
@@ -180,6 +179,11 @@ export default function Header() {
                         radius="sm"
                         variant="light"
                         onClick={() => {
+                          navigate(`category/${category._id}`);
+                          setOpenDropdown(null);
+                          setMainDropdownOpen(false);
+                        }}
+                        onMouseEnter={() => {
                           setCategoryId(category._id);
                           toggleDropdown(category._id);
                         }}

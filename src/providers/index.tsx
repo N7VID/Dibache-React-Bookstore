@@ -1,13 +1,12 @@
 import { NextUIProvider } from "@nextui-org/react";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { ReactNode } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 import { Flip, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import client from "../lib/react-query";
 
-type Props = { children: ReactNode };
-
-export default function Providers({ children }: Props) {
+export default function Providers() {
+  const navigate = useNavigate();
   return (
     <QueryClientProvider client={client}>
       <ToastContainer
@@ -24,7 +23,9 @@ export default function Providers({ children }: Props) {
         theme="light"
         transition={Flip}
       />
-      <NextUIProvider>{children}</NextUIProvider>
+      <NextUIProvider navigate={navigate}>
+        <Outlet />
+      </NextUIProvider>
     </QueryClientProvider>
   );
 }

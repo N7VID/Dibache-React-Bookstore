@@ -1,14 +1,13 @@
 import { Button, useDisclosure } from "@nextui-org/react";
-import Cookies from "js-cookie";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+import { toast } from "react-toastify";
 import NextUiModal from "../../components/NextUiModal/NextUiModal";
 import { PATHS } from "../../configs/paths.config";
 import { useLogout } from "../../hooks/useLogout";
+import { logout } from "../../queryhooks/auth";
 import MainDropDown from "../MainLayout/components/MainDropDown";
-import { toast } from "react-toastify";
 
 export default function DashboardHeader() {
-  const navigate = useNavigate();
   const {
     isOpen: isOpenLogout,
     onOpen: onOpenLogout,
@@ -19,9 +18,7 @@ export default function DashboardHeader() {
   const handleActionModal = () => {
     refetch()
       .then(() => {
-        Cookies.remove("accessToken");
-        Cookies.remove("refreshToken");
-        navigate(PATHS.HOME);
+        logout({ href: PATHS.HOME });
         toast.info("از حساب کاربری خود خارج شدید.");
       })
       .catch((error) => toast.error(error, { rtl: false }));
@@ -63,13 +60,6 @@ export default function DashboardHeader() {
               <li>
                 <NavLink to={PATHS.INVENTORY}>موجودی</NavLink>
               </li>
-              {/* <li>
-                <NavLink
-                  to={""}
-                >
-                  کاربران
-                </NavLink>
-              </li> */}
             </ul>
           </div>
           <MainDropDown onOpen={onOpenLogout} />

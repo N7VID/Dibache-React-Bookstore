@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import { ENDPOINTS } from "../constants";
 import { httpRequest } from "../services/http-request";
 
@@ -13,6 +14,12 @@ export const getLogout = async () => {
   const url = ENDPOINTS.AUTH.LOGOUT;
   const response = await httpRequest.get(url);
   return response.data;
+};
+
+export const logout = ({ href }: { href: string }) => {
+  Cookies.remove("accessToken");
+  Cookies.remove("refreshToken");
+  location.href = href;
 };
 
 export const postRefreshToken = async (token: Token) => {

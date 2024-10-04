@@ -31,9 +31,6 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
       category: "",
       subcategory: "",
       brand: "",
-      quantity: 1,
-      price: 0,
-      discount: 0,
     },
   });
 

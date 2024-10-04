@@ -17,65 +17,71 @@ import {
 } from "../pages";
 import { AuthLayout, DashboardLayout, MainLayout } from "../layouts";
 import PrivateRoutes from "./Private.routes";
+import Providers from "../providers";
 
 export const router = createBrowserRouter([
   {
-    path: PATHS.HOME,
-    element: <MainLayout />,
+    element: <Providers />,
     children: [
-      { index: true, element: <HomePage /> },
       {
-        path: PATHS.CART,
-        element: (
-          <PrivateRoutes>
-            <CartPage />
-          </PrivateRoutes>
-        ),
+        path: PATHS.HOME,
+        element: <MainLayout />,
+        children: [
+          { index: true, element: <HomePage /> },
+          {
+            path: PATHS.CART,
+            element: (
+              <PrivateRoutes>
+                <CartPage />
+              </PrivateRoutes>
+            ),
+          },
+          { path: PATHS.CATEGORY, element: <CategoryPage /> },
+          { path: PATHS.BOOK, element: <BookPage /> },
+          {
+            path: PATHS.PAYMENT,
+            element: (
+              <PrivateRoutes>
+                <PaymentPage />
+              </PrivateRoutes>
+            ),
+          },
+          {
+            path: PATHS.PAYMENT_RESULT,
+            element: (
+              <PrivateRoutes>
+                <PaymentResultPage />
+              </PrivateRoutes>
+            ),
+          },
+        ],
       },
-      { path: PATHS.CATEGORY, element: <CategoryPage /> },
-      { path: PATHS.BOOK, element: <BookPage /> },
       {
-        path: PATHS.PAYMENT,
-        element: (
-          <PrivateRoutes>
-            <PaymentPage />
-          </PrivateRoutes>
-        ),
+        path: PATHS.DASHBOARD,
+        element: <DashboardLayout />,
+        children: [
+          { index: true, element: <OrdersPage /> },
+          { path: PATHS.INVENTORY, element: <InventoryPage /> },
+          { path: PATHS.BOOKS, element: <BooksPage /> },
+        ],
       },
       {
-        path: PATHS.PAYMENT_RESULT,
-        element: (
-          <PrivateRoutes>
-            <PaymentResultPage />
-          </PrivateRoutes>
-        ),
+        path: PATHS.LOGIN,
+        element: <AuthLayout />,
+        children: [
+          { index: true, element: <LoginPage /> },
+          { path: PATHS.ADMIN, element: <AdminLoginPage /> },
+        ],
+      },
+      {
+        path: PATHS.REGISTER,
+        element: <AuthLayout />,
+        children: [{ index: true, element: <RegisterPage /> }],
+      },
+      {
+        path: PATHS.NOT_FOUND,
+        element: <NotFoundPage />,
       },
     ],
-  },
-  {
-    path: PATHS.DASHBOARD,
-    element: <DashboardLayout />,
-    children: [
-      { index: true, element: <OrdersPage /> },
-      { path: PATHS.INVENTORY, element: <InventoryPage /> },
-      { path: PATHS.BOOKS, element: <BooksPage /> },
-    ],
-  },
-  {
-    path: PATHS.LOGIN,
-    element: <AuthLayout />,
-    children: [
-      { index: true, element: <LoginPage /> },
-      { path: PATHS.ADMIN, element: <AdminLoginPage /> },
-    ],
-  },
-  {
-    path: PATHS.REGISTER,
-    element: <AuthLayout />,
-    children: [{ index: true, element: <RegisterPage /> }],
-  },
-  {
-    path: PATHS.NOT_FOUND,
-    element: <NotFoundPage />,
   },
 ]);

@@ -54,7 +54,7 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="LayoutContainer cursor-default  pb-16">
+    <div className="LayoutContainer cursor-default pb-16">
       <SortCategory
         name={`دسته بندی ${categoryName}`}
         q={q}
@@ -84,7 +84,7 @@ export default function CategoryPage() {
                 <Spinner size="lg" color="current" />
               ) : (
                 <>
-                  {groupBySubcategory[subcategory].map((item) => (
+                  {groupBySubcategory[subcategory].slice(0, 6).map((item) => (
                     <NextUiCard key={item._id} item={item} />
                   ))}
                 </>

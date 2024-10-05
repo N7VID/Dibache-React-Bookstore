@@ -92,7 +92,7 @@ export default function BookPage() {
           </BreadcrumbItem>
           <BreadcrumbItem>
             <Link
-              to={`/category/${data?.data.product.category._id}`}
+              to={`/subcategory/${data?.data.product.subcategory._id}`}
               className="text-[11px] tablet:text-[14px] lg:text-base"
             >
               {data?.data.product.subcategory.name}

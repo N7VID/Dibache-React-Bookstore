@@ -203,7 +203,7 @@ export default function Header() {
                           key={subCategory._id}
                           textValue={subCategory.name}
                           onClick={() => {
-                            navigate(`/category/${category._id}`);
+                            navigate(`/subcategory/${subCategory._id}`);
                             setMainDropdownOpen(false);
                             setOpenDropdown(null);
                           }}

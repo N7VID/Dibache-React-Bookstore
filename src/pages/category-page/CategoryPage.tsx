@@ -1,11 +1,12 @@
 import { Input, Select, SelectItem, Spinner } from "@nextui-org/react";
 import { ChangeEvent } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { SearchIcon } from "../../assets/svg/SearchIcon";
 import NextUiCard from "../../components/NextUiCard/NextUiCard";
 import { useGetServices } from "../../hooks/useGetServices";
 import { getProducts } from "../../queryhooks/product";
 import { getProductsResponse, ProductsEntity } from "../../types/productType";
+import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
 
 export default function CategoryPage() {
   const { id } = useParams();
@@ -53,7 +54,7 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="LayoutContainer cursor-default">
+    <div className="LayoutContainer cursor-default  pb-16">
       <section className="w-full py-8 shadow-box bg-white rounded-lg mt-12 mb-8 px-10 flex justify-between items-center flex-col gap-8 md:flex-row">
         <h3 className="font-bold text-xl font-vazir">
           دسته بندی {categoryName}
@@ -114,24 +115,35 @@ export default function CategoryPage() {
           </Select>
         </div>
       </section>
-      {Object.keys(groupBySubcategory).map((subcategory) => (
-        <section className="py-6" key={subcategory}>
-          <div className="flex justify-between items-center px-6">
-            <h3 className="font-semibold text-xl">{subcategory}</h3>
-          </div>
-          <div className="flex justify-center flex-wrap items-center gap-4 py-4">
-            {isLoading ? (
-              <Spinner size="lg" color="current" />
-            ) : (
-              <>
-                {groupBySubcategory[subcategory].map((item) => (
-                  <NextUiCard key={item._id} item={item} />
-                ))}
-              </>
-            )}
-          </div>
-        </section>
-      ))}
+      {Object.keys(groupBySubcategory).map((subcategory) => {
+        const subId = groupBySubcategory[subcategory]
+          ?.map((item) => item.subcategory._id)
+          .filter((value, index, curr) => curr.indexOf(value) === index);
+        return (
+          <section className="py-4" key={subcategory}>
+            <div className="flex justify-between items-center px-6">
+              <h3 className="font-semibold text-xl">{subcategory}</h3>
+              <Link to={`/subcategory/${subId}`}>
+                <span className="text-persian-green font-semibold flex justify-between items-center gap-2">
+                  مشاهده همه
+                  <ChevronLeftIcon className="size-4" />
+                </span>
+              </Link>
+            </div>
+            <div className="flex justify-center flex-wrap items-center gap-4 py-8">
+              {isLoading ? (
+                <Spinner size="lg" color="current" />
+              ) : (
+                <>
+                  {groupBySubcategory[subcategory].map((item) => (
+                    <NextUiCard key={item._id} item={item} />
+                  ))}
+                </>
+              )}
+            </div>
+          </section>
+        );
+      })}
     </div>
   );
 }

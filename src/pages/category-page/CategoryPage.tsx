@@ -1,4 +1,4 @@
-import { Spinner } from "@nextui-org/react";
+import { BreadcrumbItem, Breadcrumbs, Spinner } from "@nextui-org/react";
 import { ChangeEvent } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
@@ -7,6 +7,7 @@ import SortCategory from "../../components/SortCategory/SortCategory";
 import { useGetServices } from "../../hooks/useGetServices";
 import { getProducts } from "../../queryhooks/product";
 import { getProductsResponse, ProductsEntity } from "../../types/productType";
+import { PATHS } from "../../configs/paths.config";
 
 export default function CategoryPage() {
   const { id } = useParams();
@@ -55,6 +56,26 @@ export default function CategoryPage() {
 
   return (
     <div className="LayoutContainer cursor-default pb-16">
+      <div className="py-4">
+        <Breadcrumbs separator={<ChevronLeftIcon className="size-3" />}>
+          <BreadcrumbItem>
+            <Link
+              to={PATHS.HOME}
+              className="text-[11px] tablet:text-[14px] lg:text-base"
+            >
+              دیباچه
+            </Link>
+          </BreadcrumbItem>
+          <BreadcrumbItem>
+            <Link
+              to={`/category/${items[0]?.category._id}`}
+              className="text-[11px] tablet:text-[14px] lg:text-base"
+            >
+              {items[0]?.category.name}
+            </Link>
+          </BreadcrumbItem>
+        </Breadcrumbs>
+      </div>
       <SortCategory
         name={`دسته بندی ${categoryName}`}
         q={q}

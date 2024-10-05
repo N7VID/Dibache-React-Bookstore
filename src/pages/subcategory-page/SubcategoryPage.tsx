@@ -1,11 +1,13 @@
-import { Spinner } from "@nextui-org/react";
+import { BreadcrumbItem, Breadcrumbs, Spinner } from "@nextui-org/react";
 import { ChangeEvent } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import NextUiCard from "../../components/NextUiCard/NextUiCard";
 import SortCategory from "../../components/SortCategory/SortCategory";
 import { useGetServices } from "../../hooks/useGetServices";
 import { getProducts } from "../../queryhooks/product";
 import { getProductsResponse, ProductsEntity } from "../../types/productType";
+import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
+import { PATHS } from "../../configs/paths.config";
 
 export default function SubcategoryPage() {
   const { id } = useParams();
@@ -43,6 +45,34 @@ export default function SubcategoryPage() {
 
   return (
     <div className="LayoutContainer cursor-default pb-16">
+      <div className="py-4">
+        <Breadcrumbs separator={<ChevronLeftIcon className="size-3" />}>
+          <BreadcrumbItem>
+            <Link
+              to={PATHS.HOME}
+              className="text-[11px] tablet:text-[14px] lg:text-base"
+            >
+              دیباچه
+            </Link>
+          </BreadcrumbItem>
+          <BreadcrumbItem>
+            <Link
+              to={`/category/${items[0]?.category._id}`}
+              className="text-[11px] tablet:text-[14px] lg:text-base"
+            >
+              {items[0]?.category.name}
+            </Link>
+          </BreadcrumbItem>
+          <BreadcrumbItem>
+            <Link
+              to={`/subcategory/${items[0]?.subcategory._id}`}
+              className="text-[11px] tablet:text-[14px] lg:text-base"
+            >
+              {items[0]?.subcategory.name}
+            </Link>
+          </BreadcrumbItem>
+        </Breadcrumbs>
+      </div>
       <SortCategory
         name={`زیر مجموعه ${items[0]?.subcategory?.name}`}
         q={q}

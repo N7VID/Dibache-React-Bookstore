@@ -1,6 +1,9 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Select, SelectItem, Spinner } from "@nextui-org/react";
 import { ChangeEvent, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import XCircleIcon from "../../../../assets/svg/XCircleIcon";
 import TextEditor from "../../../../components/TextEditor/TextEditor";
 import { useGetServices } from "../../../../hooks/useGetServices";
 import { usePostService } from "../../../../hooks/usePostService";
@@ -10,20 +13,20 @@ import { getSubcategories } from "../../../../queryhooks/getSubcategories";
 import { CategoriesResponse } from "../../../../types/categoriesResponse";
 import { SubcategoriesResponse } from "../../../../types/subCategoriesResponse";
 import { AddProduct, schema } from "./schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "react-toastify";
 
 export default function AddProductForm({ onClose }: { onClose: () => void }) {
   const [subCategoriesItem, setSubCategoriesItem] = useState<
     { label: string; value: string }[]
   >([]);
-
+  const [selectedThumbnail, setSelectedThumbnail] = useState<string>("");
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const {
     handleSubmit,
     formState: { errors },
     register,
     control,
     reset,
+    resetField,
   } = useForm<AddProduct>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -80,6 +83,47 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
   ) => {
     mutate(value);
   };
+
+  function handleDeleteThumbnail() {
+    setSelectedThumbnail("");
+    resetField("thumbnail");
+  }
+
+  const handleDeleteImages = (image: string) => {
+    // Update selected images by filtering out the deleted one
+    setSelectedImages((prevImages) =>
+      prevImages.filter((value) => value !== image)
+    );
+    console.log(selectedImages);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const fileArray = Array.from(files);
+      setSelectedImages([]);
+      const imagesPreview: string[] = [];
+      const fileReaders: FileReader[] = [];
+
+      fileArray.forEach((file) => {
+        const fileReader = new FileReader();
+        fileReaders.push(fileReader);
+
+        fileReader.onload = (e) => {
+          const result = e.target?.result;
+          if (result) {
+            imagesPreview.push(result as string);
+          }
+
+          if (imagesPreview.length === fileArray.length) {
+            setSelectedImages(imagesPreview);
+          }
+        };
+        fileReader.readAsDataURL(file);
+      });
+    }
+  };
+
   return (
     <form
       action=""
@@ -173,27 +217,74 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
         variant="bordered"
         {...register("discount", { valueAsNumber: true })}
       />
-      <Input
-        label={"تصویر پیش نمایش"}
-        size="sm"
-        type="file"
-        className="w-44 xs:w-64 sm:w-full"
-        isInvalid={!!errors["thumbnail"]}
-        errorMessage={`${errors["thumbnail"]?.message}`}
-        variant="bordered"
-        {...register("thumbnail")}
-      />
-      <Input
-        label={"تصاویر"}
-        size="sm"
-        multiple
-        type="file"
-        className="w-44 xs:w-64 sm:w-full"
-        isInvalid={!!errors["images"]}
-        errorMessage={`${errors["images"]?.message}`}
-        variant="bordered"
-        {...register("images")}
-      />
+      <div className="flex flex-col justify-center items-center w-full">
+        <Input
+          label={"تصویر پیش نمایش"}
+          size="sm"
+          type="file"
+          className="w-44 xs:w-64 sm:w-full"
+          isInvalid={!!errors["thumbnail"]}
+          errorMessage={`${errors["thumbnail"]?.message}`}
+          variant="bordered"
+          {...register("thumbnail", {
+            onChange: (e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                setSelectedThumbnail(URL.createObjectURL(file));
+              }
+            },
+          })}
+        />
+        {selectedThumbnail && (
+          <div className="flex border-2 border-[#e0e0e0] rounded-md w-full flex-col justify-center items-center gap-1 py-1">
+            <span className="text-[10px]">تصویر بارگزاری شده</span>
+            <div className="relative">
+              <XCircleIcon
+                className="size-6 cursor-pointer text-red-500 absolute top-0 left-0"
+                onClick={handleDeleteThumbnail}
+              />
+              <img
+                src={selectedThumbnail}
+                alt="thumbnail-preview"
+                className="rounded-md w-32"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="flex flex-col w-full mb-4">
+        <Input
+          label={"تصاویر"}
+          size="sm"
+          multiple
+          type="file"
+          className="w-44 xs:w-64 sm:w-full"
+          isInvalid={!!errors["images"]}
+          errorMessage={`${errors["images"]?.message}`}
+          variant="bordered"
+          {...(register("images"), { onChange: (e) => handleFileChange(e) })}
+        />
+        {selectedImages.length > 0 && (
+          <div className="flex border-2 border-[#e0e0e0] rounded-md w-full flex-col justify-center items-center gap-1 py-1">
+            <span className="text-[10px]">تصویر بارگزاری شده</span>
+            <div className="flex items-center justify-between gap-2 overflow-x-auto">
+              {selectedImages.map((image, index) => (
+                <div className="relative flex-shrink-0" key={index}>
+                  <XCircleIcon
+                    className="size-6 cursor-pointer text-red-500 absolute top-0 left-0"
+                    onClick={() => handleDeleteImages(image)}
+                  />
+                  <img
+                    src={image}
+                    alt="image-preview"
+                    className="rounded-md w-32"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
       <div className="w-full">
         <Controller
           control={control}

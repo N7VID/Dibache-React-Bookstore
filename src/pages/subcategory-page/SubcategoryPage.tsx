@@ -1,6 +1,16 @@
-import { BreadcrumbItem, Breadcrumbs, Spinner } from "@nextui-org/react";
-import { ChangeEvent } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import {
+  BreadcrumbItem,
+  Breadcrumbs,
+  Pagination,
+  Spinner,
+} from "@nextui-org/react";
+import { ChangeEvent, useMemo } from "react";
+import {
+  Link,
+  ScrollRestoration,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import NextUiCard from "../../components/NextUiCard/NextUiCard";
 import SortCategory from "../../components/SortCategory/SortCategory";
 import { useGetServices } from "../../hooks/useGetServices";
@@ -8,27 +18,39 @@ import { getProducts } from "../../queryhooks/product";
 import { getProductsResponse, ProductsEntity } from "../../types/productType";
 import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
 import { PATHS } from "../../configs/paths.config";
+import { renderItem } from "../../utils/paginationRenderItem";
 
 export default function SubcategoryPage() {
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams({
     sort: "createdAt",
-    q: "",
+    page: "1",
   });
   const currentParams = Object.fromEntries([...searchParams]);
   const sort = searchParams.get("sort");
   const q = searchParams.get("q");
 
+  const params = {
+    limit: "6",
+    subcategory: id,
+    sort: sort || "createdAt",
+    page: Number(searchParams.get("page")) || 1,
+  };
+
   const { data, isLoading } = useGetServices<getProductsResponse>({
-    queryKey: ["GetCategoryBooks", sort, id],
-    queryFn: () =>
-      getProducts({ limit: "0", subcategory: id, sort: sort || "createdAt" }),
+    queryKey: ["GetCategoryBooks", params, id],
+    queryFn: () => getProducts(params),
   });
 
   let items: ProductsEntity[] = [];
   if (data?.data.products) {
     items = data.data.products;
   }
+
+  const perPage = data?.per_page ? data?.per_page : 6;
+  const pages = useMemo(() => {
+    return data?.total ? Math.ceil(data.total / perPage) : 0;
+  }, [data?.total, perPage]);
 
   function handleSortType(event: ChangeEvent<HTMLSelectElement>) {
     setSearchParams({ sort: event.target.value });
@@ -43,8 +65,13 @@ export default function SubcategoryPage() {
     }
   }
 
+  function handlePageChange(page: number) {
+    setSearchParams({ ...currentParams, page: page.toString() });
+  }
+
   return (
     <div className="LayoutContainer cursor-default pb-16">
+      <ScrollRestoration />
       <div className="py-4">
         <Breadcrumbs separator={<ChevronLeftIcon className="size-3" />}>
           <BreadcrumbItem>
@@ -82,7 +109,7 @@ export default function SubcategoryPage() {
         handleSortOrder={handleSortOrder}
         currentParams={currentParams}
       />
-      <section className="py-4">
+      <section className="py-4 flex flex-col justify-center items-center gap-6">
         <div className="flex justify-center flex-wrap items-center gap-4 py-8">
           {isLoading ? (
             <Spinner size="lg" color="current" />
@@ -94,6 +121,17 @@ export default function SubcategoryPage() {
             </>
           )}
         </div>
+        <Pagination
+          showShadow
+          renderItem={renderItem}
+          showControls
+          color="primary"
+          variant="bordered"
+          total={pages}
+          initialPage={1}
+          page={Number(searchParams.get("page")) || 1}
+          onChange={(page) => handlePageChange(page)}
+        />
       </section>
     </div>
   );

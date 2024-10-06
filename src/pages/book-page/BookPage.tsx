@@ -157,8 +157,15 @@ export default function BookPage() {
                   </span>
                 </div>
                 <div className="flex gap-2 items-center">
-                  <span className="text-key-gray">امتیاز:</span>
-                  <span className="text-value-gray">
+                  <div className="text-key-gray">
+                    <span>امتیاز کتاب:</span>
+                  </div>
+                  <img
+                    src="/src/assets/images/star.png"
+                    alt="star"
+                    className="w-4"
+                  />
+                  <span className="text-value-gray text-sm">
                     {product?.rating.rate} از {product?.rating.count} رای
                   </span>
                 </div>
@@ -194,24 +201,32 @@ export default function BookPage() {
             <CardBody>
               <div className="flex flex-col justify-between items-center p-4 gap-8">
                 <div className="flex justify-between items-center w-full">
-                  <span className="text-sm mobile:text-base">قیمت:</span>
-                  <Badge
-                    content={`${toPersianNumber(discountPercent)}%`}
-                    className="bg-red-500 text-white mobile:size-8 size-6 text-[10px] mobile:text-[13px]"
-                    placement="top-left"
-                  >
-                    <div className="flex flex-col">
-                      <span className="text-key-gray line-through text-[10px] pl-6 mobile:text-[13px]">
-                        {toPersianNumber(price)}
-                      </span>
-                      <div>
-                        <span className="font-semibold text-base mobile:text-[18px]">
-                          {toPersianNumber(endPrice)}
-                        </span>{" "}
-                        <span className="text-[12px]">تومان</span>
-                      </div>
+                  {product?.quantity > 0 ? (
+                    <>
+                      <span className="text-sm mobile:text-base">قیمت:</span>
+                      <Badge
+                        content={`${toPersianNumber(discountPercent)}%`}
+                        className="bg-red-500 text-white mobile:size-8 size-6 text-[10px] mobile:text-[13px]"
+                        placement="top-left"
+                      >
+                        <div className="flex flex-col">
+                          <span className="text-key-gray line-through text-[10px] pl-6 mobile:text-[13px]">
+                            {toPersianNumber(price)}
+                          </span>
+                          <div>
+                            <span className="font-semibold text-base mobile:text-[18px]">
+                              {toPersianNumber(endPrice)}
+                            </span>{" "}
+                            <span className="text-[12px]">تومان</span>
+                          </div>
+                        </div>
+                      </Badge>
+                    </>
+                  ) : (
+                    <div className="w-full text-center">
+                      این کتاب در حال حاضر موجود نیست ):
                     </div>
-                  </Badge>
+                  )}
                 </div>
                 <Button
                   className="bg-persian-green text-white w-44 text-[13px] mobile:text-base mobile:w-auto"

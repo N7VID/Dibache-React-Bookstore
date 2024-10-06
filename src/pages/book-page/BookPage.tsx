@@ -9,7 +9,7 @@ import {
   CardHeader,
   Divider,
 } from "@nextui-org/react";
-import { Link, useParams } from "react-router-dom";
+import { Link, ScrollRestoration, useParams } from "react-router-dom";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -28,6 +28,7 @@ import { toPersianNumber } from "../../utils/toPersianNumber";
 import ShoppingCart from "../../assets/svg/ShoppingCartIcon";
 import ChatBubbleLeftRightIcon from "../../assets/svg/ChatBubbleLeftRightIcon";
 import { toast } from "react-toastify";
+import { ProductsEntity } from "../../types/productType";
 
 export default function BookPage() {
   const { id } = useParams();
@@ -40,14 +41,16 @@ export default function BookPage() {
   });
 
   let endPrice = 0;
-  let price = 0;
+  let totalPrice = 0;
   let discountPercent = 0;
+  let product!: ProductsEntity;
   if (data?.data.product) {
+    product = data.data.product;
     const discount = data?.data.product.discount;
-    price = data?.data?.product?.price;
+    endPrice = data?.data?.product?.price;
     if (discount !== 0) {
-      endPrice = price - discount;
-      discountPercent = Math.ceil((discount * 100) / price);
+      totalPrice = endPrice + discount;
+      discountPercent = Math.ceil((discount * 100) / endPrice);
     }
   }
   const name = data?.data.product.name.split("اثر");
@@ -72,6 +75,7 @@ export default function BookPage() {
 
   return (
     <div className="LayoutContainer cursor-default pb-8">
+      <ScrollRestoration />
       <div className="py-4">
         <Breadcrumbs separator={<ChevronLeftIcon className="size-3" />}>
           <BreadcrumbItem>
@@ -84,18 +88,18 @@ export default function BookPage() {
           </BreadcrumbItem>
           <BreadcrumbItem>
             <Link
-              to={`/category/${data?.data.product.category._id}`}
+              to={`/category/${product?.category._id}`}
               className="text-[11px] tablet:text-[14px] lg:text-base"
             >
-              {data?.data.product.category.name}
+              {product?.category.name}
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
             <Link
-              to={`/category/${data?.data.product.category._id}`}
+              to={`/subcategory/${product?.subcategory._id}`}
               className="text-[11px] tablet:text-[14px] lg:text-base"
             >
-              {data?.data.product.subcategory.name}
+              {product?.subcategory.name}
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
@@ -116,7 +120,7 @@ export default function BookPage() {
               navigation
             >
               {images?.map((image) => (
-                <SwiperSlide>
+                <SwiperSlide key={image}>
                   <div className="flex justify-center items-center">
                     <img
                       src={`http://${image}`}
@@ -143,7 +147,7 @@ export default function BookPage() {
                 <div className="flex gap-2 items-center">
                   <span className="text-key-gray">انتشارات:</span>
                   <span className="text-value-gray border-b-1 border-value-gray">
-                    {data?.data.product.brand}
+                    {product?.brand}
                   </span>
                 </div>
                 <div className="flex gap-2 items-center">
@@ -153,10 +157,16 @@ export default function BookPage() {
                   </span>
                 </div>
                 <div className="flex gap-2 items-center">
-                  <span className="text-key-gray">امتیاز:</span>
-                  <span className="text-value-gray">
-                    {data?.data.product.rating.rate} از{" "}
-                    {data?.data.product.rating.count} رای
+                  <div className="text-key-gray">
+                    <span>امتیاز کتاب:</span>
+                  </div>
+                  <img
+                    src="/src/assets/images/star.png"
+                    alt="star"
+                    className="w-4"
+                  />
+                  <span className="text-value-gray text-sm">
+                    {product?.rating.rate} از {product?.rating.count} رای
                   </span>
                 </div>
               </div>
@@ -191,31 +201,40 @@ export default function BookPage() {
             <CardBody>
               <div className="flex flex-col justify-between items-center p-4 gap-8">
                 <div className="flex justify-between items-center w-full">
-                  <span className="text-sm mobile:text-base">قیمت:</span>
-                  <Badge
-                    content={`${toPersianNumber(discountPercent)}%`}
-                    className="bg-red-500 text-white mobile:size-8 size-6 text-[10px] mobile:text-[13px]"
-                    placement="top-left"
-                  >
-                    <div className="flex flex-col">
-                      <span className="text-key-gray line-through text-[10px] pl-6 mobile:text-[13px]">
-                        {toPersianNumber(price)}
-                      </span>
-                      <div>
-                        <span className="font-semibold text-base mobile:text-[18px]">
-                          {toPersianNumber(endPrice)}
-                        </span>{" "}
-                        <span className="text-[12px]">تومان</span>
-                      </div>
+                  {product?.quantity > 0 ? (
+                    <>
+                      <span className="text-sm mobile:text-base">قیمت:</span>
+                      <Badge
+                        content={`${toPersianNumber(discountPercent)}%`}
+                        className="bg-red-500 text-white mobile:size-8 size-6 text-[10px] mobile:text-[13px]"
+                        placement="top-left"
+                      >
+                        <div className="flex flex-col">
+                          <span className="text-key-gray line-through text-[10px] pl-6 mobile:text-[13px]">
+                            {toPersianNumber(totalPrice)}
+                          </span>
+                          <div>
+                            <span className="font-semibold text-base mobile:text-[18px]">
+                              {toPersianNumber(endPrice)}
+                            </span>{" "}
+                            <span className="text-[12px]">تومان</span>
+                          </div>
+                        </div>
+                      </Badge>
+                    </>
+                  ) : (
+                    <div className="w-full text-center">
+                      این کتاب در حال حاضر موجود نیست ):
                     </div>
-                  </Badge>
+                  )}
                 </div>
                 <Button
                   className="bg-persian-green text-white w-44 text-[13px] mobile:text-base mobile:w-auto"
                   variant="solid"
                   startContent={<ShoppingCart />}
+                  isDisabled={product?.quantity === 0}
                 >
-                  افزودن به سبد خرید
+                  {product?.quantity > 0 ? "افزودن به سبد خرید" : "ناموجود"}
                 </Button>
               </div>
             </CardBody>

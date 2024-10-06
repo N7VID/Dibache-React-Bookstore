@@ -1,33 +1,45 @@
-import { BreadcrumbItem, Breadcrumbs, Spinner } from "@nextui-org/react";
-import { ChangeEvent } from "react";
+import {
+  BreadcrumbItem,
+  Breadcrumbs,
+  Pagination,
+  Spinner,
+} from "@nextui-org/react";
+import { ChangeEvent, useMemo } from "react";
 import {
   Link,
   ScrollRestoration,
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
 import NextUiCard from "../../components/NextUiCard/NextUiCard";
 import SortCategory from "../../components/SortCategory/SortCategory";
 import { useGetServices } from "../../hooks/useGetServices";
 import { getProducts } from "../../queryhooks/product";
 import { getProductsResponse, ProductsEntity } from "../../types/productType";
+import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
 import { PATHS } from "../../configs/paths.config";
+import { renderItem } from "../../utils/paginationRenderItem";
 
-export default function CategoryPage() {
+export default function SubcategoryPage() {
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams({
     sort: "createdAt",
-    q: "",
+    page: "1",
   });
   const currentParams = Object.fromEntries([...searchParams]);
   const sort = searchParams.get("sort");
   const q = searchParams.get("q");
 
+  const params = {
+    limit: "6",
+    subcategory: id,
+    sort: sort || "createdAt",
+    page: Number(searchParams.get("page")) || 1,
+  };
+
   const { data, isLoading } = useGetServices<getProductsResponse>({
-    queryKey: ["GetCategoryBooks", sort, id],
-    queryFn: () =>
-      getProducts({ limit: "0", category: id, sort: sort || "createdAt" }),
+    queryKey: ["GetCategoryBooks", params, id],
+    queryFn: () => getProducts(params),
   });
 
   let items: ProductsEntity[] = [];
@@ -35,16 +47,10 @@ export default function CategoryPage() {
     items = data.data.products;
   }
 
-  let categoryName = "";
-  const groupBySubcategory = items.reduce((result, item) => {
-    const subcategoryName = item.subcategory.name as string;
-    categoryName = item.category.name as string;
-    if (!result[subcategoryName]) {
-      result[subcategoryName] = [];
-    }
-    result[subcategoryName].push(item);
-    return result;
-  }, {} as { [key: string]: typeof items });
+  const perPage = data?.per_page ? data?.per_page : 6;
+  const pages = useMemo(() => {
+    return data?.total ? Math.ceil(data.total / perPage) : 0;
+  }, [data?.total, perPage]);
 
   function handleSortType(event: ChangeEvent<HTMLSelectElement>) {
     setSearchParams({ sort: event.target.value });
@@ -57,6 +63,10 @@ export default function CategoryPage() {
     } else {
       setSearchParams({ sort: field });
     }
+  }
+
+  function handlePageChange(page: number) {
+    setSearchParams({ ...currentParams, page: page.toString() });
   }
 
   return (
@@ -80,10 +90,18 @@ export default function CategoryPage() {
               {items[0]?.category.name}
             </Link>
           </BreadcrumbItem>
+          <BreadcrumbItem>
+            <Link
+              to={`/subcategory/${items[0]?.subcategory._id}`}
+              className="text-[11px] tablet:text-[14px] lg:text-base"
+            >
+              {items[0]?.subcategory.name}
+            </Link>
+          </BreadcrumbItem>
         </Breadcrumbs>
       </div>
       <SortCategory
-        name={`دسته بندی ${categoryName}`}
+        name={`زیر مجموعه ${items[0]?.subcategory?.name}`}
         q={q}
         sort={sort}
         setSearchParams={setSearchParams}
@@ -91,35 +109,30 @@ export default function CategoryPage() {
         handleSortOrder={handleSortOrder}
         currentParams={currentParams}
       />
-      {Object.keys(groupBySubcategory).map((subcategory) => {
-        const subId = groupBySubcategory[subcategory]
-          ?.map((item) => item.subcategory._id)
-          .filter((value, index, curr) => curr.indexOf(value) === index);
-        return (
-          <section className="py-4" key={subcategory}>
-            <div className="flex justify-between items-center px-6">
-              <h3 className="font-semibold text-xl">{subcategory}</h3>
-              <Link to={`/subcategory/${subId}`}>
-                <span className="text-persian-green font-semibold flex justify-between items-center gap-2">
-                  مشاهده همه
-                  <ChevronLeftIcon className="size-4" />
-                </span>
-              </Link>
-            </div>
-            <div className="flex justify-center flex-wrap items-center gap-4 py-8">
-              {isLoading ? (
-                <Spinner size="lg" color="current" />
-              ) : (
-                <>
-                  {groupBySubcategory[subcategory].slice(0, 6).map((item) => (
-                    <NextUiCard key={item._id} item={item} />
-                  ))}
-                </>
-              )}
-            </div>
-          </section>
-        );
-      })}
+      <section className="py-4 flex flex-col justify-center items-center gap-6">
+        <div className="flex justify-center flex-wrap items-center gap-4 py-8">
+          {isLoading ? (
+            <Spinner size="lg" color="current" />
+          ) : (
+            <>
+              {items.map((item) => (
+                <NextUiCard key={item._id} item={item} />
+              ))}
+            </>
+          )}
+        </div>
+        <Pagination
+          showShadow
+          renderItem={renderItem}
+          showControls
+          color="primary"
+          variant="bordered"
+          total={pages}
+          initialPage={1}
+          page={Number(searchParams.get("page")) || 1}
+          onChange={(page) => handlePageChange(page)}
+        />
+      </section>
     </div>
   );
 }

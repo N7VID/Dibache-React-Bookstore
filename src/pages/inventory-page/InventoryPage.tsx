@@ -37,7 +37,7 @@ export default function InventoryPage() {
   const [editPrice, setEditPrice] = useState<EditModeType[]>([]);
   const [changeList, setChangeList] = useState<EditBodyType[]>([]);
   const limit = searchParams.get("limit") || "5";
-  const sort = searchParams.get("sort") || "createdAt";
+  const sort = searchParams.get("sort") || "-createdAt";
   const quantityInputRef = useRef<HTMLInputElement | null>(null);
   const priceInputRef = useRef<HTMLInputElement | null>(null);
 

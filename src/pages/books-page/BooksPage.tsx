@@ -46,7 +46,7 @@ export default function BooksPage() {
   } = useDisclosure();
 
   const limit = searchParams.get("limit") || "5";
-  const sort = searchParams.get("sort") || "createdAt";
+  const sort = searchParams.get("sort") || "-createdAt";
 
   const params: {
     page: number;

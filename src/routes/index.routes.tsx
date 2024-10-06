@@ -14,6 +14,7 @@ import {
   PaymentPage,
   PaymentResultPage,
   RegisterPage,
+  SubCategory,
 } from "../pages";
 import { AuthLayout, DashboardLayout, MainLayout } from "../layouts";
 import PrivateRoutes from "./Private.routes";
@@ -37,6 +38,7 @@ export const router = createBrowserRouter([
             ),
           },
           { path: PATHS.CATEGORY, element: <CategoryPage /> },
+          { path: PATHS.SUBCATEGORY, element: <SubCategory /> },
           { path: PATHS.BOOK, element: <BookPage /> },
           {
             path: PATHS.PAYMENT,

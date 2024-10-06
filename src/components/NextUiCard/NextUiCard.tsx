@@ -17,26 +17,23 @@ interface Props {
 export default function NextUiCard({ item }: Props) {
   let thumbnail = "";
   let endPrice = 0;
+  let totalPrice = 0;
   let discountPercent = 0;
   if (item.images) {
     thumbnail = item.images[0];
   }
-  if (item.discount !== 0) {
-    endPrice = item.price - item.discount;
-    discountPercent = Math.ceil((item.discount * 100) / item.price);
+  if (item) {
+    const discount = item.discount;
+    endPrice = item.price;
+    if (discount !== 0) {
+      totalPrice = endPrice + discount;
+      discountPercent = Math.ceil((discount * 100) / endPrice);
+    }
   }
 
   return (
     <Card className="py-5 w-48" isHoverable>
-      <Link
-        href={`/book/${item._id}`}
-        onClick={() =>
-          window.scroll({
-            top: 0,
-            behavior: "smooth",
-          })
-        }
-      >
+      <Link href={`/book/${item._id}`}>
         <CardBody className="overflow-visible py-2">
           <Badge
             placement="top-left"
@@ -59,16 +56,7 @@ export default function NextUiCard({ item }: Props) {
           content={item.name}
           className="font-yekan text-[10px] bg-persian-green text-white cursor-default"
         >
-          <Link
-            color="foreground"
-            href={`/book/${item._id}`}
-            onClick={() =>
-              window.scroll({
-                top: 0,
-                behavior: "smooth",
-              })
-            }
-          >
+          <Link color="foreground" href={`/book/${item._id}`}>
             <h4 className="text-[13px] font-bold text-ellipsis whitespace-nowrap overflow-hidden w-40">
               {item.name}
             </h4>
@@ -78,7 +66,7 @@ export default function NextUiCard({ item }: Props) {
         {endPrice ? (
           <div className="flex justify-between w-full">
             <p className="font-bold text-[12px] text-gray-400 line-through">
-              {toPersianNumber(item.price)}
+              {toPersianNumber(totalPrice)}
             </p>
             <p className="font-bold text-[12px]">
               {toPersianNumber(endPrice)} تومان
@@ -86,7 +74,7 @@ export default function NextUiCard({ item }: Props) {
           </div>
         ) : (
           <p className="font-bold text-[12px]">
-            {toPersianNumber(item.price)} تومان
+            {toPersianNumber(totalPrice)} تومان
           </p>
         )}
       </CardFooter>

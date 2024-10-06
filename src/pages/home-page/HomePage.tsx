@@ -107,7 +107,7 @@ export default function HomePage() {
             ))}
           </Swiper>
         </section>
-        <section className="py-8">
+        <section className="py-4">
           <div className="flex justify-between items-center px-6">
             <h3 className="font-semibold text-lg">
               داستان و رمان هایی که باید بخوانید

@@ -1,6 +1,11 @@
 import { BreadcrumbItem, Breadcrumbs, Spinner } from "@nextui-org/react";
 import { ChangeEvent } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  ScrollRestoration,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
 import NextUiCard from "../../components/NextUiCard/NextUiCard";
 import SortCategory from "../../components/SortCategory/SortCategory";
@@ -56,6 +61,7 @@ export default function CategoryPage() {
 
   return (
     <div className="LayoutContainer cursor-default pb-16">
+      <ScrollRestoration />
       <div className="py-4">
         <Breadcrumbs separator={<ChevronLeftIcon className="size-3" />}>
           <BreadcrumbItem>

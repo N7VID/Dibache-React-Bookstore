@@ -9,7 +9,7 @@ import {
   CardHeader,
   Divider,
 } from "@nextui-org/react";
-import { Link, useParams } from "react-router-dom";
+import { Link, ScrollRestoration, useParams } from "react-router-dom";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -72,6 +72,7 @@ export default function BookPage() {
 
   return (
     <div className="LayoutContainer cursor-default pb-8">
+      <ScrollRestoration />
       <div className="py-4">
         <Breadcrumbs separator={<ChevronLeftIcon className="size-3" />}>
           <BreadcrumbItem>

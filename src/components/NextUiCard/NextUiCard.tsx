@@ -28,15 +28,7 @@ export default function NextUiCard({ item }: Props) {
 
   return (
     <Card className="py-5 w-48" isHoverable>
-      <Link
-        href={`/book/${item._id}`}
-        onClick={() =>
-          window.scroll({
-            top: 0,
-            behavior: "smooth",
-          })
-        }
-      >
+      <Link href={`/book/${item._id}`}>
         <CardBody className="overflow-visible py-2">
           <Badge
             placement="top-left"
@@ -59,16 +51,7 @@ export default function NextUiCard({ item }: Props) {
           content={item.name}
           className="font-yekan text-[10px] bg-persian-green text-white cursor-default"
         >
-          <Link
-            color="foreground"
-            href={`/book/${item._id}`}
-            onClick={() =>
-              window.scroll({
-                top: 0,
-                behavior: "smooth",
-              })
-            }
-          >
+          <Link color="foreground" href={`/book/${item._id}`}>
             <h4 className="text-[13px] font-bold text-ellipsis whitespace-nowrap overflow-hidden w-40">
               {item.name}
             </h4>

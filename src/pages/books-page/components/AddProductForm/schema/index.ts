@@ -1,11 +1,5 @@
 import { z } from "zod";
 
-const fileListSchema = z
-  .instanceof(FileList)
-  .refine((files) => files.length > 0, {
-    message: "فایل را انتخاب کنید.",
-  });
-
 export const schema = z.object({
   name: z.string().min(1, "نام کتاب را وارد کنید."),
   category: z.string().min(1, "دسته بندی کتاب را انتخاب کنید."),
@@ -20,8 +14,8 @@ export const schema = z.object({
   discount: z
     .number({ message: "مقدار تخفیف کتاب را به تومان وارد کنید." })
     .min(0, "مقدار تخفیف کتاب را به تومان وارد کنید."),
-  thumbnail: fileListSchema,
-  images: fileListSchema,
+  thumbnail: z.any(),
+  images: z.any(),
   description: z.string().min(1, "جزئیات محصول را وارد کنید."),
 });
 

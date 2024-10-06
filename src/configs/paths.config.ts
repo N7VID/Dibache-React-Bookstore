@@ -11,6 +11,7 @@ export const PATHS = {
   BOOK: "/book/:id",
   PAYMENT: "/payment",
   CATEGORY: "/category/:id",
+  SUBCATEGORY: "/subcategory/:id",
   PAYMENT_RESULT: "/payment-result",
   NOT_FOUND: "*",
 };

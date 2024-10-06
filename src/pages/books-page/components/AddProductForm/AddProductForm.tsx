@@ -1,6 +1,9 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Select, SelectItem, Spinner } from "@nextui-org/react";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import XCircleIcon from "../../../../assets/svg/XCircleIcon";
 import TextEditor from "../../../../components/TextEditor/TextEditor";
 import { useGetServices } from "../../../../hooks/useGetServices";
 import { usePostService } from "../../../../hooks/usePostService";
@@ -10,20 +13,24 @@ import { getSubcategories } from "../../../../queryhooks/getSubcategories";
 import { CategoriesResponse } from "../../../../types/categoriesResponse";
 import { SubcategoriesResponse } from "../../../../types/subCategoriesResponse";
 import { AddProduct, schema } from "./schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "react-toastify";
 
 export default function AddProductForm({ onClose }: { onClose: () => void }) {
   const [subCategoriesItem, setSubCategoriesItem] = useState<
     { label: string; value: string }[]
   >([]);
-
+  const [selectedThumbnail, setSelectedThumbnail] = useState<string>("");
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const {
     handleSubmit,
     formState: { errors },
     register,
     control,
     reset,
+    resetField,
+    watch,
+    setValue,
+    setError,
+    clearErrors,
   } = useForm<AddProduct>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -33,6 +40,8 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
       brand: "",
     },
   });
+
+  const fileInputThumbnailRef = useRef<HTMLInputElement>(null);
 
   const { data: categoryData } = useGetServices<CategoriesResponse>({
     queryKey: ["GetCategories"],
@@ -80,11 +89,70 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
   ) => {
     mutate(value);
   };
+
+  function handleDeleteThumbnail() {
+    setSelectedThumbnail("");
+    resetField("thumbnail");
+  }
+
+  const handleDeleteImages = (image: string) => {
+    const indx = selectedImages.findIndex((value) => value === image);
+    setValue(
+      "images",
+      [...watch("images")].filter((_, index) => index !== indx)
+    );
+    setSelectedImages((prevImages) =>
+      prevImages.filter((value) => value !== image)
+    );
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const fileArray = Array.from(files);
+      setSelectedImages([]);
+      const imagesPreview: string[] = [];
+      const fileReaders: FileReader[] = [];
+
+      fileArray.forEach((file) => {
+        const fileReader = new FileReader();
+        fileReaders.push(fileReader);
+
+        fileReader.onload = (e) => {
+          const result = e.target?.result;
+          if (result) {
+            imagesPreview.push(result as string);
+          }
+
+          if (imagesPreview.length === fileArray.length) {
+            setSelectedImages(imagesPreview);
+          }
+        };
+        fileReader.readAsDataURL(file);
+      });
+    }
+  };
+
   return (
     <form
       action=""
       className="sm:w-80 mx-auto flex justify-center items-center flex-col gap-2 py-8"
-      onSubmit={handleSubmit(handleSubmitProductForm)}
+      onSubmit={handleSubmit(handleSubmitProductForm, () => {
+        if (!errors.images?.message) {
+          clearErrors("images");
+          clearErrors("thumbnail");
+        }
+        if (!watch("images") || !watch("images").length) {
+          setError("images", {
+            type: "required",
+            message: "فایل را انتخاب کنید.",
+          });
+          setError("thumbnail", {
+            type: "required",
+            message: "فایل را انتخاب کنید.",
+          });
+        }
+      })}
     >
       <Input
         label={"نام"}
@@ -173,27 +241,117 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
         variant="bordered"
         {...register("discount", { valueAsNumber: true })}
       />
-      <Input
-        label={"تصویر پیش نمایش"}
-        size="sm"
-        type="file"
-        className="w-44 xs:w-64 sm:w-full"
-        isInvalid={!!errors["thumbnail"]}
-        errorMessage={`${errors["thumbnail"]?.message}`}
-        variant="bordered"
-        {...register("thumbnail")}
-      />
-      <Input
-        label={"تصاویر"}
-        size="sm"
-        multiple
-        type="file"
-        className="w-44 xs:w-64 sm:w-full"
-        isInvalid={!!errors["images"]}
-        errorMessage={`${errors["images"]?.message}`}
-        variant="bordered"
-        {...register("images")}
-      />
+      <div className="flex flex-col w-full mb-4">
+        <div className="w-44 xs:w-64 sm:w-full flex items-center relative h-12">
+          <Input
+            label={"تصویر پیش نمایش"}
+            size="sm"
+            type="file"
+            className="opacity-0 w-full h-full z-10"
+            isInvalid={!!errors["thumbnail"]}
+            errorMessage={`${errors["thumbnail"]?.message}`}
+            variant="bordered"
+            {...register("thumbnail", {
+              onChange: (e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  setSelectedThumbnail(URL.createObjectURL(file));
+                }
+              },
+            })}
+            ref={fileInputThumbnailRef}
+          />
+          <Button
+            variant="bordered"
+            radius="sm"
+            className="absolute top-3 left-0 w-full h-8 z-20"
+            onClick={() => {
+              fileInputThumbnailRef.current?.click();
+            }}
+          >
+            انتخاب تصویر پیش نمایش
+          </Button>
+        </div>
+        {selectedThumbnail && (
+          <div className="flex border-2 border-[#e0e0e0] rounded-md w-full flex-col justify-center items-center gap-1 py-1">
+            <span className="text-[10px]">تصویر بارگزاری شده</span>
+            <div className="relative">
+              <XCircleIcon
+                className="size-6 cursor-pointer text-[#f31260] absolute top-0 left-0"
+                onClick={handleDeleteThumbnail}
+              />
+              <img
+                src={selectedThumbnail}
+                alt="thumbnail-preview"
+                className="rounded-md w-32"
+              />
+            </div>
+          </div>
+        )}
+        {errors.images?.message && (
+          <p className="text-[#f31260] text-[12px]">
+            {errors.images?.message as string}
+          </p>
+        )}
+      </div>
+      <div className="flex flex-col w-full mb-4 -mt-6">
+        <div className="w-44 xs:w-64 sm:w-full flex items-center relative h-12">
+          <Input
+            label={"تصاویر"}
+            size="sm"
+            multiple
+            id="imagesInp"
+            type="file"
+            className="opacity-0 w-full h-full z-10"
+            isInvalid={!!errors["images"]}
+            errorMessage={`${errors["images"]?.message}`}
+            variant="bordered"
+            {...register("images")}
+            onChange={(e) => {
+              register("images").onChange(e);
+              handleFileChange(e);
+            }}
+          />
+          <Button
+            variant="bordered"
+            radius="sm"
+            className="absolute top-3 left-0 w-full h-8 z-20"
+            onClick={() => {
+              const fileInput = document.querySelector(
+                "#imagesInp"
+              ) as HTMLInputElement;
+              fileInput?.click();
+            }}
+          >
+            انتخاب تصاویر
+          </Button>
+        </div>
+        {selectedImages.length > 0 && (
+          <div className="flex border-2 border-[#e0e0e0] rounded-md w-full flex-col justify-center items-center gap-1 py-1">
+            <span className="text-[10px]">تصویر بارگزاری شده</span>
+            <div className="flex items-center justify-between gap-2 overflow-x-auto">
+              {selectedImages.map((image, index) => (
+                <div className="relative flex-shrink-0" key={index}>
+                  <XCircleIcon
+                    className="size-6 cursor-pointer text-[#f31260] absolute top-0 left-0"
+                    onClick={() => handleDeleteImages(image)}
+                  />
+                  <img
+                    src={image}
+                    alt="image-preview"
+                    className="rounded-md w-32"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {errors.images?.message && (
+          <p className="text-[#f31260] text-[12px]">
+            {errors.images?.message as string}
+          </p>
+        )}
+      </div>
       <div className="w-full">
         <Controller
           control={control}

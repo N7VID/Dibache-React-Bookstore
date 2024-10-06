@@ -28,6 +28,7 @@ import { toPersianNumber } from "../../utils/toPersianNumber";
 import ShoppingCart from "../../assets/svg/ShoppingCartIcon";
 import ChatBubbleLeftRightIcon from "../../assets/svg/ChatBubbleLeftRightIcon";
 import { toast } from "react-toastify";
+import { ProductsEntity } from "../../types/productType";
 
 export default function BookPage() {
   const { id } = useParams();
@@ -42,7 +43,9 @@ export default function BookPage() {
   let endPrice = 0;
   let price = 0;
   let discountPercent = 0;
+  let product!: ProductsEntity;
   if (data?.data.product) {
+    product = data.data.product;
     const discount = data?.data.product.discount;
     price = data?.data?.product?.price;
     if (discount !== 0) {
@@ -85,18 +88,18 @@ export default function BookPage() {
           </BreadcrumbItem>
           <BreadcrumbItem>
             <Link
-              to={`/category/${data?.data.product.category._id}`}
+              to={`/category/${product?.category._id}`}
               className="text-[11px] tablet:text-[14px] lg:text-base"
             >
-              {data?.data.product.category.name}
+              {product?.category.name}
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
             <Link
-              to={`/subcategory/${data?.data.product.subcategory._id}`}
+              to={`/subcategory/${product?.subcategory._id}`}
               className="text-[11px] tablet:text-[14px] lg:text-base"
             >
-              {data?.data.product.subcategory.name}
+              {product?.subcategory.name}
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
@@ -117,7 +120,7 @@ export default function BookPage() {
               navigation
             >
               {images?.map((image) => (
-                <SwiperSlide>
+                <SwiperSlide key={image}>
                   <div className="flex justify-center items-center">
                     <img
                       src={`http://${image}`}
@@ -144,7 +147,7 @@ export default function BookPage() {
                 <div className="flex gap-2 items-center">
                   <span className="text-key-gray">انتشارات:</span>
                   <span className="text-value-gray border-b-1 border-value-gray">
-                    {data?.data.product.brand}
+                    {product?.brand}
                   </span>
                 </div>
                 <div className="flex gap-2 items-center">
@@ -156,8 +159,7 @@ export default function BookPage() {
                 <div className="flex gap-2 items-center">
                   <span className="text-key-gray">امتیاز:</span>
                   <span className="text-value-gray">
-                    {data?.data.product.rating.rate} از{" "}
-                    {data?.data.product.rating.count} رای
+                    {product?.rating.rate} از {product?.rating.count} رای
                   </span>
                 </div>
               </div>
@@ -215,8 +217,9 @@ export default function BookPage() {
                   className="bg-persian-green text-white w-44 text-[13px] mobile:text-base mobile:w-auto"
                   variant="solid"
                   startContent={<ShoppingCart />}
+                  isDisabled={product?.quantity === 0}
                 >
-                  افزودن به سبد خرید
+                  {product?.quantity > 0 ? "افزودن به سبد خرید" : "ناموجود"}
                 </Button>
               </div>
             </CardBody>

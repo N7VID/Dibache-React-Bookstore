@@ -17,13 +17,18 @@ interface Props {
 export default function NextUiCard({ item }: Props) {
   let thumbnail = "";
   let endPrice = 0;
+  let totalPrice = 0;
   let discountPercent = 0;
   if (item.images) {
     thumbnail = item.images[0];
   }
-  if (item.discount !== 0) {
-    endPrice = item.price - item.discount;
-    discountPercent = Math.ceil((item.discount * 100) / item.price);
+  if (item) {
+    const discount = item.discount;
+    endPrice = item.price;
+    if (discount !== 0) {
+      totalPrice = endPrice + discount;
+      discountPercent = Math.ceil((discount * 100) / endPrice);
+    }
   }
 
   return (
@@ -61,7 +66,7 @@ export default function NextUiCard({ item }: Props) {
         {endPrice ? (
           <div className="flex justify-between w-full">
             <p className="font-bold text-[12px] text-gray-400 line-through">
-              {toPersianNumber(item.price)}
+              {toPersianNumber(totalPrice)}
             </p>
             <p className="font-bold text-[12px]">
               {toPersianNumber(endPrice)} تومان
@@ -69,7 +74,7 @@ export default function NextUiCard({ item }: Props) {
           </div>
         ) : (
           <p className="font-bold text-[12px]">
-            {toPersianNumber(item.price)} تومان
+            {toPersianNumber(totalPrice)} تومان
           </p>
         )}
       </CardFooter>

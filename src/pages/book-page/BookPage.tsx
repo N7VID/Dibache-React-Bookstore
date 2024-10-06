@@ -41,16 +41,16 @@ export default function BookPage() {
   });
 
   let endPrice = 0;
-  let price = 0;
+  let totalPrice = 0;
   let discountPercent = 0;
   let product!: ProductsEntity;
   if (data?.data.product) {
     product = data.data.product;
     const discount = data?.data.product.discount;
-    price = data?.data?.product?.price;
+    endPrice = data?.data?.product?.price;
     if (discount !== 0) {
-      endPrice = price - discount;
-      discountPercent = Math.ceil((discount * 100) / price);
+      totalPrice = endPrice + discount;
+      discountPercent = Math.ceil((discount * 100) / endPrice);
     }
   }
   const name = data?.data.product.name.split("اثر");
@@ -211,7 +211,7 @@ export default function BookPage() {
                       >
                         <div className="flex flex-col">
                           <span className="text-key-gray line-through text-[10px] pl-6 mobile:text-[13px]">
-                            {toPersianNumber(price)}
+                            {toPersianNumber(totalPrice)}
                           </span>
                           <div>
                             <span className="font-semibold text-base mobile:text-[18px]">

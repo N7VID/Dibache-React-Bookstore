@@ -38,8 +38,9 @@ import { getProductsById } from "../../queryhooks/product";
 import { GetProductsByIdResponse } from "../../types/GetProductsByIdResponse";
 import { ProductsEntity } from "../../types/productType";
 import { toPersianNumber } from "../../utils/toPersianNumber";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DeleteIcon } from "../../assets/svg/DeleteIcon";
+import { RootContext } from "../../context/RootContextProvider";
 
 interface Icart {
   userId: string;
@@ -50,10 +51,10 @@ export default function BookPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [count, setCount] = useState(1);
-  const [cart, setCart] = useState<Icart[]>(() => {
-    const storedCart = localStorage.getItem("cart");
-    return storedCart ? JSON.parse(storedCart) : [];
-  });
+  const context = useContext(RootContext);
+  if (!context)
+    throw new Error("useCart must be used within a RootContextProvider");
+  const { cart, setCart } = context;
 
   const { data } = useGetServices<GetProductsByIdResponse>({
     queryKey: ["GetBookById", id],

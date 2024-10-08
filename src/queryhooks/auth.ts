@@ -19,6 +19,7 @@ export const getLogout = async () => {
 export const logout = ({ href }: { href: string }) => {
   Cookies.remove("accessToken");
   Cookies.remove("refreshToken");
+  localStorage.clear();
   location.href = href;
 };
 

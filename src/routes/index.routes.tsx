@@ -41,14 +41,6 @@ export const router = createBrowserRouter([
           { path: PATHS.SUBCATEGORY, element: <SubCategory /> },
           { path: PATHS.BOOK, element: <BookPage /> },
           {
-            path: PATHS.PAYMENT,
-            element: (
-              <PrivateRoutes>
-                <PaymentPage />
-              </PrivateRoutes>
-            ),
-          },
-          {
             path: PATHS.PAYMENT_RESULT,
             element: (
               <PrivateRoutes>
@@ -83,6 +75,14 @@ export const router = createBrowserRouter([
       {
         path: PATHS.NOT_FOUND,
         element: <NotFoundPage />,
+      },
+      {
+        path: PATHS.PAYMENT,
+        element: (
+          <PrivateRoutes>
+            <PaymentPage />
+          </PrivateRoutes>
+        ),
       },
     ],
   },

@@ -1,6 +1,6 @@
 import { Button, Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CartCard from "../../components/CartCard/CartCard";
 import { PATHS } from "../../configs/paths.config";
 import { RootContext } from "../../context/RootContextProvider";
@@ -8,9 +8,24 @@ import { toPersianNumber } from "../../utils/toPersianNumber";
 
 export default function CartPage() {
   const context = useContext(RootContext);
+  const navigate = useNavigate();
   if (!context)
     throw new Error("useCart must be used within a RootContextProvider");
-  const { cart } = context;
+  const { cart, billData } = context;
+
+  const totalBill = billData.reduce(
+    (acc, curr) => {
+      acc.discount += curr.discount;
+      acc.endPrice += curr.endPrice;
+      acc.totalPrice += curr.totalPrice;
+      return acc;
+    },
+    {
+      endPrice: 0,
+      totalPrice: 0,
+      discount: 0,
+    }
+  );
 
   return (
     <div className="LayoutContainer cursor-default py-8">
@@ -43,7 +58,7 @@ export default function CartPage() {
               <CartCard product={item.product} key={item.product.id} />
             ))}
           </div>
-          <div>
+          <div className="min-w-[320px]">
             <Card shadow="sm">
               <CardHeader className="justify-center">
                 <h4 className="text-persian-green py-2 mobile:text-[18px] text-sm">
@@ -57,22 +72,22 @@ export default function CartPage() {
                     <span>
                       قیمت کالاها <span>({toPersianNumber(cart.length)})</span>
                     </span>
-                    <span>1</span>
+                    <span>{toPersianNumber(totalBill.totalPrice)} تومان</span>
                   </div>
                   <div className="flex items-center gap-16 justify-between px-4 py-2 text-sm">
                     <span>جمع سبد خرید</span>
-                    <span>6</span>
+                    <span>{toPersianNumber(totalBill.endPrice)} تومان</span>
                   </div>
                   <div className="flex items-center gap-16 justify-between px-4 py-2 text-sm text-persian-green">
                     <span>سود شما از خرید</span>
-                    <span>5</span>
+                    <span>{toPersianNumber(totalBill.discount)} تومان</span>
                   </div>
                 </div>
                 <div className="flex justify-center">
                   <Button
                     className="bg-persian-green text-white w-44 text-[13px] mobile:text-sm mobile:w-full"
                     variant="solid"
-                    // onClick={() => handleAddCartButton(product._id)}
+                    onClick={() => navigate(PATHS.PAYMENT)}
                   >
                     تایید و تکمیل سفارش
                   </Button>

@@ -1,5 +1,5 @@
 import { Button, ButtonGroup, Spinner } from "@nextui-org/react";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import BuildingStorefrontIcon from "../../assets/svg/BuildingStorefrontIcon";
 import { DeleteIcon } from "../../assets/svg/DeleteIcon";
@@ -27,7 +27,7 @@ export default function CartCard({
   const context = useContext(RootContext);
   if (!context)
     throw new Error("useCart must be used within a RootContextProvider");
-  const { setCart, cart } = context;
+  const { setCart, cart, setBillData } = context;
 
   let productsEntity!: ProductsEntity;
   if (data?.data.product) {
@@ -62,6 +62,33 @@ export default function CartCard({
       setCart(updatedCart);
     }
   }
+
+  useEffect(() => {
+    if (productsEntity) {
+      const bill = {
+        id: productsEntity?._id,
+        endPrice: productsEntity?.price * count,
+        discount: productsEntity?.discount * count,
+        totalPrice: productsEntity?.price + productsEntity?.discount * count,
+      };
+      setBillData((prev) => {
+        const existingItem = prev.find(
+          (item) => item.id === productsEntity._id
+        );
+        if (!existingItem) {
+          return [...prev, bill];
+        } else {
+          return prev.map((item) => {
+            if (item.id === bill.id) {
+              return bill;
+            } else {
+              return item;
+            }
+          });
+        }
+      });
+    }
+  }, [count, productsEntity, setBillData]);
 
   return (
     <div className="p-4 flex flex-col gap-4 bg-white rounded-lg shadow-box min-h-52 justify-center">

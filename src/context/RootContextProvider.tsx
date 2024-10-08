@@ -13,6 +13,7 @@ interface Icart {
 
 interface IBill {
   id: string;
+  image: string | undefined;
   endPrice: number;
   discount: number;
   totalPrice: number;

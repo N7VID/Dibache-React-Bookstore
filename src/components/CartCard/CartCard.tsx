@@ -67,6 +67,7 @@ export default function CartCard({
     if (productsEntity) {
       const bill = {
         id: productsEntity?._id,
+        image: productsEntity?.images?.[0],
         endPrice: productsEntity?.price * count,
         discount: productsEntity?.discount * count,
         totalPrice: productsEntity?.price + productsEntity?.discount * count,

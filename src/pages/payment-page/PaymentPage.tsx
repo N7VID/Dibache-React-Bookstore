@@ -1,4 +1,11 @@
-import { Button, Input } from "@nextui-org/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Divider,
+  Input,
+} from "@nextui-org/react";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import { Controller, useForm } from "react-hook-form";
@@ -6,10 +13,31 @@ import DatePicker from "react-multi-date-picker";
 import { Link, useNavigate } from "react-router-dom";
 import ArrowRightIcon from "../../assets/svg/ArrowRightIcon";
 import { PATHS } from "../../configs/paths.config";
+import { toPersianNumber } from "../../utils/toPersianNumber";
+import { useContext } from "react";
+import { RootContext } from "../../context/RootContextProvider";
 
 export default function PaymentPage() {
   const navigate = useNavigate();
   const user = localStorage.getItem("user");
+  const context = useContext(RootContext);
+  if (!context)
+    throw new Error("useCart must be used within a RootContextProvider");
+  const { cart, billData } = context;
+
+  const totalBill = billData.reduce(
+    (acc, curr) => {
+      acc.discount += curr.discount;
+      acc.endPrice += curr.endPrice;
+      acc.totalPrice += curr.totalPrice;
+      return acc;
+    },
+    {
+      endPrice: 0,
+      totalPrice: 0,
+      discount: 0,
+    }
+  );
 
   let person = [];
   if (user) {
@@ -25,7 +53,13 @@ export default function PaymentPage() {
     },
   });
 
-  function handleSubmitBill(value) {
+  function handleSubmitBill(value: {
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    address: string;
+    deliveryDate: string;
+  }) {
     const formattedDate = new Date(value?.deliveryDate).toISOString();
     console.log(formattedDate);
   }
@@ -35,7 +69,7 @@ export default function PaymentPage() {
       <header className="border border-key-gray rounded-lg p-1 grid grid-cols-3 items-center">
         <div
           className="flex items-center gap-2 px-4 cursor-pointer w-fit"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate(PATHS.CART)}
         >
           <ArrowRightIcon className="size-6" />
           <span className="font-semibold hidden mobile:block">
@@ -143,11 +177,54 @@ export default function PaymentPage() {
           </div>
           <div className="flex justify-center items-start p-4 gap-4 flex-col border border-key-gray rounded-lg mt-3">
             سبد خرید
+            <div className="flex items-center gap-4">
+              {billData.map((item) => (
+                <div key={item.id}>
+                  <Link to={`/book/${item.id}`}>
+                    <img src={`http://${item.image}`} alt="" className="w-20" />
+                  </Link>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <div className="col-span-6 col-start-9">
-          <div className="flex justify-center items-center border border-key-gray rounded-lg">
-            hi
+          <div className="flex justify-center items-center min-w-[320px]">
+            <Card shadow="sm" className="w-96">
+              <CardHeader className="justify-center">
+                <h4 className="text-persian-green py-2 mobile:text-[18px] text-sm">
+                  خرید کالای فیزیکی
+                </h4>
+              </CardHeader>
+              <Divider className="bg-persian-green p-[0.8px]" />
+              <CardBody>
+                <div className="py-4">
+                  <div className="flex items-center gap-16 justify-between px-4 py-2 text-sm">
+                    <span>
+                      قیمت کالاها <span>({toPersianNumber(cart.length)})</span>
+                    </span>
+                    <span>{toPersianNumber(totalBill.totalPrice)} تومان</span>
+                  </div>
+                  <div className="flex items-center gap-16 justify-between px-4 py-2 text-sm">
+                    <span>جمع سبد خرید</span>
+                    <span>{toPersianNumber(totalBill.endPrice)} تومان</span>
+                  </div>
+                  <div className="flex items-center gap-16 justify-between px-4 py-2 text-sm text-persian-green">
+                    <span>سود شما از خرید</span>
+                    <span>{toPersianNumber(totalBill.discount)} تومان</span>
+                  </div>
+                </div>
+                <div className="flex justify-center">
+                  <Button
+                    className="bg-persian-green text-white w-44 text-[13px] mobile:text-sm mobile:w-full"
+                    variant="solid"
+                    onClick={() => navigate(PATHS.PAYMENT)}
+                  >
+                    ثبت سفارش
+                  </Button>
+                </div>
+              </CardBody>
+            </Card>
           </div>
         </div>
       </main>

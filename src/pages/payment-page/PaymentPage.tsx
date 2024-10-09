@@ -16,6 +16,7 @@ import { PATHS } from "../../configs/paths.config";
 import { toPersianNumber } from "../../utils/toPersianNumber";
 import { useContext } from "react";
 import { RootContext } from "../../context/RootContextProvider";
+import ShoppingCart from "../../assets/svg/ShoppingCartIcon";
 
 export default function PaymentPage() {
   const navigate = useNavigate();
@@ -84,10 +85,19 @@ export default function PaymentPage() {
       </header>
       <main className="grid grid-cols-12 items-center py-4">
         <div className="col-span-6 col-start-1 col-end-8">
-          <div className="flex justify-center items-start p-4 gap-4 flex-col border border-key-gray rounded-lg">
-            <div className="flex flex-col items-center gap-4">
-              <p>نهایی کردن خرید</p>
-              <p className="text-sm font-semibold">مشخصات خریدار</p>
+          <div className="flex justify-center items-start px-4 py-8 gap-8 flex-col border border-key-gray rounded-lg">
+            <div className="grid grid-cols-3 w-full items-center gap-4 font-semibold">
+              <div className="flex items-center gap-3">
+                <img
+                  src="/src/assets/svg/user-black.svg"
+                  alt="user"
+                  className="size-5"
+                />
+                <p className="text-sm">مشخصات خریدار</p>
+              </div>
+              <p className="flex justify-center items-center">
+                نهایی کردن خرید
+              </p>
             </div>
             <form
               action=""
@@ -175,21 +185,28 @@ export default function PaymentPage() {
               </Button>
             </form>
           </div>
-          <div className="flex justify-center items-start p-4 gap-4 flex-col border border-key-gray rounded-lg mt-3">
-            سبد خرید
-            <div className="flex items-center gap-4">
+          <div className="flex justify-center items-start px-4 py-8 gap-8 flex-col border border-key-gray rounded-lg mt-3">
+            <div className="flex items-center gap-3 font-semibold text-sm">
+              <ShoppingCart />
+              <span>سبد خرید</span>
+            </div>
+            <div className="flex items-center gap-4 flex-wrap">
               {billData.map((item) => (
                 <div key={item.id}>
                   <Link to={`/book/${item.id}`}>
-                    <img src={`http://${item.image}`} alt="" className="w-20" />
+                    <img
+                      src={`http://${item.image}`}
+                      alt={item.id}
+                      className="w-24"
+                    />
                   </Link>
                 </div>
               ))}
             </div>
           </div>
         </div>
-        <div className="col-span-6 col-start-9">
-          <div className="flex justify-center items-center min-w-[320px]">
+        <div className="col-span-6 col-start-9 mb-60">
+          <div className="flex justify-end min-w-[320px]">
             <Card shadow="sm" className="w-96">
               <CardHeader className="justify-center">
                 <h4 className="text-persian-green py-2 mobile:text-[18px] text-sm">

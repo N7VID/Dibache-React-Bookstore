@@ -58,6 +58,7 @@ export default function CartCard({
       updateProductCountInCart(productsEntity._id!, newCount);
     } else {
       const updatedCart = cart.filter((item) => item.product.id !== productId);
+      setBillData((prev) => prev.filter((item) => item.id !== productId));
       localStorage.setItem("cart", JSON.stringify(updatedCart));
       setCart(updatedCart);
     }

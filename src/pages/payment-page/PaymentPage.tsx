@@ -232,13 +232,15 @@ export default function PaymentPage() {
                   </div>
                 </div>
                 <div className="flex justify-center">
-                  <Button
-                    className="bg-persian-green text-white w-44 text-[13px] mobile:text-sm mobile:w-full"
-                    variant="solid"
-                    onClick={() => navigate(PATHS.PAYMENT)}
-                  >
-                    ثبت سفارش
-                  </Button>
+                  <Link to={"http://localhost:7000/"} target="_blank">
+                    <Button
+                      className="bg-persian-green text-white w-44 text-[13px] mobile:text-sm mobile:w-full"
+                      variant="solid"
+                      // onClick={() => navigate(PATHS.PAYMENT)}
+                    >
+                      ثبت سفارش
+                    </Button>
+                  </Link>
                 </div>
               </CardBody>
             </Card>

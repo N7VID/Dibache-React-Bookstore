@@ -1,10 +1,11 @@
 import { Button, Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
 import { useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, ScrollRestoration, useNavigate } from "react-router-dom";
 import CartCard from "../../components/CartCard/CartCard";
 import { PATHS } from "../../configs/paths.config";
 import { RootContext } from "../../context/RootContextProvider";
 import { toPersianNumber } from "../../utils/toPersianNumber";
+import BookIcon from "../../assets/svg/BookIcon";
 
 export default function CartPage() {
   const context = useContext(RootContext);
@@ -27,9 +28,14 @@ export default function CartPage() {
     }
   );
 
+  const discountPercent = Math.ceil(
+    (totalBill.discount * 100) / totalBill.endPrice
+  );
+
   return (
     <div className="LayoutContainer cursor-default py-8">
-      {cart?.length === 0 ? (
+      <ScrollRestoration />
+      {cart?.products?.length === 0 || !cart.products ? (
         <div className="border-2 border-[#eee] rounded-lg flex flex-col items-center justify-center gap-4 py-12 px-4">
           <img src="/src/assets/svg/empty-cart.svg" alt="empty-cart" />
           <div className="flex flex-col justify-center items-center gap-1 text-center">
@@ -46,16 +52,17 @@ export default function CartPage() {
           </div>
         </div>
       ) : (
-        <div className="border-2 border-[#eee] rounded-lg flex justify-between p-4 gap-8 relative">
-          <div className="rounded-lg p-4 flex flex-col justify-center gap-4 flex-grow">
-            <div className="flex flex-col gap-1">
-              <span>سبد خرید شما</span>
-              <span className="text-key-gray text-sm">
-                {toPersianNumber(cart.length)} کتاب
+        <div className="border-t-2 border-[#eee] flex justify-between p-4 gap-8 relative">
+          <div className="rounded-lg p-4 flex flex-col justify-center gap-8 flex-grow max-w-[820px]">
+            <div className="flex flex-col gap-2">
+              <span className="font-semibold">سبد خرید شما</span>
+              <span className="text-key-gray text-sm flex gap-2 items-center">
+                <BookIcon />
+                {toPersianNumber(+cart?.products?.length)} کتاب
               </span>
             </div>
-            {cart.map((item) => (
-              <CartCard product={item.product} key={item.product.id} />
+            {cart?.products?.map((item) => (
+              <CartCard product={item} key={item.product} />
             ))}
           </div>
           <div className="min-w-[320px]">
@@ -70,17 +77,23 @@ export default function CartPage() {
                 <div className="py-4">
                   <div className="flex items-center gap-16 justify-between px-4 py-2 text-sm">
                     <span>
-                      قیمت کالاها <span>({toPersianNumber(cart.length)})</span>
+                      قیمت کالاها{" "}
+                      <span>({toPersianNumber(+cart?.products?.length)})</span>
                     </span>
-                    <span>{toPersianNumber(totalBill.totalPrice)} تومان</span>
+                    <span>{toPersianNumber(totalBill.endPrice)} تومان</span>
                   </div>
                   <div className="flex items-center gap-16 justify-between px-4 py-2 text-sm">
                     <span>جمع سبد خرید</span>
-                    <span>{toPersianNumber(totalBill.endPrice)} تومان</span>
+                    <span>{toPersianNumber(totalBill.totalPrice)} تومان</span>
                   </div>
                   <div className="flex items-center gap-16 justify-between px-4 py-2 text-sm text-persian-green">
                     <span>سود شما از خرید</span>
-                    <span>{toPersianNumber(totalBill.discount)} تومان</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold">
+                        ({toPersianNumber(discountPercent)}%)
+                      </span>
+                      <span>{toPersianNumber(totalBill.discount)} تومان</span>
+                    </div>
                   </div>
                 </div>
                 <div className="flex justify-center">

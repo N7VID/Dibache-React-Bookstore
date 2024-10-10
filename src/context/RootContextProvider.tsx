@@ -5,22 +5,19 @@ import {
   SetStateAction,
   useState,
 } from "react";
-
-interface Icart {
-  userId: string;
-  product: { id: string; count: number };
-}
+import { Icart } from "../types/cartDatatype";
 
 interface IBill {
   id: string;
+  image: string | undefined;
   endPrice: number;
   discount: number;
   totalPrice: number;
 }
 
 interface ICartContext {
-  cart: Icart[];
-  setCart: Dispatch<SetStateAction<Icart[]>>;
+  cart: Icart;
+  setCart: Dispatch<SetStateAction<Icart>>;
   setBillData: Dispatch<SetStateAction<IBill[]>>;
   billData: IBill[];
 }
@@ -31,12 +28,13 @@ export default function RootContextProvider({
 }: {
   children: ReactNode;
 }) {
-  const [cart, setCart] = useState<Icart[]>(() => {
+  const [cart, setCart] = useState<Icart>(() => {
     const storedCart = localStorage.getItem("cart");
-    return storedCart ? JSON.parse(storedCart) : [];
+    return storedCart ? JSON.parse(storedCart) : {};
   });
 
   const [billData, setBillData] = useState<IBill[]>([]);
+
   return (
     <RootContext.Provider value={{ cart, setCart, billData, setBillData }}>
       {children}

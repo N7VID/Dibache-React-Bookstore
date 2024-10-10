@@ -57,7 +57,7 @@ export default function MainDropDown({ onOpen }: props) {
         content={""}
         color="danger"
         placement="top-left"
-        isInvisible={cart.length === 0}
+        isInvisible={cart?.products?.length === 0 || !cart.products}
       >
         <DropdownTrigger>
           <Button
@@ -119,9 +119,9 @@ export default function MainDropDown({ onOpen }: props) {
           }
         >
           سبد خرید
-          {cart.length !== 0 && (
+          {cart?.products?.length !== 0 && cart.products && (
             <div className="absolute top-1 right-[95px] w-[15.5px] h-[15.5px] text-[13px] flex justify-center items-center pb-[2px] rounded-full bg-badge-pink text-white p-1 font-thin">
-              {cart.length}
+              {cart?.products?.length}
             </div>
           )}
         </DropdownItem>

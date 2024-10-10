@@ -17,11 +17,11 @@ import { toPersianNumber } from "../../utils/toPersianNumber";
 export default function CartCard({
   product,
 }: {
-  product: { id: string; count: number };
+  product: { product: string; count: number };
 }) {
   const { data, isLoading } = useGetServices<GetProductsByIdResponse>({
     queryKey: ["GetCartProduct", product],
-    queryFn: () => getProductsById(product.id),
+    queryFn: () => getProductsById(product.product),
   });
   const [count, setCount] = useState(product.count);
   const context = useContext(RootContext);
@@ -36,7 +36,7 @@ export default function CartCard({
 
   const updateProductCountInCart = (productId: string, newCount: number) => {
     const updatedProduct = cart.products.map((item) =>
-      item.id === productId ? { ...item, count: newCount } : item
+      item.product === productId ? { ...item, count: newCount } : item
     );
     setCart((prev) => ({
       ...prev,
@@ -61,7 +61,9 @@ export default function CartCard({
       setCount(newCount);
       updateProductCountInCart(productsEntity._id!, newCount);
     } else {
-      const updatedCart = cart.products.filter((item) => item.id !== productId);
+      const updatedCart = cart.products.filter(
+        (item) => item.product !== productId
+      );
       setBillData((prev) => prev.filter((item) => item.id !== productId));
       localStorage.setItem(
         "cart",
@@ -111,7 +113,7 @@ export default function CartCard({
           {" "}
           <div className="flex items-center gap-4">
             <div>
-              <Link to={`/book/${product?.id}`}>
+              <Link to={`/book/${product?.product}`}>
                 <img
                   src={`http://${productsEntity?.images?.[0]}`}
                   alt={productsEntity?.name}
@@ -121,7 +123,9 @@ export default function CartCard({
             </div>
             <div className="flex flex-col gap-4">
               <span className="font-semibold text-sm">
-                <Link to={`/book/${product?.id}`}>{productsEntity?.name}</Link>
+                <Link to={`/book/${product?.product}`}>
+                  {productsEntity?.name}
+                </Link>
               </span>
               <div className="flex flex-col gap-1">
                 <div className="flex gap-2 items-center text-value-gray text-[12px]">

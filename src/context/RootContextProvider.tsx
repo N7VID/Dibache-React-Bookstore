@@ -5,12 +5,7 @@ import {
   SetStateAction,
   useState,
 } from "react";
-
-interface Icart {
-  user: string;
-  products: { id: string; count: number }[];
-  deliveryDate?: string;
-}
+import { Icart } from "../types/cartDatatype";
 
 interface IBill {
   id: string;

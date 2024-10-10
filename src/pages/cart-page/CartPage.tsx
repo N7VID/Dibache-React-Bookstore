@@ -62,7 +62,7 @@ export default function CartPage() {
               </span>
             </div>
             {cart?.products?.map((item) => (
-              <CartCard product={item} key={item.id} />
+              <CartCard product={item} key={item.product} />
             ))}
           </div>
           <div className="min-w-[320px]">

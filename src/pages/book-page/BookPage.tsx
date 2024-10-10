@@ -41,11 +41,7 @@ import { toPersianNumber } from "../../utils/toPersianNumber";
 import { useContext, useEffect, useState } from "react";
 import { DeleteIcon } from "../../assets/svg/DeleteIcon";
 import { RootContext } from "../../context/RootContextProvider";
-
-interface Icart {
-  userId: string;
-  products: { id: string; count: number }[];
-}
+import { Icart } from "../../types/cartDatatype";
 
 export default function BookPage() {
   const { id } = useParams();
@@ -100,7 +96,9 @@ export default function BookPage() {
 
   useEffect(() => {
     const savedCart: Icart = JSON.parse(localStorage.getItem("cart") || "{}");
-    const savedProduct = savedCart?.products?.find((item) => item.id === id);
+    const savedProduct = savedCart?.products?.find(
+      (item) => item.product === id
+    );
 
     if (savedProduct) {
       setCount(savedProduct?.count);
@@ -112,7 +110,7 @@ export default function BookPage() {
   }, []);
 
   const isProductInCart = (productId: string) => {
-    return cart?.products?.some((item) => item.id === productId);
+    return cart?.products?.some((item) => item.product === productId);
   };
 
   function handleAddCartButton(productId: string) {
@@ -121,14 +119,14 @@ export default function BookPage() {
 
     if (accessToken && userId) {
       const cartValue: Icart = {
-        userId: JSON.parse(userId)._id,
-        products: [{ id: productId, count }],
+        user: JSON.parse(userId)._id,
+        products: [{ product: productId, count }],
       };
       setCart((prevCart) => {
         const updatedCart = { ...prevCart };
-        updatedCart.user = cartValue.userId;
+        updatedCart.user = cartValue.user;
         const existingProductIndex = updatedCart?.products?.findIndex(
-          (item) => item.id === productId
+          (item) => item.product === productId
         );
         if (existingProductIndex >= 0) {
           updatedCart.products[existingProductIndex].count += count;
@@ -148,7 +146,7 @@ export default function BookPage() {
 
   const updateProductCountInCart = (productId: string, newCount: number) => {
     const updatedProduct = cart.products.map((item) =>
-      item.id === productId ? { ...item, count: newCount } : item
+      item.product === productId ? { ...item, count: newCount } : item
     );
     setCart((prev) => ({
       ...prev,
@@ -174,7 +172,9 @@ export default function BookPage() {
       setCount(newCount);
       updateProductCountInCart(product._id!, newCount);
     } else {
-      const updatedCart = cart.products.filter((item) => item.id !== productId);
+      const updatedCart = cart.products.filter(
+        (item) => item.product !== productId
+      );
       localStorage.setItem(
         "cart",
         JSON.stringify({ ...cart, products: updatedCart })

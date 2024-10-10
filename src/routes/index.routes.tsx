@@ -1,5 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import { PATHS } from "../configs/paths.config";
+import { AuthLayout, DashboardLayout, MainLayout } from "../layouts";
+import DashboardFooter from "../layouts/DashboardLayout/DashboardFooter";
+import Header from "../layouts/MainLayout/Header";
 import {
   AdminLoginPage,
   BookPage,
@@ -16,9 +19,8 @@ import {
   RegisterPage,
   SubCategory,
 } from "../pages";
-import { AuthLayout, DashboardLayout, MainLayout } from "../layouts";
-import PrivateRoutes from "./Private.routes";
 import Providers from "../providers";
+import PrivateRoutes from "./Private.routes";
 
 export const router = createBrowserRouter([
   {
@@ -40,14 +42,6 @@ export const router = createBrowserRouter([
           { path: PATHS.CATEGORY, element: <CategoryPage /> },
           { path: PATHS.SUBCATEGORY, element: <SubCategory /> },
           { path: PATHS.BOOK, element: <BookPage /> },
-          {
-            path: PATHS.PAYMENT_RESULT,
-            element: (
-              <PrivateRoutes>
-                <PaymentResultPage />
-              </PrivateRoutes>
-            ),
-          },
         ],
       },
       {
@@ -81,6 +75,20 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoutes>
             <PaymentPage />
+          </PrivateRoutes>
+        ),
+      },
+      {
+        path: PATHS.PAYMENT_RESULT,
+        element: (
+          <PrivateRoutes>
+            <div className="flex flex-col min-h-screen overflow-hidden font-yekan">
+              <Header />
+              <main className="flex-grow bg-ghost-white pt-32">
+                <PaymentResultPage />
+              </main>
+              <DashboardFooter />
+            </div>
           </PrivateRoutes>
         ),
       },

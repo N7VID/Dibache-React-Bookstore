@@ -44,7 +44,7 @@ import { RootContext } from "../../context/RootContextProvider";
 
 interface Icart {
   userId: string;
-  product: { id: string; count: number };
+  products: { id: string; count: number }[];
 }
 
 export default function BookPage() {
@@ -99,12 +99,11 @@ export default function BookPage() {
   };
 
   useEffect(() => {
-    const savedCart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const savedProduct = savedCart.find(
-      (item: Icart) => item.product.id === id
-    );
+    const savedCart: Icart = JSON.parse(localStorage.getItem("cart") || "{}");
+    const savedProduct = savedCart?.products?.find((item) => item.id === id);
+
     if (savedProduct) {
-      setCount(savedProduct.product.count);
+      setCount(savedProduct?.count);
     }
   }, [id]);
 
@@ -113,7 +112,7 @@ export default function BookPage() {
   }, []);
 
   const isProductInCart = (productId: string) => {
-    return cart.some((item) => item.product.id === productId);
+    return cart?.products?.some((item) => item.id === productId);
   };
 
   function handleAddCartButton(productId: string) {
@@ -123,19 +122,24 @@ export default function BookPage() {
     if (accessToken && userId) {
       const cartValue: Icart = {
         userId: JSON.parse(userId)._id,
-        product: { id: productId, count },
+        products: [{ id: productId, count }],
       };
       setCart((prevCart) => {
-        const existingProductIndex = prevCart.findIndex(
-          (item) => item.product.id === productId
+        const updatedCart = { ...prevCart };
+        updatedCart.user = cartValue.userId;
+        const existingProductIndex = updatedCart?.products?.findIndex(
+          (item) => item.id === productId
         );
         if (existingProductIndex >= 0) {
-          prevCart[existingProductIndex].product.count += count;
+          updatedCart.products[existingProductIndex].count += count;
         } else {
-          prevCart.push(cartValue as never);
+          updatedCart.products = [
+            ...(updatedCart?.products || []),
+            cartValue.products[0],
+          ];
         }
-        localStorage.setItem("cart", JSON.stringify(prevCart));
-        return [...prevCart];
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        return updatedCart;
       });
     } else {
       navigate(PATHS.LOGIN);
@@ -143,13 +147,17 @@ export default function BookPage() {
   }
 
   const updateProductCountInCart = (productId: string, newCount: number) => {
-    const updatedCart = cart.map((item) =>
-      item.product.id === productId
-        ? { ...item, product: { ...item.product, count: newCount } }
-        : item
+    const updatedProduct = cart.products.map((item) =>
+      item.id === productId ? { ...item, count: newCount } : item
     );
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    setCart((prev) => ({
+      ...prev,
+      products: updatedProduct,
+    }));
+    localStorage.setItem(
+      "cart",
+      JSON.stringify({ ...cart, products: updatedProduct })
+    );
   };
 
   function handleAddCount() {
@@ -166,9 +174,15 @@ export default function BookPage() {
       setCount(newCount);
       updateProductCountInCart(product._id!, newCount);
     } else {
-      const updatedCart = cart.filter((item) => item.product.id !== productId);
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
-      setCart(updatedCart);
+      const updatedCart = cart.products.filter((item) => item.id !== productId);
+      localStorage.setItem(
+        "cart",
+        JSON.stringify({ ...cart, products: updatedCart })
+      );
+      setCart((prev) => ({
+        ...prev,
+        products: updatedCart,
+      }));
     }
   }
 

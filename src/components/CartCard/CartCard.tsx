@@ -35,13 +35,17 @@ export default function CartCard({
   }
 
   const updateProductCountInCart = (productId: string, newCount: number) => {
-    const updatedCart = cart.map((item) =>
-      item.product.id === productId
-        ? { ...item, product: { ...item.product, count: newCount } }
-        : item
+    const updatedProduct = cart.products.map((item) =>
+      item.id === productId ? { ...item, count: newCount } : item
     );
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    setCart((prev) => ({
+      ...prev,
+      products: updatedProduct,
+    }));
+    localStorage.setItem(
+      "cart",
+      JSON.stringify({ ...cart, products: updatedProduct })
+    );
   };
 
   function handleAddCount() {
@@ -57,10 +61,16 @@ export default function CartCard({
       setCount(newCount);
       updateProductCountInCart(productsEntity._id!, newCount);
     } else {
-      const updatedCart = cart.filter((item) => item.product.id !== productId);
+      const updatedCart = cart.products.filter((item) => item.id !== productId);
       setBillData((prev) => prev.filter((item) => item.id !== productId));
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
-      setCart(updatedCart);
+      localStorage.setItem(
+        "cart",
+        JSON.stringify({ ...cart, products: updatedCart })
+      );
+      setCart((prev) => ({
+        ...prev,
+        products: updatedCart,
+      }));
     }
   }
 

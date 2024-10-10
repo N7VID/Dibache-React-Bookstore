@@ -218,7 +218,8 @@ export default function PaymentPage() {
                 <div className="py-4">
                   <div className="flex items-center gap-16 justify-between px-4 py-2 text-sm">
                     <span>
-                      قیمت کالاها <span>({toPersianNumber(cart.length)})</span>
+                      قیمت کالاها{" "}
+                      <span>({toPersianNumber(cart.products.length)})</span>
                     </span>
                     <span>{toPersianNumber(totalBill.totalPrice)} تومان</span>
                   </div>

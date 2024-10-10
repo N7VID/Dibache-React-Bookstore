@@ -35,7 +35,7 @@ export default function CartPage() {
   return (
     <div className="LayoutContainer cursor-default py-8">
       <ScrollRestoration />
-      {cart?.length === 0 ? (
+      {cart?.products?.length === 0 ? (
         <div className="border-2 border-[#eee] rounded-lg flex flex-col items-center justify-center gap-4 py-12 px-4">
           <img src="/src/assets/svg/empty-cart.svg" alt="empty-cart" />
           <div className="flex flex-col justify-center items-center gap-1 text-center">
@@ -58,11 +58,11 @@ export default function CartPage() {
               <span className="font-semibold">سبد خرید شما</span>
               <span className="text-key-gray text-sm flex gap-2 items-center">
                 <BookIcon />
-                {toPersianNumber(cart.length)} کتاب
+                {toPersianNumber(+cart?.products?.length)} کتاب
               </span>
             </div>
-            {cart.map((item) => (
-              <CartCard product={item.product} key={item.product.id} />
+            {cart?.products?.map((item) => (
+              <CartCard product={item} key={item.id} />
             ))}
           </div>
           <div className="min-w-[320px]">
@@ -77,7 +77,8 @@ export default function CartPage() {
                 <div className="py-4">
                   <div className="flex items-center gap-16 justify-between px-4 py-2 text-sm">
                     <span>
-                      قیمت کالاها <span>({toPersianNumber(cart.length)})</span>
+                      قیمت کالاها{" "}
+                      <span>({toPersianNumber(+cart?.products?.length)})</span>
                     </span>
                     <span>{toPersianNumber(totalBill.endPrice)} تومان</span>
                   </div>

@@ -7,8 +7,8 @@ import {
 } from "react";
 
 interface Icart {
-  userId: string;
-  product: { id: string; count: number };
+  user: string;
+  products: { id: string; count: number }[];
 }
 
 interface IBill {
@@ -20,8 +20,8 @@ interface IBill {
 }
 
 interface ICartContext {
-  cart: Icart[];
-  setCart: Dispatch<SetStateAction<Icart[]>>;
+  cart: Icart;
+  setCart: Dispatch<SetStateAction<Icart>>;
   setBillData: Dispatch<SetStateAction<IBill[]>>;
   billData: IBill[];
 }
@@ -32,12 +32,13 @@ export default function RootContextProvider({
 }: {
   children: ReactNode;
 }) {
-  const [cart, setCart] = useState<Icart[]>(() => {
+  const [cart, setCart] = useState<Icart>(() => {
     const storedCart = localStorage.getItem("cart");
-    return storedCart ? JSON.parse(storedCart) : [];
+    return storedCart ? JSON.parse(storedCart) : {};
   });
 
   const [billData, setBillData] = useState<IBill[]>([]);
+
   return (
     <RootContext.Provider value={{ cart, setCart, billData, setBillData }}>
       {children}

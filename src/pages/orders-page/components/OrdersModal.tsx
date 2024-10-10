@@ -4,6 +4,7 @@ import {
   ModalBody,
   ModalContent,
   ModalHeader,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -12,11 +13,14 @@ import {
   TableRow,
 } from "@nextui-org/react";
 import { useGetServices } from "../../../hooks/useGetServices";
-import { getOrdersById } from "../../../queryhooks/admin/orders";
+import { getOrdersById, patchOrders } from "../../../queryhooks/admin/orders";
 import {
+  Order,
   OrdersByIdResponse,
   ProductsEntity,
 } from "../../../types/ordersByIdResponse";
+import { usePatchServices } from "../../../hooks/usePatchServices";
+import { toast } from "react-toastify";
 
 interface props {
   isOpen: boolean;
@@ -39,6 +43,35 @@ export default function OrdersModal({
   let items: ProductsEntity[] = [];
   if (data?.data.order?.products?.length) {
     items = data?.data.order?.products;
+  }
+
+  const { mutate, isPending } = usePatchServices({
+    mutationKey: ["PatchStatusOrder"],
+    mutationFn: patchOrders,
+    invalidate: ["GetOrders", "GetDeliveredOrders", "GetWaitingOrders"],
+    options: {
+      onSuccess: () => {
+        onClose();
+        toast.success("سفارش مورد نظر با موفقیت تحویل داده شد.");
+      },
+      onError: (error) => {
+        toast.error(error.message, { rtl: false });
+      },
+    },
+  });
+
+  function handleChangeStatusButton(order: Order) {
+    const products = order?.products?.map((product) => ({
+      product: product.product._id,
+      count: product.count,
+    }));
+
+    const updatedData = {
+      deliveryStatus: true,
+      user: order?.user?._id,
+      products,
+    };
+    mutate({ id: order._id, data: updatedData });
   }
 
   return (
@@ -110,9 +143,9 @@ export default function OrdersModal({
                   <div className="flex justify-between px-20">
                     <span>زمان تحویل</span>
                     <span>
-                      {data?.data.order?.deliveryDate &&
+                      {data?.data.order?.updatedAt &&
                         new Date(
-                          data?.data.order?.deliveryDate
+                          data?.data.order?.updatedAt
                         ).toLocaleDateString("fa-IR")}
                     </span>
                   </div>
@@ -120,9 +153,12 @@ export default function OrdersModal({
                   <div className="flex justify-center items-center">
                     <Button
                       className="bg-persian-green text-white"
-                      onClick={onClose}
+                      onClick={() => {
+                        if (data?.data?.order)
+                          handleChangeStatusButton(data?.data?.order);
+                      }}
                     >
-                      تحویل شد
+                      {isPending ? <Spinner /> : "تحویل شد"}
                     </Button>
                   </div>
                 )}

@@ -102,7 +102,7 @@ export default function TableOrders({
         </TableHeader>
         <TableBody loadingContent={<Spinner />} loadingState={loadingState}>
           {items.map((item) => {
-            const createdAt = data?.data.orders?.[0].createdAt;
+            const createdAt = item.createdAt;
             const faDate = createdAt
               ? new Date(createdAt).toLocaleDateString("fa-IR")
               : "";

@@ -24,7 +24,7 @@ export default function PaymentPage() {
   const context = useContext(RootContext);
   if (!context)
     throw new Error("useCart must be used within a RootContextProvider");
-  const { cart, billData } = context;
+  const { cart, billData, setCart } = context;
 
   const totalBill = billData.reduce(
     (acc, curr) => {
@@ -50,7 +50,7 @@ export default function PaymentPage() {
       lastName: person?.lastname,
       phoneNumber: person.phoneNumber,
       address: person.address,
-      deliveryDate: "",
+      deliveryDate: cart.deliveryDate || "",
     },
   });
 
@@ -62,7 +62,12 @@ export default function PaymentPage() {
     deliveryDate: string;
   }) {
     const formattedDate = new Date(value?.deliveryDate).toISOString();
-    console.log(formattedDate);
+    setCart((prev) => ({ ...prev, deliveryDate: formattedDate }));
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }
+
+  function handleOrderButton() {
+    window.open("http://localhost:7000/", "_blank");
   }
 
   return (
@@ -233,15 +238,14 @@ export default function PaymentPage() {
                   </div>
                 </div>
                 <div className="flex justify-center">
-                  <Link to={"http://localhost:7000/"} target="_blank">
-                    <Button
-                      className="bg-persian-green text-white w-44 text-[13px] mobile:text-sm mobile:w-full"
-                      variant="solid"
-                      // onClick={() => navigate(PATHS.PAYMENT)}
-                    >
-                      ثبت سفارش
-                    </Button>
-                  </Link>
+                  <Button
+                    className="bg-persian-green text-white w-44 text-[13px] mobile:text-sm mobile:w-full"
+                    variant="solid"
+                    isDisabled={!Object.keys(cart).includes("deliveryDate")}
+                    onClick={handleOrderButton}
+                  >
+                    ثبت سفارش
+                  </Button>
                 </div>
               </CardBody>
             </Card>

@@ -9,6 +9,7 @@ import {
 interface Icart {
   user: string;
   products: { id: string; count: number }[];
+  deliveryDate?: string;
 }
 
 interface IBill {

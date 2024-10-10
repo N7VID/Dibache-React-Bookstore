@@ -62,8 +62,9 @@ export default function PaymentPage() {
     deliveryDate: string;
   }) {
     const formattedDate = new Date(value?.deliveryDate).toISOString();
-    setCart((prev) => ({ ...prev, deliveryDate: formattedDate }));
-    localStorage.setItem("cart", JSON.stringify(cart));
+    const updatedCart = { ...cart, deliveryDate: formattedDate };
+    setCart(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
   }
 
   function handleOrderButton() {

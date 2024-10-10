@@ -68,7 +68,7 @@ export default function PaymentPage() {
   }
 
   function handleOrderButton() {
-    window.open("http://localhost:7000/", "_blank");
+    window.open("http://localhost:7000/", "_self");
   }
 
   return (

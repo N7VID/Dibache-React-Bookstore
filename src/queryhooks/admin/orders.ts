@@ -24,3 +24,25 @@ export const getOrdersById = async (id: string) => {
   const response = await httpRequest.get(url);
   return response.data;
 };
+
+export const patchOrders = async ({
+  id,
+  data,
+}: {
+  id: string;
+  data: {
+    user: string;
+    products:
+      | {
+          product: string;
+          count: number;
+        }[]
+      | undefined;
+
+    deliveryStatus: boolean;
+  };
+}) => {
+  const url = `${ENDPOINTS.ORDERS}/${id}`;
+  const response = await httpRequest.patch(url, data);
+  return response.data;
+};

@@ -10,6 +10,7 @@ import {
 import Cookies from "js-cookie";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import BookIcon from "../../assets/svg/BookIcon";
 import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
 import ListIcon from "../../assets/svg/ListIcon";
@@ -19,6 +20,7 @@ import NextUiModal from "../../components/NextUiModal/NextUiModal";
 import { PATHS } from "../../configs/paths.config";
 import { useGetServices } from "../../hooks/useGetServices";
 import { useLogout } from "../../hooks/useLogout";
+import { logout } from "../../queryhooks/auth";
 import { getCategories } from "../../queryhooks/getCategories";
 import { getSubcategoriesByCategoryId } from "../../queryhooks/getSubcategories";
 import {
@@ -30,8 +32,6 @@ import {
   SubcategoriesResponse,
 } from "../../types/subCategoriesResponse";
 import MainDropDown from "./components/MainDropDown";
-import { toast } from "react-toastify";
-import { logout } from "../../queryhooks/auth";
 
 export default function Header() {
   const navigate = useNavigate();

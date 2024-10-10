@@ -3,35 +3,55 @@ import {
   BreadcrumbItem,
   Breadcrumbs,
   Button,
+  ButtonGroup,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
   Divider,
 } from "@nextui-org/react";
-import { Link, ScrollRestoration, useParams } from "react-router-dom";
+import Cookies from "js-cookie";
+import {
+  Link,
+  ScrollRestoration,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
+import { toast } from "react-toastify";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { A11y, Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import ChatBubbleLeftRightIcon from "../../assets/svg/ChatBubbleLeftRightIcon";
 import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
+import HeartIcon from "../../assets/svg/HeartIcon";
+import MinusIcon from "../../assets/svg/MinusIcon";
+import PlusIcon from "../../assets/svg/PlusIcon";
+import ShareIcon from "../../assets/svg/ShareIcon";
+import ShieldCheckIcon from "../../assets/svg/ShieldCheckIcon";
+import ShoppingCart from "../../assets/svg/ShoppingCartIcon";
+import TruckIcon from "../../assets/svg/TruckIconIcon";
 import { PATHS } from "../../configs/paths.config";
 import { useGetServices } from "../../hooks/useGetServices";
 import { getProductsById } from "../../queryhooks/product";
 import { GetProductsByIdResponse } from "../../types/GetProductsByIdResponse";
-import ShareIcon from "../../assets/svg/ShareIcon";
-import HeartIcon from "../../assets/svg/HeartIcon";
-import ShieldCheckIcon from "../../assets/svg/ShieldCheckIcon";
-import TruckIcon from "../../assets/svg/TruckIconIcon";
-import { toPersianNumber } from "../../utils/toPersianNumber";
-import ShoppingCart from "../../assets/svg/ShoppingCartIcon";
-import ChatBubbleLeftRightIcon from "../../assets/svg/ChatBubbleLeftRightIcon";
-import { toast } from "react-toastify";
 import { ProductsEntity } from "../../types/productType";
+import { toPersianNumber } from "../../utils/toPersianNumber";
+import { useContext, useEffect, useState } from "react";
+import { DeleteIcon } from "../../assets/svg/DeleteIcon";
+import { RootContext } from "../../context/RootContextProvider";
+import { Icart } from "../../types/cartDatatype";
 
 export default function BookPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const [count, setCount] = useState(1);
+  const context = useContext(RootContext);
+  if (!context)
+    throw new Error("useCart must be used within a RootContextProvider");
+  const { cart, setCart } = context;
+
   const { data } = useGetServices<GetProductsByIdResponse>({
     queryKey: ["GetBookById", id],
     queryFn: () => getProductsById(id!),
@@ -53,9 +73,10 @@ export default function BookPage() {
       discountPercent = Math.ceil((discount * 100) / endPrice);
     }
   }
-  const name = data?.data.product.name.split("اثر");
-  const category = `${data?.data.product.category.name}، ${data?.data.product.subcategory.name}`;
-  const images = data?.data.product.images;
+
+  const name = product?.name.split("اثر");
+  const category = `${product?.category.name}، ${product?.subcategory.name}`;
+  const images = product?.images;
 
   const copyToClipboard = () => {
     const currentUrl = window.location.href;
@@ -72,6 +93,98 @@ export default function BookPage() {
   const ProductDescription = ({ description }: { description: string }) => {
     return <div dangerouslySetInnerHTML={{ __html: description }} />;
   };
+
+  useEffect(() => {
+    const savedCart: Icart = JSON.parse(localStorage.getItem("cart") || "{}");
+    const savedProduct = savedCart?.products?.find(
+      (item) => item.product === id
+    );
+
+    if (savedProduct) {
+      setCount(savedProduct?.count);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (!Cookies.get("accessToken")) localStorage.clear();
+  }, []);
+
+  const isProductInCart = (productId: string) => {
+    return cart?.products?.some((item) => item.product === productId);
+  };
+
+  function handleAddCartButton(productId: string) {
+    const accessToken = Cookies.get("accessToken");
+    const userId = localStorage.getItem("user");
+
+    if (accessToken && userId) {
+      const cartValue: Icart = {
+        user: JSON.parse(userId)._id,
+        products: [{ product: productId, count }],
+      };
+      setCart((prevCart) => {
+        const updatedCart = { ...prevCart };
+        updatedCart.user = cartValue.user;
+        const existingProductIndex = updatedCart?.products?.findIndex(
+          (item) => item.product === productId
+        );
+        if (existingProductIndex >= 0) {
+          updatedCart.products[existingProductIndex].count += count;
+        } else {
+          updatedCart.products = [
+            ...(updatedCart?.products || []),
+            cartValue.products[0],
+          ];
+        }
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        return updatedCart;
+      });
+    } else {
+      navigate(PATHS.LOGIN);
+    }
+  }
+
+  const updateProductCountInCart = (productId: string, newCount: number) => {
+    const updatedProduct = cart.products.map((item) =>
+      item.product === productId ? { ...item, count: newCount } : item
+    );
+    setCart((prev) => ({
+      ...prev,
+      products: updatedProduct,
+    }));
+    localStorage.setItem(
+      "cart",
+      JSON.stringify({ ...cart, products: updatedProduct })
+    );
+  };
+
+  function handleAddCount() {
+    if (product && count < product.quantity) {
+      const newCount = count + 1;
+      setCount(newCount);
+      updateProductCountInCart(product._id!, newCount);
+    }
+  }
+
+  function handleMinusCount(productId: string) {
+    if (count > 1) {
+      const newCount = count - 1;
+      setCount(newCount);
+      updateProductCountInCart(product._id!, newCount);
+    } else {
+      const updatedCart = cart.products.filter(
+        (item) => item.product !== productId
+      );
+      localStorage.setItem(
+        "cart",
+        JSON.stringify({ ...cart, products: updatedCart })
+      );
+      setCart((prev) => ({
+        ...prev,
+        products: updatedCart,
+      }));
+    }
+  }
 
   return (
     <div className="LayoutContainer cursor-default pb-8">
@@ -228,14 +341,52 @@ export default function BookPage() {
                     </div>
                   )}
                 </div>
-                <Button
-                  className="bg-persian-green text-white w-44 text-[13px] mobile:text-base mobile:w-auto"
-                  variant="solid"
-                  startContent={<ShoppingCart />}
-                  isDisabled={product?.quantity === 0}
-                >
-                  {product?.quantity > 0 ? "افزودن به سبد خرید" : "ناموجود"}
-                </Button>
+                {isProductInCart(product?._id) ? (
+                  <div className="flex items-center justify-center gap-4">
+                    <ButtonGroup variant="bordered">
+                      <Button isIconOnly onClick={handleAddCount}>
+                        <PlusIcon className="text-persian-green size-5 font-extrabold decoration-4" />
+                      </Button>
+                      <Button isIconOnly disabled>
+                        <span className="text-lg text-persian-green">
+                          {count}
+                        </span>
+                      </Button>
+                      <Button
+                        isIconOnly
+                        onClick={() => handleMinusCount(product._id)}
+                      >
+                        {count === 1 ? (
+                          <DeleteIcon className="size-5 text-persian-green" />
+                        ) : (
+                          <MinusIcon className="text-persian-green size-5 font-extrabold decoration-4" />
+                        )}
+                      </Button>
+                    </ButtonGroup>
+                    <div className="flex flex-col justify-center gap-1 items-start font-medium">
+                      <span className="text-[14px]">در سبد شما</span>
+                      <span className="text-[11px]">
+                        مشاهده{" "}
+                        <Link
+                          to={PATHS.CART}
+                          className="text-persian-green font-semibold"
+                        >
+                          سبد خرید
+                        </Link>
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <Button
+                    className="bg-persian-green text-white w-44 text-[13px] mobile:text-base mobile:w-auto"
+                    variant="solid"
+                    startContent={<ShoppingCart />}
+                    isDisabled={product?.quantity === 0}
+                    onClick={() => handleAddCartButton(product._id)}
+                  >
+                    {product?.quantity > 0 ? "افزودن به سبد خرید" : "ناموجود"}
+                  </Button>
+                )}
               </div>
             </CardBody>
             <Divider className="bg-persian-green p-[0.8px]" />

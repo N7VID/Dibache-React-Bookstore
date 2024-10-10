@@ -35,7 +35,7 @@ export default function CartPage() {
   return (
     <div className="LayoutContainer cursor-default py-8">
       <ScrollRestoration />
-      {cart?.products?.length === 0 ? (
+      {cart?.products?.length === 0 || !cart.products ? (
         <div className="border-2 border-[#eee] rounded-lg flex flex-col items-center justify-center gap-4 py-12 px-4">
           <img src="/src/assets/svg/empty-cart.svg" alt="empty-cart" />
           <div className="flex flex-col justify-center items-center gap-1 text-center">

@@ -65,7 +65,10 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="LayoutContainer pt-[100px]">
+    <div className="LayoutContainer pt-[90px] md:px-16 cursor-default">
+      <h2 className="text-2xl text-value-gray font-semibold py-4">
+        مدیریت سفارشات
+      </h2>
       <Tabs aria-label="Options" onSelectionChange={handleSelectionChange}>
         <Tab key="waiting" title="در انتظار ارسال">
           <TableOrders

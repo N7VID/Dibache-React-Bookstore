@@ -14,6 +14,7 @@ import { useMemo, useState } from "react";
 import { OrdersEntity, OrdersResponse } from "../../../types/ordersResponse";
 import { renderItem } from "../../../utils/paginationRenderItem";
 import OrdersModal from "./OrdersModal";
+import { toPersianNumber } from "../../../utils/toPersianNumber";
 
 interface Params {
   data: OrdersResponse | undefined;
@@ -110,7 +111,7 @@ export default function TableOrders({
               <TableRow key={item._id} className="border-b-1">
                 <TableCell className="text-center py-3">{`${item.user.firstname} ${item.user.lastname}`}</TableCell>
                 <TableCell className="text-center py-3">
-                  {item.totalPrice}
+                  <span>{toPersianNumber(item.totalPrice)}</span>
                 </TableCell>
                 <TableCell className="text-center py-3">{faDate}</TableCell>
                 <TableCell className="text-center py-3">

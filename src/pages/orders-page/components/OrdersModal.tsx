@@ -1,5 +1,6 @@
 import {
   Button,
+  Link,
   Modal,
   ModalBody,
   ModalContent,
@@ -21,6 +22,7 @@ import {
 } from "../../../types/ordersByIdResponse";
 import { usePatchServices } from "../../../hooks/usePatchServices";
 import { toast } from "react-toastify";
+import { toPersianNumber } from "../../../utils/toPersianNumber";
 
 interface props {
   isOpen: boolean;
@@ -77,7 +79,7 @@ export default function OrdersModal({
   return (
     <>
       <Modal
-        size="xl"
+        size="lg"
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         placement="top-center"
@@ -92,35 +94,47 @@ export default function OrdersModal({
               نمایش سفارش
             </ModalHeader>
             <ModalBody>
-              <div className="flex flex-col gap-4 pt-4 pb-8">
-                <div className="flex justify-between px-20 mt-4">
+              <div className="flex flex-col gap-4 pb-8 text-sm">
+                <div className="flex justify-between px-10 mt-4">
                   <span>نام مشتری</span>
-                  <span>{`${data?.data.order?.user?.firstname} ${data?.data.order?.user?.lastname}`}</span>
+                  <span className="font-semibold">{`${data?.data.order?.user?.firstname} ${data?.data.order?.user?.lastname}`}</span>
                 </div>
-                <div className="flex justify-between px-20">
+                <div className="flex justify-between px-10">
                   <span>آدرس</span>
-                  <span>{data?.data.order?.user?.address}</span>
+                  <span className="font-semibold">
+                    {data?.data.order?.user?.address}
+                  </span>
                 </div>
-                <div className="flex justify-between px-20">
+                <div className="flex justify-between px-10">
                   <span>شماره تماس</span>
-                  <span>{data?.data.order?.user?.phoneNumber}</span>
+                  <span className="font-semibold">
+                    {data?.data.order?.user?.phoneNumber}
+                  </span>
                 </div>
-                <div className="flex justify-between px-20">
+                <div className="flex justify-between px-10">
                   <span>زمان تحویل</span>
-                  <span>
+                  <span className="font-semibold">
                     {data?.data.order?.deliveryDate &&
                       new Date(
                         data?.data.order?.deliveryDate
                       ).toLocaleDateString("fa-IR")}
                   </span>
                 </div>
-                <div className="flex justify-between px-20 mb-4">
+                <div className="flex justify-between px-10">
                   <span>زمان سفارش</span>
-                  <span>
+                  <span className="font-semibold">
                     {data?.data.order?.createdAt &&
                       new Date(data?.data.order?.createdAt).toLocaleDateString(
                         "fa-IR"
                       )}
+                  </span>
+                </div>
+                <div className="flex justify-between px-10 mb-4">
+                  <span>قیمت کل سفارش</span>
+                  <span className="font-semibold">
+                    {data?.data?.order &&
+                      toPersianNumber(data?.data?.order?.totalPrice)}{" "}
+                    تومان
                   </span>
                 </div>
                 <Table>
@@ -131,37 +145,54 @@ export default function OrdersModal({
                   </TableHeader>
                   <TableBody>
                     {items.map((item) => (
-                      <TableRow key={item.product._id}>
-                        <TableCell>{item.product.name}</TableCell>
-                        <TableCell>{item.product.price}</TableCell>
-                        <TableCell>{item.count}</TableCell>
+                      <TableRow key={item.product._id} className="border-b-1">
+                        <TableCell>
+                          <Link
+                            href={`/book/${item.product._id}`}
+                            className="text-sm"
+                          >
+                            {item.product.name}
+                          </Link>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-sm">
+                            {toPersianNumber(item.product.price)}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-sm">
+                            {toPersianNumber(item.count)}
+                          </span>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
-                {data?.data.order?.deliveryStatus ? (
-                  <div className="flex justify-between px-20">
-                    <span>زمان تحویل</span>
-                    <span>
-                      {data?.data.order?.updatedAt &&
-                        new Date(
-                          data?.data.order?.updatedAt
-                        ).toLocaleDateString("fa-IR")}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex justify-center items-center">
-                    <Button
-                      className="bg-persian-green text-white"
-                      onClick={() => {
-                        if (data?.data?.order)
-                          handleChangeStatusButton(data?.data?.order);
-                      }}
-                    >
-                      {isPending ? <Spinner /> : "تحویل شد"}
-                    </Button>
-                  </div>
-                )}
+                <div className="mt-4">
+                  {data?.data.order?.deliveryStatus ? (
+                    <div className="flex justify-between px-20">
+                      <span>زمان تحویل</span>
+                      <span>
+                        {data?.data.order?.updatedAt &&
+                          new Date(
+                            data?.data.order?.updatedAt
+                          ).toLocaleDateString("fa-IR")}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex justify-center items-center">
+                      <Button
+                        className="bg-persian-green text-white w-60"
+                        onClick={() => {
+                          if (data?.data?.order)
+                            handleChangeStatusButton(data?.data?.order);
+                        }}
+                      >
+                        {isPending ? <Spinner /> : "تحویل شد"}
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
             </ModalBody>
           </>

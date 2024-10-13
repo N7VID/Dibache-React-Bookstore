@@ -10,7 +10,7 @@ import { useContext } from "react";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import { Controller, useForm } from "react-hook-form";
-import DatePicker from "react-multi-date-picker";
+import DatePicker, { DateObject } from "react-multi-date-picker";
 import { Link, ScrollRestoration, useNavigate } from "react-router-dom";
 import ArrowRightIcon from "../../assets/svg/ArrowRightIcon";
 import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
@@ -72,6 +72,14 @@ export default function PaymentPage() {
   function handleOrderButton() {
     window.open("http://localhost:7000/", "_self");
   }
+
+  const discountPercent = Math.ceil(
+    (totalBill.discount * 100) / totalBill.endPrice
+  );
+
+  const dayOfMonth = parseInt(
+    new Date().toLocaleDateString("fa-IR-u-nu-latn", { day: "numeric" })
+  );
 
   return (
     <div className="LayoutContainer cursor-default py-6 font-yekan min-h-screen">
@@ -177,6 +185,10 @@ export default function PaymentPage() {
                         calendar={persian}
                         locale={persian_fa}
                         calendarPosition="bottom-center"
+                        minDate={new DateObject({ calendar: persian }).set(
+                          "day",
+                          dayOfMonth
+                        )}
                       />
                       {errors &&
                         errors[name] &&
@@ -240,6 +252,9 @@ export default function PaymentPage() {
                 <div className="flex items-center gap-16 justify-between px-4 py-2 text-sm text-persian-green">
                   <span>سود شما از خرید</span>
                   <div className="flex items-center gap-2">
+                    <span className="font-semibold">
+                      ({toPersianNumber(discountPercent)}%)
+                    </span>
                     <span>{toPersianNumber(totalBill.discount)} تومان</span>
                   </div>
                 </div>

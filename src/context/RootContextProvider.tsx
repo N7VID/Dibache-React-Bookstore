@@ -6,14 +6,7 @@ import {
   useState,
 } from "react";
 import { Icart } from "../types/cartDatatype";
-
-interface IBill {
-  id: string;
-  image: string | undefined;
-  endPrice: number;
-  discount: number;
-  totalPrice: number;
-}
+import { IBill } from "../types/billDataType";
 
 interface ICartContext {
   cart: Icart;

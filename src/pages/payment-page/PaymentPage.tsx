@@ -6,17 +6,19 @@ import {
   Divider,
   Input,
 } from "@nextui-org/react";
+import { useContext } from "react";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import { Controller, useForm } from "react-hook-form";
 import DatePicker from "react-multi-date-picker";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, ScrollRestoration, useNavigate } from "react-router-dom";
 import ArrowRightIcon from "../../assets/svg/ArrowRightIcon";
-import { PATHS } from "../../configs/paths.config";
-import { toPersianNumber } from "../../utils/toPersianNumber";
-import { useContext } from "react";
-import { RootContext } from "../../context/RootContextProvider";
+import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
 import ShoppingCart from "../../assets/svg/ShoppingCartIcon";
+import { PATHS } from "../../configs/paths.config";
+import { RootContext } from "../../context/RootContextProvider";
+import { toPersianNumber } from "../../utils/toPersianNumber";
+import PaymentCard from "./components/PaymentCard";
 
 export default function PaymentPage() {
   const navigate = useNavigate();
@@ -73,6 +75,7 @@ export default function PaymentPage() {
 
   return (
     <div className="LayoutContainer cursor-default py-6 font-yekan min-h-screen">
+      <ScrollRestoration />
       <header className="border border-key-gray rounded-lg p-1 grid grid-cols-3 items-center">
         <div
           className="flex items-center gap-2 px-4 cursor-pointer w-fit"
@@ -90,8 +93,8 @@ export default function PaymentPage() {
         </div>
       </header>
       <main className="grid grid-cols-12 items-center py-4">
-        <div className="col-span-6 col-start-1 col-end-8">
-          <div className="flex justify-center items-start px-4 py-8 gap-8 flex-col border border-key-gray rounded-lg">
+        <div className="col-span-6 col-start-1 col-end-9">
+          <div className="flex justify-center items-center px-4 py-8 gap-8 flex-col border border-key-gray rounded-lg">
             <div className="grid grid-cols-3 w-full items-center gap-4 font-semibold">
               <div className="flex items-center gap-3">
                 <img
@@ -173,7 +176,7 @@ export default function PaymentPage() {
                         onChange={(date) => onChange(date?.isValid ? date : "")}
                         calendar={persian}
                         locale={persian_fa}
-                        calendarPosition="bottom-right"
+                        calendarPosition="bottom-center"
                       />
                       {errors &&
                         errors[name] &&
@@ -192,65 +195,67 @@ export default function PaymentPage() {
             </form>
           </div>
           <div className="flex justify-center items-start px-4 py-8 gap-8 flex-col border border-key-gray rounded-lg mt-3">
-            <div className="flex items-center gap-3 font-semibold text-sm">
-              <ShoppingCart />
-              <span>سبد خرید</span>
+            <div className="flex justify-between w-full font-semibold text-sm">
+              <div className="flex items-center gap-3">
+                <ShoppingCart />
+                <span>سبد خرید</span>
+              </div>
+              <div className="flex items-center text-persian-green">
+                <Link to={PATHS.CART}>
+                  <span className="text-persian-green font-semibold flex justify-between items-center gap-2">
+                    مشاهده سبد خرید
+                    <ChevronLeftIcon className="size-4" />
+                  </span>
+                </Link>
+              </div>
             </div>
-            <div className="flex items-center gap-4 flex-wrap">
+            <div className="flex items-center justify-center gap-4 flex-wrap">
               {billData.map((item) => (
-                <div key={item.id}>
-                  <Link to={`/book/${item.id}`}>
-                    <img
-                      src={`http://${item.image}`}
-                      alt={item.id}
-                      className="w-24"
-                    />
-                  </Link>
-                </div>
+                <PaymentCard key={item.id} item={item} />
               ))}
             </div>
           </div>
         </div>
-        <div className="col-span-6 col-start-9 mb-60">
-          <div className="flex justify-end min-w-[320px]">
-            <Card shadow="sm" className="w-96">
-              <CardHeader className="justify-center">
-                <h4 className="text-persian-green py-2 mobile:text-[18px] text-sm">
-                  خرید کالای فیزیکی
-                </h4>
-              </CardHeader>
-              <Divider className="bg-persian-green p-[0.8px]" />
-              <CardBody>
-                <div className="py-4">
-                  <div className="flex items-center gap-16 justify-between px-4 py-2 text-sm">
-                    <span>
-                      قیمت کالاها{" "}
-                      <span>({toPersianNumber(cart.products.length)})</span>
-                    </span>
-                    <span>{toPersianNumber(totalBill.totalPrice)} تومان</span>
-                  </div>
-                  <div className="flex items-center gap-16 justify-between px-4 py-2 text-sm">
-                    <span>جمع سبد خرید</span>
-                    <span>{toPersianNumber(totalBill.endPrice)} تومان</span>
-                  </div>
-                  <div className="flex items-center gap-16 justify-between px-4 py-2 text-sm text-persian-green">
-                    <span>سود شما از خرید</span>
+        <div className="col-span-6 col-start-9 mb-60 flex justify-end min-w-[320px]">
+          <Card shadow="sm" className="w-96 sticky top-0 h-full">
+            <CardHeader className="justify-center">
+              <h4 className="text-persian-green py-2 mobile:text-[18px] text-sm">
+                خرید کالای فیزیکی
+              </h4>
+            </CardHeader>
+            <Divider className="bg-persian-green p-[0.8px]" />
+            <CardBody>
+              <div className="py-4">
+                <div className="flex items-center gap-16 justify-between px-4 py-2 text-sm">
+                  <span>
+                    قیمت کالاها{" "}
+                    <span>({toPersianNumber(cart.products.length)})</span>
+                  </span>
+                  <span>{toPersianNumber(totalBill.endPrice)} تومان</span>
+                </div>
+                <div className="flex items-center gap-16 justify-between px-4 py-2 text-sm">
+                  <span>جمع سبد خرید</span>
+                  <span>{toPersianNumber(totalBill.totalPrice)} تومان</span>
+                </div>
+                <div className="flex items-center gap-16 justify-between px-4 py-2 text-sm text-persian-green">
+                  <span>سود شما از خرید</span>
+                  <div className="flex items-center gap-2">
                     <span>{toPersianNumber(totalBill.discount)} تومان</span>
                   </div>
                 </div>
-                <div className="flex justify-center">
-                  <Button
-                    className="bg-persian-green text-white w-44 text-[13px] mobile:text-sm mobile:w-full"
-                    variant="solid"
-                    isDisabled={!Object.keys(cart).includes("deliveryDate")}
-                    onClick={handleOrderButton}
-                  >
-                    ثبت سفارش
-                  </Button>
-                </div>
-              </CardBody>
-            </Card>
-          </div>
+              </div>
+              <div className="flex justify-center">
+                <Button
+                  className="bg-persian-green text-white w-44 text-[13px] mobile:text-sm mobile:w-full"
+                  variant="solid"
+                  isDisabled={!Object.keys(cart).includes("deliveryDate")}
+                  onClick={handleOrderButton}
+                >
+                  ثبت سفارش
+                </Button>
+              </div>
+            </CardBody>
+          </Card>
         </div>
       </main>
     </div>

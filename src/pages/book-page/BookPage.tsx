@@ -42,6 +42,7 @@ import { useContext, useEffect, useState } from "react";
 import { DeleteIcon } from "../../assets/svg/DeleteIcon";
 import { RootContext } from "../../context/RootContextProvider";
 import { Icart } from "../../types/cartDatatype";
+import InfoIcon from "../../assets/svg/InfoIcon";
 
 export default function BookPage() {
   const { id } = useParams();
@@ -222,8 +223,8 @@ export default function BookPage() {
           </BreadcrumbItem>
         </Breadcrumbs>
       </div>
-      <section className="flex flex-col laptop:flex-row items-center justify-between gap-16 laptop:gap-8 pb-16 laptop:pb-8">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+      <section className="flex flex-col laptop:flex-row items-center justify-between gap-16 laptop:gap-8 mt-4 pb-16 laptop:pb-8">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-6">
           <div className="sm:w-[380px] w-[220px]">
             <Swiper
               modules={[Navigation, Pagination, A11y, Autoplay]}
@@ -238,20 +239,34 @@ export default function BookPage() {
                     <img
                       src={`http://${image}`}
                       alt={name?.[0]}
-                      className="sm:w-[350px] w-[200px] rounded-lg max-h-[400px] object-contain"
+                      className="sm:w-[400px] w-[200px] rounded-lg max-h-[400px] object-contain"
                     />
                   </div>
                 </SwiperSlide>
               ))}
             </Swiper>
           </div>
-          <div className="flex flex-col justify-between gap-8 laptop:gap-28">
+          <div className="flex flex-col gap-8 laptop:gap-6">
             <div>
-              <h1 className="text-sm sm:text-[18px] lg:text-xl font-bold pb-4">
+              <h1 className="text-sm sm:text-[18px] lg:text-xl font-bold pb-2 border-b-2">
                 {name?.[0]}
               </h1>
-              <div className="flex flex-col gap-3 text-[12px] mobile:text-base">
-                <div className="flex gap-2 items-center ">
+              <div className="flex gap-2 py-1 items-center">
+                <img
+                  src="/src/assets/images/star.png"
+                  alt="star"
+                  className="w-3"
+                />
+                <div className="flex items-center gap-2 text-[12px] font-semibold">
+                  <span>{toPersianNumber(+product?.rating.rate)}</span>
+                  <span className="text-key-gray">
+                    (امتیاز {toPersianNumber(+product?.rating.count)} خریدار)
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 text-[12px] mobile:text-sm py-5 border-b-2">
+                <h4 className="font-semibold text-base pb-2">ویژگی ها</h4>
+                <div className="flex gap-2 items-center">
                   <span className="text-key-gray">نویسنده:</span>
                   <span className="text-value-gray border-b-1 border-value-gray">
                     {name?.[1]}
@@ -269,24 +284,19 @@ export default function BookPage() {
                     {category}
                   </span>
                 </div>
-                <div className="flex gap-2 items-center">
-                  <div className="text-key-gray">
-                    <span>امتیاز کتاب:</span>
-                  </div>
-                  <img
-                    src="/src/assets/images/star.png"
-                    alt="star"
-                    className="w-4"
-                  />
-                  <span className="text-value-gray text-sm">
-                    {product?.rating.rate} از {product?.rating.count} رای
-                  </span>
-                </div>
               </div>
+            </div>
+            <div className="flex items-center gap-2 w-full justify-between">
+              <InfoIcon className="size-5 text-key-gray" />
+              <p className="text-[12px] text-key-gray max-w-[500px] leading-5">
+                درخواست مرجوع کردن کالا در گروه کتاب {product?.category?.name}{" "}
+                با دلیل "انصراف از خرید" تنها در صورتی قابل تایید است که کالا در
+                شرایط اولیه باشد (در صورت پلمپ بودن، کالا نباید باز شده باشد).
+              </p>
             </div>
             <div className="flex items-center mobile:gap-4 gap-1">
               <Button
-                className="border-persian-green text-persian-green w-44 text-[12px] mobile:text-base mobile:w-auto"
+                className="border-persian-green text-persian-green w-44 text-[12px] mobile:text-sm mobile:w-auto"
                 variant="bordered"
                 startContent={<HeartIcon />}
               >
@@ -415,13 +425,13 @@ export default function BookPage() {
           </Card>
         </div>
       </section>
-      <section className="flex flex-col pb-4 gap-4 laptop:px-0 mobile:mp-6 px-4">
+      <section className="flex flex-col gap-4 my-4 laptop:px-0 mobile:mp-6 px-4">
         <div>
-          <h3 className="text-sm mobile:text-lg font-semibold">
+          <h3 className="text-sm mobile:text-lg font-semibold text-[#222]">
             معرفی {name?.[0]}
           </h3>
         </div>
-        <div className="max-w-[980px] text-[11px] mobile:text-base">
+        <div className="max-w-[650px] text-[11px] mobile:text-sm text-value-gray">
           {data?.data.product.description && (
             <ProductDescription description={data.data.product.description} />
           )}

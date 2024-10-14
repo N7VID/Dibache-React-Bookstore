@@ -21,6 +21,8 @@ import {
 } from "../pages";
 import Providers from "../providers";
 import PrivateRoutes from "./Private.routes";
+import { Suspense } from "react";
+import Loading from "../components/Loading/Loading";
 
 export const router = createBrowserRouter([
   {
@@ -28,7 +30,11 @@ export const router = createBrowserRouter([
     children: [
       {
         path: PATHS.HOME,
-        element: <MainLayout />,
+        element: (
+          <Suspense fallback={<Loading />}>
+            <MainLayout />
+          </Suspense>
+        ),
         children: [
           { index: true, element: <HomePage /> },
           {
@@ -46,7 +52,11 @@ export const router = createBrowserRouter([
       },
       {
         path: PATHS.DASHBOARD,
-        element: <DashboardLayout />,
+        element: (
+          <Suspense fallback={<Loading />}>
+            <DashboardLayout />
+          </Suspense>
+        ),
         children: [
           { index: true, element: <OrdersPage /> },
           { path: PATHS.INVENTORY, element: <InventoryPage /> },
@@ -55,7 +65,11 @@ export const router = createBrowserRouter([
       },
       {
         path: PATHS.LOGIN,
-        element: <AuthLayout />,
+        element: (
+          <Suspense fallback={<Loading />}>
+            <AuthLayout />
+          </Suspense>
+        ),
         children: [
           { index: true, element: <LoginPage /> },
           { path: PATHS.ADMIN, element: <AdminLoginPage /> },
@@ -63,7 +77,11 @@ export const router = createBrowserRouter([
       },
       {
         path: PATHS.REGISTER,
-        element: <AuthLayout />,
+        element: (
+          <Suspense fallback={<Loading />}>
+            <AuthLayout />
+          </Suspense>
+        ),
         children: [{ index: true, element: <RegisterPage /> }],
       },
       {

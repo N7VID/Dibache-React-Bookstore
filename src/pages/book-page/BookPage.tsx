@@ -1,18 +1,17 @@
-import { BreadcrumbItem, Breadcrumbs, Button } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
-import { Link, ScrollRestoration, useParams } from "react-router-dom";
+import { ScrollRestoration, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { A11y, Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
 import HeartIcon from "../../assets/svg/HeartIcon";
 import InfoIcon from "../../assets/svg/InfoIcon";
 import ShareIcon from "../../assets/svg/ShareIcon";
-import { PATHS } from "../../configs/paths.config";
+import MainBreadcrumbs from "../../components/MainBreadcrumbs/MainBreadcrumbs";
 import { useGetServices } from "../../hooks/useGetServices";
 import { getProductsById } from "../../queryhooks/product";
 import { Icart } from "../../types/cartDatatype";
@@ -86,37 +85,7 @@ export default function BookPage() {
     <div className="LayoutContainer cursor-default pb-8">
       <ScrollRestoration />
       <div className="py-4">
-        <Breadcrumbs separator={<ChevronLeftIcon className="size-3" />}>
-          <BreadcrumbItem>
-            <Link
-              to={PATHS.HOME}
-              className="text-[11px] tablet:text-[14px] lg:text-base"
-            >
-              دیباچه
-            </Link>
-          </BreadcrumbItem>
-          <BreadcrumbItem>
-            <Link
-              to={`/category/${product?.category._id}`}
-              className="text-[11px] tablet:text-[14px] lg:text-base"
-            >
-              {product?.category.name}
-            </Link>
-          </BreadcrumbItem>
-          <BreadcrumbItem>
-            <Link
-              to={`/subcategory/${product?.subcategory._id}`}
-              className="text-[11px] tablet:text-[14px] lg:text-base"
-            >
-              {product?.subcategory.name}
-            </Link>
-          </BreadcrumbItem>
-          <BreadcrumbItem>
-            <span className="text-[11px] tablet:text-[14px] lg:text-base">
-              {name?.[0]}
-            </span>
-          </BreadcrumbItem>
-        </Breadcrumbs>
+        <MainBreadcrumbs type="single" name={name} product={product} />
       </div>
       <section className="flex flex-col laptop:flex-row items-center justify-between gap-16 laptop:gap-8 mt-4 pb-16 laptop:pb-8">
         <div className="flex flex-col md:flex-row items-center justify-center gap-6">

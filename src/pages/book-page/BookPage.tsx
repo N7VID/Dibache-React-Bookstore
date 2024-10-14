@@ -1,24 +1,19 @@
-import { Button } from "@nextui-org/react";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { ScrollRestoration, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { A11y, Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import HeartIcon from "../../assets/svg/HeartIcon";
-import InfoIcon from "../../assets/svg/InfoIcon";
-import ShareIcon from "../../assets/svg/ShareIcon";
 import MainBreadcrumbs from "../../components/MainBreadcrumbs/MainBreadcrumbs";
 import { useGetServices } from "../../hooks/useGetServices";
 import { getProductsById } from "../../queryhooks/product";
 import { Icart } from "../../types/cartDatatype";
 import { GetProductsByIdResponse } from "../../types/GetProductsByIdResponse";
 import { ProductsEntity } from "../../types/productType";
-import { toPersianNumber } from "../../utils/toPersianNumber";
 import BookPaymentCard from "./components/BookPaymentCard";
+import BookDetailSection from "./components/BookDetailSection";
 
 export default function BookPage() {
   const { id } = useParams();
@@ -47,21 +42,7 @@ export default function BookPage() {
   }
 
   const name = product?.name.split("اثر");
-  const category = `${product?.category.name}، ${product?.subcategory.name}`;
   const images = product?.images;
-
-  const copyToClipboard = () => {
-    const currentUrl = window.location.href;
-    navigator.clipboard
-      .writeText(currentUrl)
-      .then(() => {
-        toast.success("با موفقیت کپی شد.");
-      })
-      .catch((error) => {
-        toast.error(`Failed to copy: ${error}`, { rtl: false });
-      });
-  };
-
   const ProductDescription = ({ description }: { description: string }) => {
     return <div dangerouslySetInnerHTML={{ __html: description }} />;
   };
@@ -71,7 +52,6 @@ export default function BookPage() {
     const savedProduct = savedCart?.products?.find(
       (item) => item.product === id
     );
-
     if (savedProduct) {
       setCount(savedProduct?.count);
     }
@@ -110,72 +90,7 @@ export default function BookPage() {
               ))}
             </Swiper>
           </div>
-          <div className="flex flex-col gap-8 laptop:gap-6">
-            <div>
-              <h1 className="text-sm sm:text-[18px] lg:text-xl font-bold pb-2 border-b-2">
-                {name?.[0]}
-              </h1>
-              <div className="flex gap-2 py-1 items-center">
-                <img
-                  src="/src/assets/images/star.png"
-                  alt="star"
-                  className="w-3"
-                />
-                <div className="flex items-center gap-2 text-[12px] font-semibold">
-                  <span>{toPersianNumber(+product?.rating.rate)}</span>
-                  <span className="text-key-gray">
-                    (امتیاز {toPersianNumber(+product?.rating.count)} خریدار)
-                  </span>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2 text-[12px] mobile:text-sm py-5 border-b-2">
-                <h4 className="font-semibold text-base pb-2">ویژگی ها</h4>
-                <div className="flex gap-2 items-center">
-                  <span className="text-key-gray">نویسنده:</span>
-                  <span className="text-value-gray border-b-1 border-value-gray">
-                    {name?.[1]}
-                  </span>
-                </div>
-                <div className="flex gap-2 items-center">
-                  <span className="text-key-gray">انتشارات:</span>
-                  <span className="text-value-gray border-b-1 border-value-gray">
-                    {product?.brand}
-                  </span>
-                </div>
-                <div className="flex gap-2 items-center">
-                  <span className="text-key-gray">دسته بندی:</span>
-                  <span className="text-value-gray border-b-1 border-value-gray">
-                    {category}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 w-full justify-between">
-              <InfoIcon className="size-5 text-key-gray" />
-              <p className="text-[12px] text-key-gray max-w-[500px] leading-5">
-                درخواست مرجوع کردن کالا در گروه کتاب {product?.category?.name}{" "}
-                با دلیل "انصراف از خرید" تنها در صورتی قابل تایید است که کالا در
-                شرایط اولیه باشد (در صورت پلمپ بودن، کالا نباید باز شده باشد).
-              </p>
-            </div>
-            <div className="flex items-center mobile:gap-4 gap-1">
-              <Button
-                className="border-persian-green text-persian-green w-44 text-[12px] mobile:text-sm mobile:w-auto"
-                variant="bordered"
-                startContent={<HeartIcon />}
-              >
-                اضافه به علاقه مندی ها
-              </Button>
-              <Button
-                onClick={copyToClipboard}
-                isIconOnly
-                className="border-persian-green text-persian-green"
-                variant="bordered"
-              >
-                <ShareIcon />
-              </Button>
-            </div>
-          </div>
+          <BookDetailSection product={product} name={name} />
         </div>
         <div>
           <BookPaymentCard

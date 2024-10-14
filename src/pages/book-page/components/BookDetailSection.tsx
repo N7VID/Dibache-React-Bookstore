@@ -8,11 +8,10 @@ import { toPersianNumber } from "../../../utils/toPersianNumber";
 
 export default function BookDetailSection({
   product,
-  name,
 }: {
   product: ProductsEntity;
-  name: string[];
 }) {
+  const name = product?.name.split("اثر");
   const category = `${product?.category.name}، ${product?.subcategory.name}`;
 
   const copyToClipboard = () => {

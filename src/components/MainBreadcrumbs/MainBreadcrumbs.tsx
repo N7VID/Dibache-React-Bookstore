@@ -6,11 +6,12 @@ import { ProductsEntity } from "../../types/productType";
 
 interface Props {
   product: ProductsEntity;
-  name?: string[];
   type: "single" | "subcategory" | "category";
 }
 
-export default function MainBreadcrumbs({ product, name, type }: Props) {
+export default function MainBreadcrumbs({ product, type }: Props) {
+  const name = product?.name.split("اثر");
+
   const categoryLink = `/category/${product?.category?._id}`;
   const subcategoryLink = product?.subcategory?._id
     ? `/subcategory/${product?.subcategory?._id}`

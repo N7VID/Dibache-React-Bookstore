@@ -14,11 +14,11 @@ import { GetProductsByIdResponse } from "../../types/GetProductsByIdResponse";
 import { ProductsEntity } from "../../types/productType";
 import BookPaymentCard from "./components/BookPaymentCard";
 import BookDetailSection from "./components/BookDetailSection";
+import BookDescription from "./components/BookDescription";
 
 export default function BookPage() {
   const { id } = useParams();
   const [count, setCount] = useState(1);
-
   const { data } = useGetServices<GetProductsByIdResponse>({
     queryKey: ["GetBookById", id],
     queryFn: () => getProductsById(id!),
@@ -43,9 +43,6 @@ export default function BookPage() {
 
   const name = product?.name.split("اثر");
   const images = product?.images;
-  const ProductDescription = ({ description }: { description: string }) => {
-    return <div dangerouslySetInnerHTML={{ __html: description }} />;
-  };
 
   useEffect(() => {
     const savedCart: Icart = JSON.parse(localStorage.getItem("cart") || "{}");
@@ -65,7 +62,7 @@ export default function BookPage() {
     <div className="LayoutContainer cursor-default pb-8">
       <ScrollRestoration />
       <div className="py-4">
-        <MainBreadcrumbs type="single" name={name} product={product} />
+        <MainBreadcrumbs type="single" product={product} />
       </div>
       <section className="flex flex-col laptop:flex-row items-center justify-between gap-16 laptop:gap-8 mt-4 pb-16 laptop:pb-8">
         <div className="flex flex-col md:flex-row items-center justify-center gap-6">
@@ -90,7 +87,7 @@ export default function BookPage() {
               ))}
             </Swiper>
           </div>
-          <BookDetailSection product={product} name={name} />
+          <BookDetailSection product={product} />
         </div>
         <div>
           <BookPaymentCard
@@ -103,18 +100,7 @@ export default function BookPage() {
           />
         </div>
       </section>
-      <section className="flex flex-col gap-4 my-4 laptop:px-0 mobile:mp-6 px-4">
-        <div>
-          <h3 className="text-sm mobile:text-lg font-semibold text-[#222]">
-            معرفی {name?.[0]}
-          </h3>
-        </div>
-        <div className="max-w-[650px] text-[11px] mobile:text-sm text-value-gray">
-          {data?.data.product.description && (
-            <ProductDescription description={data.data.product.description} />
-          )}
-        </div>
-      </section>
+      <BookDescription data={product} />
     </div>
   );
 }

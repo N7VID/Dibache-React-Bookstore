@@ -4,10 +4,12 @@ import { useGetServices } from "../../hooks/useGetServices";
 import { getOrders } from "../../queryhooks/admin/orders";
 import { OrdersResponse } from "../../types/ordersResponse";
 import TableOrders from "./components/TableOrders";
+import { useTableSort } from "../../hooks/useTableSort";
 
 export default function OrdersPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-
+  const { handleTotalPriceOrderColumn, handleCreatedAtOrderColumn } =
+    useTableSort();
   const limit = searchParams.get("limit") || "5";
   const sort = searchParams.get("sort") || "-createdAt";
 
@@ -50,20 +52,6 @@ export default function OrdersPage() {
     setSearchParams({ ...currentParams, page: page.toString(), limit });
   }
 
-  function handlePriceOrderColumn() {
-    const currentParams = Object.fromEntries([...searchParams]);
-    const newSort =
-      currentParams.sort === "totalPrice" ? "-totalPrice" : "totalPrice";
-    setSearchParams({ ...currentParams, sort: newSort });
-  }
-
-  function handleCreatedAtOrderColumn() {
-    const currentParams = Object.fromEntries([...searchParams]);
-    const newSort =
-      currentParams.sort === "createdAt" ? "-createdAt" : "createdAt";
-    setSearchParams({ ...currentParams, sort: newSort });
-  }
-
   return (
     <div className="LayoutContainer pt-[85px] md:px-16 cursor-default">
       <h2 className="text-2xl text-value-gray font-semibold py-6">
@@ -77,7 +65,7 @@ export default function OrdersPage() {
             searchParams={searchParams}
             handlePageChange={handlePageChange}
             handleCreatedAtSorting={handleCreatedAtOrderColumn}
-            handlePriceSorting={handlePriceOrderColumn}
+            handlePriceSorting={handleTotalPriceOrderColumn}
           />
         </Tab>
         <Tab key="delivered" title="تحویل شده">
@@ -87,7 +75,7 @@ export default function OrdersPage() {
             searchParams={searchParams}
             handlePageChange={handlePageChange}
             handleCreatedAtSorting={handleCreatedAtOrderColumn}
-            handlePriceSorting={handlePriceOrderColumn}
+            handlePriceSorting={handleTotalPriceOrderColumn}
           />
         </Tab>
         <Tab key="all" title="همه سفارشات">
@@ -97,7 +85,7 @@ export default function OrdersPage() {
             searchParams={searchParams}
             handlePageChange={handlePageChange}
             handleCreatedAtSorting={handleCreatedAtOrderColumn}
-            handlePriceSorting={handlePriceOrderColumn}
+            handlePriceSorting={handleTotalPriceOrderColumn}
           />
         </Tab>
       </Tabs>

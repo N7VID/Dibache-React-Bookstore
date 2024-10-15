@@ -25,10 +25,13 @@ import NextUiModal from "../../components/NextUiModal/NextUiModal";
 import { useDeleteServices } from "../../hooks/useDeleteServices";
 import { deleteProducts } from "../../queryhooks/admin/products";
 import { toast } from "react-toastify";
+import { useTableSort } from "../../hooks/useTableSort";
 
 export default function BooksPage() {
   const [modalType, setModalType] = useState("");
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const { handlePageChange, handleCategoryOrderColumn, handleNameOrderColumn } =
+    useTableSort();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [selectedItem, setSelectedItem] = useState<{
     id: string;
@@ -87,22 +90,6 @@ export default function BooksPage() {
   let items: ProductsEntity[] = [];
   if (data?.data.products?.length) {
     items = data.data.products;
-  }
-
-  function handleNameOrderColumn() {
-    const currentParams = Object.fromEntries([...searchParams]);
-    const newSort = currentParams.sort === "name" ? "-name" : "name";
-    setSearchParams({ ...currentParams, sort: newSort });
-  }
-  function handleCategoryOrderColumn() {
-    const currentParams = Object.fromEntries([...searchParams]);
-    const newSort =
-      currentParams.sort === "category" ? "-category" : "category";
-    setSearchParams({ ...currentParams, sort: newSort });
-  }
-  function handlePageChange(page: number) {
-    const currentParams = Object.fromEntries([...searchParams]);
-    setSearchParams({ ...currentParams, page: page.toString(), limit });
   }
 
   function handleActionModal() {

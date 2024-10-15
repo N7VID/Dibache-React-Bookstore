@@ -65,8 +65,8 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="LayoutContainer pt-[90px] md:px-16 cursor-default">
-      <h2 className="text-2xl text-value-gray font-semibold py-4">
+    <div className="LayoutContainer pt-[85px] md:px-16 cursor-default">
+      <h2 className="text-2xl text-value-gray font-semibold py-6">
         مدیریت سفارشات
       </h2>
       <Tabs aria-label="Options" onSelectionChange={handleSelectionChange}>

@@ -10,7 +10,7 @@ import {
   Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
-import { useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { DeleteIcon } from "../../assets/svg/DeleteIcon";
 import { EditIcon } from "../../assets/svg/EditIcon";
@@ -26,6 +26,7 @@ import { useDeleteServices } from "../../hooks/useDeleteServices";
 import { deleteProducts } from "../../queryhooks/admin/products";
 import { toast } from "react-toastify";
 import { useTableSort } from "../../hooks/useTableSort";
+import { RootContext } from "../../context/RootContextProvider";
 
 export default function BooksPage() {
   const [modalType, setModalType] = useState("");
@@ -33,15 +34,11 @@ export default function BooksPage() {
   const { handlePageChange, handleCategoryOrderColumn, handleNameOrderColumn } =
     useTableSort();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const [selectedItem, setSelectedItem] = useState<{
-    id: string;
-    name: string;
-    item?: ProductsEntity | null;
-  }>({
-    id: "",
-    name: "",
-    item: null,
-  });
+  const context = useContext(RootContext);
+  if (!context)
+    throw new Error("useCart must be used within a RootContextProvider");
+  const { selectedItemEditForm, setSelectedItemEditForm } = context;
+
   const {
     isOpen: isOpenDeleteModal,
     onOpen: onOpenDeleteModal,
@@ -93,18 +90,18 @@ export default function BooksPage() {
   }
 
   function handleActionModal() {
-    if (selectedItem) {
-      mutate(selectedItem.id);
+    if (selectedItemEditForm) {
+      mutate(selectedItemEditForm.id);
     }
   }
   function handleDeleteButton(id: string, name: string) {
     onOpenDeleteModal();
-    setSelectedItem({ id, name });
+    setSelectedItemEditForm({ id, name });
   }
   function handleEditButton(item: ProductsEntity) {
     onOpen();
     setModalType("edit");
-    if (item) setSelectedItem((prev) => ({ ...prev, item }));
+    if (item) setSelectedItemEditForm((prev) => ({ ...prev, item }));
   }
 
   return (
@@ -205,7 +202,6 @@ export default function BooksPage() {
         </TableBody>
       </Table>
       <FormModal
-        item={selectedItem?.item}
         isOpen={isOpen}
         onClose={onClose}
         onOpenChange={onOpenChange}
@@ -215,7 +211,7 @@ export default function BooksPage() {
         isOpen={isOpenDeleteModal}
         onOpenChange={onOpenChangeModal}
         onAction={handleActionModal}
-        modalTitle={`حذف ${selectedItem.name.split("اثر")[0]}؟`}
+        modalTitle={`حذف ${selectedItemEditForm.name.split("اثر")[0]}؟`}
         modalBody="این عملیات حذف دائمی داده‌ها را به همراه دارد و قابل برگشت نیست. همچنین تمامی اطلاعات مرتبط با این آیتم نیز از دست خواهند رفت."
         buttonContent={["انصراف", "حذف کتاب"]}
       />

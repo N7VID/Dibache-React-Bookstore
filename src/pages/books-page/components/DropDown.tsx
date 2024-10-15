@@ -25,6 +25,7 @@ export default function DropDown({ onOpen, setModalType }: props) {
       <DropdownTrigger>
         <Button
           variant="bordered"
+          className="bg-white"
           startContent={<PlusCircle className="size-5" />}
           endContent={
             <img

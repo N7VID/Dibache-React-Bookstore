@@ -114,7 +114,6 @@ export default function BooksPage() {
     onOpenDeleteModal();
     setSelectedItem({ id, name });
   }
-
   function handleEditButton(item: ProductsEntity) {
     onOpen();
     setModalType("edit");
@@ -122,11 +121,14 @@ export default function BooksPage() {
   }
 
   return (
-    <div className="LayoutContainer pt-[100px]">
+    <div className="LayoutContainer pt-[85px] md:px-16 cursor-default">
+      <h2 className="text-2xl text-value-gray font-semibold py-6">
+        مدیریت محصولات
+      </h2>
       <DropDown onOpen={onOpen} setModalType={setModalType} />
       <Table
         aria-label="Example static collection table"
-        className="py-6 cursor-default"
+        className="py-3 cursor-default"
         bottomContent={
           pages > 0 ? (
             <div className="flex w-full justify-center">
@@ -170,11 +172,10 @@ export default function BooksPage() {
                   className="w-16"
                 />
               </TableCell>
-              <TableCell>
-                {" "}
+              <TableCell className="text-[10px] mobile:text-sm px-1 mobile:px-3">
                 <Link to={`/book/${item._id}`}>{item.name}</Link>
               </TableCell>
-              <TableCell>{`${item.category.name} / ${item.subcategory.name}`}</TableCell>
+              <TableCell className="text-[10px] mobile:text-sm px-1 mobile:px-3">{`${item.category.name} / ${item.subcategory.name}`}</TableCell>
               <TableCell>
                 <div className="relative flex items-center gap-4 flex-col sm:flex-row">
                   <Tooltip
@@ -183,7 +184,7 @@ export default function BooksPage() {
                   >
                     <Link to={`/book/${item._id}`}>
                       <span className="text-lg text-default-900 cursor-pointer active:opacity-50">
-                        <EyeIcon />
+                        <EyeIcon className="size-3 mobile:size-auto" />
                       </span>
                     </Link>
                   </Tooltip>
@@ -195,7 +196,7 @@ export default function BooksPage() {
                       className="text-lg text-default-900 cursor-pointer active:opacity-50"
                       onClick={() => handleEditButton(item)}
                     >
-                      <EditIcon />
+                      <EditIcon className="size-3 mobile:size-auto" />
                     </span>
                   </Tooltip>
                   <Tooltip
@@ -207,7 +208,7 @@ export default function BooksPage() {
                       className="text-lg text-danger cursor-pointer active:opacity-50"
                       onClick={() => handleDeleteButton(item._id, item.name)}
                     >
-                      <DeleteIcon />
+                      <DeleteIcon className="size-3 mobile:size-auto" />
                     </span>
                   </Tooltip>
                 </div>

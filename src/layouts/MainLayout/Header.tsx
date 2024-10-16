@@ -1,79 +1,66 @@
 import {
   Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
   Input,
+  Link,
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarMenu,
+  NavbarMenuItem,
+  NavbarMenuToggle,
   useDisclosure,
 } from "@nextui-org/react";
 import Cookies from "js-cookie";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import BookIcon from "../../assets/svg/BookIcon";
-import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
-import ListIcon from "../../assets/svg/ListIcon";
 import { SearchIcon } from "../../assets/svg/SearchIcon";
 import { UserIcon } from "../../assets/svg/UserIcon";
 import NextUiModal from "../../components/NextUiModal/NextUiModal";
 import { PATHS } from "../../configs/paths.config";
-import { useGetServices } from "../../hooks/useGetServices";
 import { useLogout } from "../../hooks/useLogout";
 import { logout } from "../../queryhooks/auth";
-import { getCategories } from "../../queryhooks/getCategories";
-import { getSubcategoriesByCategoryId } from "../../queryhooks/getSubcategories";
-import {
-  CategoriesEntity,
-  CategoriesResponse,
-} from "../../types/categoriesResponse";
-import {
-  SubcategoriesEntity,
-  SubcategoriesResponse,
-} from "../../types/subCategoriesResponse";
+import { User } from "../../types/authResponse";
 import MainDropDown from "./components/MainDropDown";
+import MainMenu from "./components/mainMenu";
 
 export default function Header() {
   const navigate = useNavigate();
   const accessToken = Cookies.get("accessToken");
+  const { role }: User = JSON.parse(localStorage.getItem("user") || "{}");
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [categoryId, setCategoryId] = useState("");
-  const [isMainDropdownOpen, setMainDropdownOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<null | string>(null);
 
-  const toggleMainDropdown = () => {
-    setMainDropdownOpen(!isMainDropdownOpen);
-  };
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const toggleDropdown = (categoryId: string) => {
-    if (openDropdown === categoryId) {
-      setOpenDropdown(null);
-    } else {
-      setOpenDropdown(categoryId);
-    }
-  };
+  const publicMenuItems = [
+    { name: "ورود", href: PATHS.LOGIN },
+    { name: "ثبت نام", href: PATHS.REGISTER },
+  ];
+
+  const userMenuItems = [
+    { name: "پروفایل", href: "/" },
+    { name: "علاقه مندی ها", href: "/" },
+    { name: "سبد خرید", href: PATHS.CART },
+    { name: "خروج از حساب کاربری", href: "/" },
+  ];
+
+  const adminMenuItems = [
+    { name: "پروفایل", href: "/" },
+    { name: "سفارشات", href: "/dashboard" },
+    { name: "محصولات", href: "/dashboard/books" },
+    { name: "موجودی", href: "/dashboard/inventory" },
+    { name: "علاقه مندی ها", href: "/" },
+    { name: "سبد خرید", href: PATHS.CART },
+    { name: "خروج از حساب کاربری", href: "/" },
+  ];
+
+  const menuItems = !accessToken
+    ? publicMenuItems
+    : role === "ADMIN"
+    ? adminMenuItems
+    : userMenuItems;
 
   const { refetch } = useLogout();
-
-  const { data } = useGetServices<CategoriesResponse>({
-    queryKey: ["GetCategoriesMenu"],
-    queryFn: getCategories,
-  });
-
-  const { data: subCategoriesData } = useGetServices<SubcategoriesResponse>({
-    queryKey: ["GetSubCategoriesMenu", categoryId],
-    queryFn: () => getSubcategoriesByCategoryId(categoryId),
-  });
-
-  let items: CategoriesEntity[] = [];
-  if (data?.data.categories) {
-    items = data?.data.categories;
-  }
-
-  let subcategoriesItem: SubcategoriesEntity[] = [];
-  if (subCategoriesData?.data.subcategories) {
-    subcategoriesItem = subCategoriesData.data.subcategories;
-  }
 
   const handleActionModal = () => {
     refetch()
@@ -86,148 +73,83 @@ export default function Header() {
 
   return (
     <>
-      <header className="shadow-header fixed w-full bg-white z-50">
-        <div className="LayoutContainer flex items-center justify-center md:justify-between gap-0 sm:gap-4">
-          <div className="flex items-center justify-between md:gap-4 gap-2">
-            <div className="flex items-center">
-              <Button
-                variant="bordered"
-                isIconOnly
-                aria-label="sidebar"
-                className="flex md:hidden"
-              >
-                <img
-                  src="/src/assets/svg/menu-ham-black.svg"
-                  className="w-7"
-                  alt="sidebar-icon"
-                />
-              </Button>
-              <Link to={PATHS.HOME}>
-                <img
-                  src="/Dibache-1.png"
-                  alt="Dibache-logo"
-                  className="w-32 my-2"
-                />
-              </Link>
-            </div>
-            <Input
-              isClearable
-              labelPlacement="inside"
-              placeholder="جستجو در دیباچه"
-              radius="full"
-              size="md"
-              className="sm:w-[450px] w-[210px]"
-              startContent={
-                <SearchIcon className="text-black/60 dark:text-white/90 cursor-pointer flex-shrink-0" />
-              }
-            />
-          </div>
-          {accessToken ? (
-            <>
-              <MainDropDown onOpen={onOpen} />
-            </>
-          ) : (
-            <Button
-              className="bg-main-gray hidden md:flex"
-              startContent={
-                <UserIcon className="text-black/70 dark:text-white/90" />
-              }
-              onClick={() => navigate(PATHS.LOGIN)}
+      <header className="LayoutContainer shadow-header fixed w-full bg-white z-50">
+        <Navbar
+          isMenuOpen={isMenuOpen}
+          onMenuOpenChange={setIsMenuOpen}
+          className="custom-navbar bg-white fixed pt-[6px] pb-[10px] px-0"
+        >
+          <div className="flex w-full items-center justify-between">
+            <NavbarContent justify="center">
+              <NavbarMenuToggle
+                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                className="sm:hidden"
+              />
+              <NavbarBrand>
+                <Link href={PATHS.HOME}>
+                  <img
+                    src="/Dibache-1.png"
+                    alt="Dibache-logo"
+                    className="w-32"
+                  />
+                </Link>
+              </NavbarBrand>
+            </NavbarContent>
+            <NavbarContent
+              className="hidden sm:flex gap-4 px-4"
+              justify="start"
             >
-              ورود به حساب کاربری
-            </Button>
-          )}
-        </div>
-        <div className="LayoutContainer flex gap-8">
-          <Dropdown
-            backdrop="opaque"
-            closeOnSelect={false}
-            isOpen={isMainDropdownOpen}
-            onClose={() => setMainDropdownOpen(false)}
-          >
-            <DropdownTrigger>
-              <Button
-                disableRipple
-                className="p-0 bg-transparent data-[hover=true]:bg-transparent"
-                startContent={<ListIcon />}
-                radius="sm"
-                size="lg"
-                variant="light"
-                onClick={toggleMainDropdown}
-              >
-                دسته بندی ها
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu aria-label="Main Categories">
-              {items.map((category) => (
-                <DropdownItem
-                  className="font-yekan"
-                  key={category._id}
-                  textValue={category.name}
+              <Input
+                isClearable
+                labelPlacement="inside"
+                placeholder="جستجو در دیباچه"
+                radius="full"
+                size="md"
+                className="laptop:w-[450px] md:w-[350px] w-[210px]"
+                startContent={
+                  <SearchIcon className="text-black/60 dark:text-white/90 cursor-pointer flex-shrink-0" />
+                }
+              />
+            </NavbarContent>
+            <NavbarContent justify="center" className="hidden sm:block">
+              {accessToken ? (
+                <>
+                  <MainDropDown onOpen={onOpen} />
+                </>
+              ) : (
+                <Button
+                  className="bg-main-gray hidden md:flex"
+                  startContent={
+                    <UserIcon className="text-black/70 dark:text-white/90" />
+                  }
+                  onClick={() => navigate(PATHS.LOGIN)}
                 >
-                  <Dropdown
-                    key={category._id}
-                    placement="left"
-                    closeOnSelect={false}
-                    isOpen={openDropdown === category._id}
-                    onClose={() => setOpenDropdown(null)}
-                  >
-                    <DropdownTrigger>
-                      <Button
-                        disableRipple
-                        className="p-0 w-full bg-transparent data-[hover=true]:bg-transparent text-medium"
-                        radius="sm"
-                        variant="light"
-                        onClick={() => {
-                          navigate(`category/${category._id}`);
-                          setOpenDropdown(null);
-                          setMainDropdownOpen(false);
-                        }}
-                        onMouseEnter={() => {
-                          setCategoryId(category._id);
-                          toggleDropdown(category._id);
-                        }}
-                      >
-                        <div className="w-full flex justify-between items-center">
-                          {category.name}
-                          <ChevronLeftIcon />
-                        </div>
-                      </Button>
-                    </DropdownTrigger>
-                    <DropdownMenu
-                      aria-label="Subcategories"
-                      className="font-yekan"
-                    >
-                      {subcategoriesItem.map((subCategory) => (
-                        <DropdownItem
-                          key={subCategory._id}
-                          textValue={subCategory.name}
-                          onClick={() => {
-                            navigate(`/subcategory/${subCategory._id}`);
-                            setMainDropdownOpen(false);
-                            setOpenDropdown(null);
-                          }}
-                        >
-                          {subCategory.name}
-                        </DropdownItem>
-                      ))}
-                    </DropdownMenu>
-                  </Dropdown>
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
-          <Button
-            disableRipple
-            className="p-0 bg-transparent data-[hover=true]:bg-transparent"
-            startContent={<BookIcon />}
-            radius="sm"
-            size="lg"
-            variant="light"
-          >
-            جدیدترین کتاب ها
-          </Button>
-        </div>
+                  ورود به حساب کاربری
+                </Button>
+              )}
+            </NavbarContent>
+          </div>
+          <NavbarMenu>
+            {menuItems.map((item, index) => (
+              <NavbarMenuItem
+                key={`${item.name}-${index}`}
+                className="font-yekan"
+              >
+                <Link
+                  color={
+                    index === menuItems.length - 1 ? "danger" : "foreground"
+                  }
+                  className="w-full"
+                  href={item.href}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              </NavbarMenuItem>
+            ))}
+          </NavbarMenu>
+        </Navbar>
+        <MainMenu />
         <NextUiModal
           isOpen={isOpen}
           onOpenChange={onOpenChange}

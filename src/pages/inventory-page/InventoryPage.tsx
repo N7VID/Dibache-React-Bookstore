@@ -1,5 +1,4 @@
 import {
-  Button,
   Input,
   Pagination,
   Spinner,
@@ -11,15 +10,17 @@ import {
   TableRow,
 } from "@nextui-org/react";
 import { ChangeEvent, KeyboardEvent, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { ENDPOINTS } from "../../constants";
 import { useGetServices } from "../../hooks/useGetServices";
 import { getProducts } from "../../queryhooks/product";
+import { httpRequest } from "../../services/http-request";
 import { getProductsResponse, ProductsEntity } from "../../types/productType";
 import { renderItem } from "../../utils/paginationRenderItem";
-import { httpRequest } from "../../services/http-request";
-import { ENDPOINTS } from "../../constants";
 import { toPersianNumber } from "../../utils/toPersianNumber";
-import { toast } from "react-toastify";
+import TableToolbar from "./components/TableToolbar";
+import { useTableSort } from "../../hooks/useTableSort";
 
 interface EditModeType {
   id: string;
@@ -32,10 +33,16 @@ interface EditBodyType {
 }
 
 export default function InventoryPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [editQuantity, setEditQuantity] = useState<EditModeType[]>([]);
   const [editPrice, setEditPrice] = useState<EditModeType[]>([]);
   const [changeList, setChangeList] = useState<EditBodyType[]>([]);
+  const {
+    handleInventoryOrderColumn,
+    handlePageChange,
+    handlePriceOrderColumn,
+    handleNameOrderColumn,
+  } = useTableSort();
   const limit = searchParams.get("limit") || "5";
   const sort = searchParams.get("sort") || "-createdAt";
   const quantityInputRef = useRef<HTMLInputElement | null>(null);
@@ -60,7 +67,6 @@ export default function InventoryPage() {
   const pages = useMemo(() => {
     return data?.total ? Math.ceil(data.total / rowsPerPage) : 0;
   }, [data?.total, rowsPerPage]);
-
   const loadingState =
     isLoading || data?.data.products?.length === 0 ? "loading" : "idle";
 
@@ -69,30 +75,22 @@ export default function InventoryPage() {
     items = data.data.products;
   }
 
-  const currentParams = Object.fromEntries([...searchParams]);
-  function handlePriceOrderColumn() {
-    const newSort = currentParams.sort === "price" ? "-price" : "price";
-    setSearchParams({ ...currentParams, sort: newSort });
-  }
-  function handleInventoryOrderColumn() {
-    const newSort =
-      currentParams.sort === "quantity" ? "-quantity" : "quantity";
-    setSearchParams({ ...currentParams, sort: newSort });
-  }
-  function handlePageChange(page: number) {
-    setSearchParams({ ...currentParams, page: page.toString(), limit });
-  }
-
-  function handleOnClickQuantity(id: string, quantity: number) {
-    setEditQuantity((prev) => [...prev, { id: id, value: quantity }]);
+  function handleOnClick({
+    id,
+    value,
+    type,
+  }: {
+    id: string;
+    value: number;
+    type: "price" | "quantity";
+  }) {
+    if (type === "price") {
+      setEditPrice((prev) => [...prev, { id, value }]);
+    } else {
+      setEditQuantity((prev) => [...prev, { id, value }]);
+    }
     setTimeout(() => {
       quantityInputRef.current?.focus();
-    }, 0);
-  }
-  function handleOnClickPrice(id: string, price: number) {
-    setEditPrice((prev) => [...prev, { id: id, value: price }]);
-    setTimeout(() => {
-      priceInputRef.current?.focus();
     }, 0);
   }
 
@@ -181,22 +179,14 @@ export default function InventoryPage() {
   }
 
   return (
-    <div className="LayoutContainer pt-[100px]">
-      <Button
-        disabled={changeList.length === 0}
-        onClick={handleSave}
-        variant={changeList.length === 0 ? "bordered" : "solid"}
-        className={
-          changeList.length === 0
-            ? "text-black bg-default-100"
-            : "text-white bg-persian-green/80"
-        }
-      >
-        ذخیره تغییرات
-      </Button>
+    <div className="LayoutContainer pt-[85px] md:px-16 cursor-default">
+      <h2 className="text-2xl text-value-gray font-semibold py-6">
+        مدیریت موجودی
+      </h2>
+      <TableToolbar handleSave={handleSave} changeList={changeList} />
       <Table
         aria-label="Example static collection table"
-        className="py-6 cursor-default"
+        className="py-3 cursor-default"
         bottomContent={
           pages > 0 ? (
             <div className="flex w-full justify-center">
@@ -218,7 +208,7 @@ export default function InventoryPage() {
       >
         <TableHeader>
           <TableColumn key="thumbnail">تصویر</TableColumn>
-          <TableColumn key="name" allowsSorting>
+          <TableColumn key="name" allowsSorting onClick={handleNameOrderColumn}>
             نام کتاب
           </TableColumn>
           <TableColumn
@@ -253,7 +243,9 @@ export default function InventoryPage() {
                     className="w-16"
                   />
                 </TableCell>
-                <TableCell>{item.name}</TableCell>
+                <TableCell>
+                  <Link to={`/book/${item._id}`}>{item.name}</Link>
+                </TableCell>
                 <TableCell>
                   {price ? (
                     <Input
@@ -268,7 +260,13 @@ export default function InventoryPage() {
                     />
                   ) : (
                     <span
-                      onClick={() => handleOnClickPrice(item._id, item.price)}
+                      onClick={() =>
+                        handleOnClick({
+                          id: item._id,
+                          value: item.price,
+                          type: "price",
+                        })
+                      }
                       className="cursor-pointer"
                     >
                       {toPersianNumber(item.price)}
@@ -290,7 +288,11 @@ export default function InventoryPage() {
                   ) : (
                     <span
                       onClick={() =>
-                        handleOnClickQuantity(item._id, item.quantity)
+                        handleOnClick({
+                          id: item._id,
+                          value: item.quantity,
+                          type: "quantity",
+                        })
                       }
                       className="cursor-pointer"
                     >

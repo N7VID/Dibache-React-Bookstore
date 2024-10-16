@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Select, SelectItem, Spinner } from "@nextui-org/react";
-import { ChangeEvent, useContext, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import TextEditor from "../../../../components/TextEditor/TextEditor";
@@ -35,12 +36,12 @@ export default function EditProductForm({ onClose }: Params) {
     register,
     control,
     reset,
+    setValue,
+    watch,
   } = useForm<EditProduct>({
     resolver: zodResolver(schema),
     defaultValues: {
       name: item?.name,
-      category: item?.category._id,
-      subcategory: item?.subcategory._id,
       brand: item?.brand,
       quantity: item?.quantity,
       price: item?.price,
@@ -57,6 +58,17 @@ export default function EditProductForm({ onClose }: Params) {
     queryKey: ["GetSubcategories"],
     queryFn: getSubcategories,
   });
+
+  useEffect(() => {
+    if (categoryData && subCategoryData && item) {
+      setValue("category", item?.category._id);
+      setValue("subcategory", item?.subcategory._id);
+      const filteredSubcategories = subCategoryData?.data.subcategories
+        ?.filter((categoryItem) => categoryItem.category === item.category._id)
+        .map((item) => ({ label: item.name, value: item._id }));
+      setSubCategoriesItem(filteredSubcategories || []);
+    }
+  }, [item, categoryData, subCategoryData]);
 
   const { mutate, isPending } = usePatchServices({
     mutationKey: ["PatchProducts"],
@@ -118,7 +130,8 @@ export default function EditProductForm({ onClose }: Params) {
         errorMessage={`${errors["category"]?.message}`}
         variant="bordered"
         className="max-w-xs"
-        value={item?.category._id}
+        value={watch("category")}
+        selectedKeys={[watch("category")]}
         {...register("category", {
           onChange: handleSubCategories,
         })}
@@ -136,12 +149,12 @@ export default function EditProductForm({ onClose }: Params) {
       <Select
         label="زیر مجموعه"
         size="sm"
-        isDisabled={subCategoriesItem.length === 0}
         isInvalid={!!errors["subcategory"]}
         errorMessage={`${errors["subcategory"]?.message}`}
         variant="bordered"
         className="max-w-xs"
-        value={item?.subcategory._id}
+        value={watch("subcategory")}
+        selectedKeys={[watch("subcategory")]}
         {...register("subcategory")}
       >
         {subCategoriesItem?.map((item) => (

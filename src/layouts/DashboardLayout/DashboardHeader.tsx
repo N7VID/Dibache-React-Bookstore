@@ -73,7 +73,7 @@ export default function DashboardHeader() {
       <Navbar
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
-        className="custom-navbar shadow-header bg-white fixed z-30 py-[6px] px-0"
+        className="custom-navbar shadow-header bg-white fixed z-30 pt-[6px] pb-[10px] px-0"
       >
         <div className="flex LayoutContainer w-full items-center justify-between">
           <NavbarContent justify="center">
@@ -83,11 +83,7 @@ export default function DashboardHeader() {
             />
             <NavbarBrand>
               <Link href={PATHS.HOME}>
-                <img
-                  src="/Dibache-1.png"
-                  alt="Dibache-logo"
-                  className="w-32 my-2"
-                />
+                <img src="/Dibache-1.png" alt="Dibache-logo" className="w-32" />
               </Link>
             </NavbarBrand>
           </NavbarContent>

@@ -56,7 +56,7 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="h-[120px] mobile:h-[150px] md:h-[300px] w-full bg-persian-green flex justify-center items-center cursor-default px-4">
+      <section className="h-[120px] mobile:h-[150px] md:h-[300px] w-full bg-persian-green flex justify-center items-center cursor-default px-4 -mt-12 mobile:-mt-0">
         <div className="flex flex-col justify-center items-center">
           <h2 className="text-xl mobile:text-2xl md:text-3xl font-bold text-white border-b-2 pb-4 border-white">
             دیباچه، کتاب‌ها آغازگر هر داستان‌اند!
@@ -80,10 +80,10 @@ export default function HomePage() {
         />
       </section>
       <div className="LayoutContainer cursor-default">
-        <h2 className="text-xl font-bold text-center pt-8">
+        <h2 className="text-sm tablet:text-lg font-bold text-center pt-8">
           خرید آسان کتاب در دسته‌بندی‌های مختلف از دیباچه
         </h2>
-        <section className="py-8 px-[50px]">
+        <section className="py-8 px-[10px] tablet:px-[50px]">
           <Swiper
             modules={[Navigation, Pagination, A11y, Autoplay]}
             slidesPerView={3}
@@ -92,6 +92,18 @@ export default function HomePage() {
             autoplay={{
               delay: 5000,
               disableOnInteraction: false,
+            }}
+            spaceBetween={10}
+            breakpoints={{
+              900: {
+                slidesPerView: 3,
+              },
+              640: {
+                slidesPerView: 2,
+              },
+              0: {
+                slidesPerView: 1,
+              },
             }}
           >
             {firstSlider.map((slide, index) => (
@@ -108,12 +120,12 @@ export default function HomePage() {
           </Swiper>
         </section>
         <section className="py-4">
-          <div className="flex justify-between items-center px-6">
-            <h3 className="font-semibold text-lg">
+          <div className="flex flex-col gap-4 sm:flex-row sm:gap-0 justify-between items-center px-6">
+            <h3 className="font-semibold text-sm tablet:text-lg">
               داستان و رمان هایی که باید بخوانید
             </h3>
             <Link to={`/category/66e6bf415611008189a0bd30`}>
-              <span className="text-persian-green font-semibold flex justify-between items-center gap-2">
+              <span className="text-persian-green text-sm tablet:text-lg font-semibold flex justify-between items-center gap-2">
                 مشاهده همه
                 <ChevronLeftIcon className="size-4" />
               </span>
@@ -132,12 +144,12 @@ export default function HomePage() {
           </div>
         </section>
         <section className="py-8">
-          <div className="flex justify-between items-center px-6">
-            <h3 className="font-semibold text-lg">
+          <div className="flex justify-between items-center px-6 flex-col gap-4 sm:flex-row sm:gap-0 ">
+            <h3 className="font-semibold text-sm tablet:text-lg">
               سفری به درون ذهن با کتاب‌های روانشناسی
             </h3>
             <Link to={`/category/66e6a3a95611008189a0bd14`}>
-              <span className="text-persian-green font-semibold flex justify-between items-center gap-2">
+              <span className="text-persian-green font-semibold flex justify-between items-center gap-2 text-sm tablet:text-lg">
                 مشاهده همه
                 <ChevronLeftIcon className="size-4" />
               </span>
@@ -155,10 +167,10 @@ export default function HomePage() {
             )}
           </div>
         </section>
-        <h2 className="text-xl font-bold text-center pt-8">
+        <h2 className="font-bold text-center pt-8 text-sm tablet:text-lg">
           دسته بندی متنوع کتاب ها در دیباچه
         </h2>
-        <section className="py-8 pb-[100px] px-[50px]">
+        <section className="py-8 pb-[100px] px-[10px] tablet:px-[50px]">
           <Swiper
             modules={[Navigation, Pagination, A11y, Autoplay]}
             slidesPerView={3}
@@ -167,6 +179,18 @@ export default function HomePage() {
             autoplay={{
               delay: 5000,
               disableOnInteraction: false,
+            }}
+            spaceBetween={10}
+            breakpoints={{
+              900: {
+                slidesPerView: 3,
+              },
+              640: {
+                slidesPerView: 2,
+              },
+              0: {
+                slidesPerView: 1,
+              },
             }}
           >
             {secondSlider.map((slide, index) => (

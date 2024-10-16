@@ -102,9 +102,7 @@ export default function DashboardHeader() {
                   )
                 }
               >
-                <li>
-                  <NavLink to={navbarItem.href}>{navbarItem.name}</NavLink>
-                </li>
+                <NavLink to={navbarItem.href}>{navbarItem.name}</NavLink>
               </NavbarItem>
             ))}
           </NavbarContent>

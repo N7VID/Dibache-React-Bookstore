@@ -9,7 +9,9 @@ import { useGetServices } from "../../hooks/useGetServices";
 import { getProducts } from "../../queryhooks/product";
 import { getProductsResponse, ProductsEntity } from "../../types/productType";
 import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
-import { Link } from "react-router-dom";
+import { Link, ScrollRestoration } from "react-router-dom";
+import { getCategories } from "../../queryhooks/getCategories";
+import { CategoriesResponse } from "../../types/categoriesResponse";
 
 const firstSlider = [
   { src: "/src/assets/images/Ad-5.png" },
@@ -19,44 +21,48 @@ const firstSlider = [
   { src: "/src/assets/images/Ad-2.png" },
   { src: "/src/assets/images/Ad-1.png" },
 ];
-const secondSlider = [
-  {
-    src: "/src/assets/images/Cat-1.png",
-    path: "/category/66e6bf415611008189a0bd30",
-  },
-  {
-    src: "/src/assets/images/Cat-2.png",
-    path: "/category/66e6a3a95611008189a0bd14",
-  },
-  { src: "/src/assets/images/Cat-3.png", path: "" },
-  { src: "/src/assets/images/Cat-4.png", path: "" },
-];
 
 export default function HomePage() {
+  const { data } = useGetServices<CategoriesResponse>({
+    queryKey: ["GetCategoriesHomepage"],
+    queryFn: getCategories,
+  });
+  const categories = data?.data.categories;
+  const secondSlider = [
+    {
+      src: "/src/assets/images/Cat-1.png",
+      path: `/category/${categories?.[1]._id}`,
+    },
+    {
+      src: "/src/assets/images/Cat-2.png",
+      path: `/category/${categories?.[0]._id}`,
+    },
+    { src: "/src/assets/images/Cat-3.png", path: "" },
+    { src: "/src/assets/images/Cat-4.png", path: "" },
+  ];
+
   const { data: firstCategoryData, isLoading } =
     useGetServices<getProductsResponse>({
-      queryKey: ["GetFirstCategoryBooks"],
-      queryFn: () =>
-        getProducts({ limit: "6", category: "66e6bf415611008189a0bd30" }),
+      queryKey: ["GetFirstCategoryBooks", categories],
+      queryFn: () => getProducts({ limit: "6", category: categories?.[1]._id }),
     });
   const { data: secondCategoryData, isLoading: secondCategoryIsLoading } =
     useGetServices<getProductsResponse>({
-      queryKey: ["GetSecondCategoryBooks"],
-      queryFn: () =>
-        getProducts({ limit: "6", category: "66e6a3a95611008189a0bd14" }),
+      queryKey: ["GetSecondCategoryBooks", categories],
+      queryFn: () => getProducts({ limit: "6", category: categories?.[0]._id }),
     });
 
   let firstCategoryItems: ProductsEntity[] = [];
   let secondCategoryItems: ProductsEntity[] = [];
   if (firstCategoryData?.data.products)
     firstCategoryItems = firstCategoryData.data.products;
-
   if (secondCategoryData?.data.products)
     secondCategoryItems = secondCategoryData?.data?.products;
 
   return (
     <>
       <section className="h-[120px] mobile:h-[150px] md:h-[300px] w-full bg-persian-green flex justify-center items-center cursor-default px-4 -mt-12 mobile:-mt-0">
+        <ScrollRestoration />
         <div className="flex flex-col justify-center items-center">
           <h2 className="text-xl mobile:text-2xl md:text-3xl font-bold text-white border-b-2 pb-4 border-white">
             دیباچه، کتاب‌ها آغازگر هر داستان‌اند!
@@ -124,7 +130,7 @@ export default function HomePage() {
             <h3 className="font-semibold text-sm tablet:text-lg">
               داستان و رمان هایی که باید بخوانید
             </h3>
-            <Link to={`/category/66e6bf415611008189a0bd30`}>
+            <Link to={`/category/${categories?.[1]._id}`}>
               <span className="text-persian-green text-sm tablet:text-lg font-semibold flex justify-between items-center gap-2">
                 مشاهده همه
                 <ChevronLeftIcon className="size-4" />
@@ -148,7 +154,7 @@ export default function HomePage() {
             <h3 className="font-semibold text-sm tablet:text-lg">
               سفری به درون ذهن با کتاب‌های روانشناسی
             </h3>
-            <Link to={`/category/66e6a3a95611008189a0bd14`}>
+            <Link to={`/category/${categories?.[0]._id}`}>
               <span className="text-persian-green font-semibold flex justify-between items-center gap-2 text-sm tablet:text-lg">
                 مشاهده همه
                 <ChevronLeftIcon className="size-4" />

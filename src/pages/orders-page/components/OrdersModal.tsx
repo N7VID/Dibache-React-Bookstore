@@ -23,12 +23,17 @@ import {
 import { usePatchServices } from "../../../hooks/usePatchServices";
 import { toast } from "react-toastify";
 import { toPersianNumber } from "../../../utils/toPersianNumber";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
+import { OrdersResponse } from "../../../types/ordersResponse";
 
 interface props {
   isOpen: boolean;
   onOpenChange: () => void;
   onClose: () => void;
   modalId: string;
+  refetch?: (
+    options?: RefetchOptions
+  ) => Promise<QueryObserverResult<OrdersResponse, Error>>;
 }
 
 export default function OrdersModal({
@@ -36,6 +41,7 @@ export default function OrdersModal({
   onOpenChange,
   onClose,
   modalId,
+  refetch,
 }: props) {
   const { data } = useGetServices<OrdersByIdResponse>({
     queryKey: ["GetOrdersById", modalId],
@@ -50,10 +56,10 @@ export default function OrdersModal({
   const { mutate, isPending } = usePatchServices({
     mutationKey: ["PatchStatusOrder"],
     mutationFn: patchOrders,
-    invalidate: ["GetOrders", "GetDeliveredOrders", "GetWaitingOrders"],
     options: {
       onSuccess: () => {
         onClose();
+        if (refetch) refetch();
         toast.success("سفارش مورد نظر با موفقیت تحویل داده شد.");
       },
       onError: (error) => {

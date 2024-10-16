@@ -41,11 +41,14 @@ export default function OrdersPage() {
       queryFn: () => getOrders(params, true),
     });
 
-  const { data: waitingOrdersData, isLoading: isLoadingWaitingOrders } =
-    useGetServices<OrdersResponse>({
-      queryKey: ["GetWaitingOrders", params],
-      queryFn: () => getOrders(params, false),
-    });
+  const {
+    data: waitingOrdersData,
+    isLoading: isLoadingWaitingOrders,
+    refetch,
+  } = useGetServices<OrdersResponse>({
+    queryKey: ["GetWaitingOrders", params],
+    queryFn: () => getOrders(params, false),
+  });
 
   function handlePageChange(page: number) {
     const currentParams = Object.fromEntries([...searchParams]);
@@ -60,6 +63,7 @@ export default function OrdersPage() {
       <Tabs aria-label="Options" onSelectionChange={handleSelectionChange}>
         <Tab key="waiting" title="در انتظار ارسال">
           <TableOrders
+            refetch={refetch}
             data={waitingOrdersData}
             isLoading={isLoadingWaitingOrders}
             searchParams={searchParams}

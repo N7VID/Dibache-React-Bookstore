@@ -43,7 +43,7 @@ export default function DashboardHeader() {
 
   const menuItems = [
     { name: "پروفایل", href: "/" },
-    { name: "سفارشات", href: "/" },
+    { name: "سفارشات", href: "/dashboard" },
     { name: "محصولات", href: "/dashboard/books" },
     { name: "موجودی", href: "/dashboard/inventory" },
     { name: "علاقه مندی ها", href: "/" },
@@ -122,6 +122,7 @@ export default function DashboardHeader() {
                 color={index === menuItems.length - 1 ? "danger" : "foreground"}
                 className="w-full"
                 href={item.href}
+                onClick={() => setIsMenuOpen(false)}
               >
                 {item.name}
               </Link>

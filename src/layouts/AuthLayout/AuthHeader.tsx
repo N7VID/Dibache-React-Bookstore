@@ -72,7 +72,12 @@ export default function AuthHeader() {
               key={`${item.name}-${index}`}
               className="font-yekan"
             >
-              <Link color={"foreground"} className="w-full" href={item.href}>
+              <Link
+                color={"foreground"}
+                className="w-full"
+                href={item.href}
+                onClick={() => setIsMenuOpen(false)}
+              >
                 {item.name}
               </Link>
             </NavbarMenuItem>

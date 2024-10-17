@@ -31,7 +31,7 @@ export default function MobileNavbar() {
           <p className="sm:text-sm text-[12px]">دسته ها</p>
         </li>
         <Badge
-          content={cart.products.length}
+          content={cart?.products?.length}
           color="danger"
           placement="top-left"
           isInvisible={cart?.products?.length === 0 || !cart.products}

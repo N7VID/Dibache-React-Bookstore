@@ -256,6 +256,7 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
                 const file = e.target.files?.[0];
                 if (file) {
                   setSelectedThumbnail(URL.createObjectURL(file));
+                  setValue("thumbnail", file);
                 }
               },
             })}

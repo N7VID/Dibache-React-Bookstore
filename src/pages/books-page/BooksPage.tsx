@@ -58,7 +58,7 @@ export default function BooksPage() {
     sort,
   };
 
-  const { data, isLoading } = useGetServices<getProductsResponse>({
+  const { data, isLoading, refetch } = useGetServices<getProductsResponse>({
     queryKey: ["GetProducts", params],
     queryFn: () => getProducts(params),
   });
@@ -91,7 +91,11 @@ export default function BooksPage() {
 
   function handleActionModal() {
     if (selectedItemEditForm) {
-      mutate(selectedItemEditForm.id);
+      mutate(selectedItemEditForm.id, {
+        onError: () => {
+          refetch();
+        },
+      });
     }
   }
   function handleDeleteButton(id: string, name: string) {

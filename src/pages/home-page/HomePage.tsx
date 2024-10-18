@@ -1,17 +1,18 @@
 import { Button, Spinner } from "@nextui-org/react";
+import { Link, ScrollRestoration } from "react-router-dom";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { A11y, Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
 import NextUiCard from "../../components/NextUiCard/NextUiCard";
 import { useGetServices } from "../../hooks/useGetServices";
-import { getProducts } from "../../queryhooks/product";
-import { getProductsResponse, ProductsEntity } from "../../types/productType";
-import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
-import { Link, ScrollRestoration } from "react-router-dom";
 import { getCategories } from "../../queryhooks/getCategories";
+import { getProducts } from "../../queryhooks/product";
 import { CategoriesResponse } from "../../types/categoriesResponse";
+import { getProductsResponse, ProductsEntity } from "../../types/productType";
+import HomePageAccordion from "./components/HomePageAccordion";
 
 const firstSlider = [
   { src: "/src/assets/images/Ad-5.png" },
@@ -214,6 +215,26 @@ export default function HomePage() {
             ))}
           </Swiper>
         </section>
+        <section className="py-2">
+          <div className="bg-persian-green py-2 px-[10px] tablet:px-[50px] rounded-lg flex justify-between items-center">
+            <h4 className="text-lg text-white">
+              به عزیزان <br /> و دوستانتان کتاب <br /> هدیه دهید!
+            </h4>
+            <img
+              src="/src/assets/images/i152311623630.png"
+              alt=""
+              className="w-32"
+            />
+            <Button
+              className="w-32 bg-white text-medium hidden md:block"
+              size="sm"
+              radius="full"
+            >
+              اطلاعات بیشتر
+            </Button>
+          </div>
+        </section>
+        <HomePageAccordion />
       </div>
     </>
   );

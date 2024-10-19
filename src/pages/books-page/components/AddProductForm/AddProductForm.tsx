@@ -50,7 +50,7 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
 
   const { data: subCategoryData } = useGetServices<SubcategoriesResponse>({
     queryKey: ["GetSubcategories"],
-    queryFn: getSubcategories,
+    queryFn: () => getSubcategories({ limit: 0 }),
   });
 
   const categoriesItem =

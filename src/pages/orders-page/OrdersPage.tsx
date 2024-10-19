@@ -29,22 +29,28 @@ export default function OrdersPage() {
     }
   };
 
-  const { data: ordersData, isLoading: isLoadingOrdersData } =
-    useGetServices<OrdersResponse>({
-      queryKey: ["GetOrders", params],
-      queryFn: () => getOrders(params),
-    });
+  const {
+    data: ordersData,
+    isLoading: isLoadingOrdersData,
+    refetch: refetchGetOrders,
+  } = useGetServices<OrdersResponse>({
+    queryKey: ["GetOrders", params],
+    queryFn: () => getOrders(params),
+  });
 
-  const { data: deliveredOrdersData, isLoading: isLoadingDeliveredOrders } =
-    useGetServices<OrdersResponse>({
-      queryKey: ["GetDeliveredOrders", params],
-      queryFn: () => getOrders(params, true),
-    });
+  const {
+    data: deliveredOrdersData,
+    isLoading: isLoadingDeliveredOrders,
+    refetch: refetchGetDeliveredOrders,
+  } = useGetServices<OrdersResponse>({
+    queryKey: ["GetDeliveredOrders", params],
+    queryFn: () => getOrders(params, true),
+  });
 
   const {
     data: waitingOrdersData,
     isLoading: isLoadingWaitingOrders,
-    refetch,
+    refetch: refetchGetWaitingOrders,
   } = useGetServices<OrdersResponse>({
     queryKey: ["GetWaitingOrders", params],
     queryFn: () => getOrders(params, false),
@@ -53,6 +59,12 @@ export default function OrdersPage() {
   function handlePageChange(page: number) {
     const currentParams = Object.fromEntries([...searchParams]);
     setSearchParams({ ...currentParams, page: page.toString(), limit });
+  }
+
+  function refetch() {
+    refetchGetOrders();
+    refetchGetDeliveredOrders();
+    refetchGetWaitingOrders();
   }
 
   return (

@@ -13,9 +13,8 @@ import {
 import { useMemo, useState } from "react";
 import { OrdersEntity, OrdersResponse } from "../../../types/ordersResponse";
 import { renderItem } from "../../../utils/paginationRenderItem";
-import OrdersModal from "./OrdersModal";
 import { toPersianNumber } from "../../../utils/toPersianNumber";
-import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
+import OrdersModal from "./OrdersModal";
 
 interface Params {
   data: OrdersResponse | undefined;
@@ -24,9 +23,7 @@ interface Params {
   handlePageChange: (page: number) => void;
   handlePriceSorting: () => void;
   handleCreatedAtSorting: () => void;
-  refetch?: (
-    options?: RefetchOptions
-  ) => Promise<QueryObserverResult<OrdersResponse, Error>>;
+  refetch?: () => void;
 }
 
 export default function TableOrders({

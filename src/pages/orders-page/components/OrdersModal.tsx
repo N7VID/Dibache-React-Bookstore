@@ -13,27 +13,23 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
+import { toast } from "react-toastify";
 import { useGetServices } from "../../../hooks/useGetServices";
+import { usePatchServices } from "../../../hooks/usePatchServices";
 import { getOrdersById, patchOrders } from "../../../queryhooks/admin/orders";
 import {
   Order,
   OrdersByIdResponse,
   ProductsEntity,
 } from "../../../types/ordersByIdResponse";
-import { usePatchServices } from "../../../hooks/usePatchServices";
-import { toast } from "react-toastify";
 import { toPersianNumber } from "../../../utils/toPersianNumber";
-import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
-import { OrdersResponse } from "../../../types/ordersResponse";
 
 interface props {
   isOpen: boolean;
   onOpenChange: () => void;
   onClose: () => void;
   modalId: string;
-  refetch?: (
-    options?: RefetchOptions
-  ) => Promise<QueryObserverResult<OrdersResponse, Error>>;
+  refetch?: () => void;
 }
 
 export default function OrdersModal({

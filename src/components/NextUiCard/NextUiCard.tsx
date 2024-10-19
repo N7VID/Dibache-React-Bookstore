@@ -63,7 +63,7 @@ export default function NextUiCard({ item }: Props) {
           </Link>
         </Tooltip>
         <small className="text-default-500">{item.brand}</small>
-        {endPrice ? (
+        {totalPrice ? (
           <div className="flex justify-between w-full">
             <p className="font-bold text-[12px] text-gray-400 line-through">
               {toPersianNumber(totalPrice)}
@@ -74,7 +74,7 @@ export default function NextUiCard({ item }: Props) {
           </div>
         ) : (
           <p className="font-bold text-[12px]">
-            {toPersianNumber(totalPrice)} تومان
+            {toPersianNumber(endPrice)} تومان
           </p>
         )}
       </CardFooter>

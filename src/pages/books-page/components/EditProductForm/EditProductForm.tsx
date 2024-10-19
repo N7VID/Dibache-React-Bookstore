@@ -56,7 +56,7 @@ export default function EditProductForm({ onClose }: Params) {
 
   const { data: subCategoryData } = useGetServices<SubcategoriesResponse>({
     queryKey: ["GetSubcategories"],
-    queryFn: getSubcategories,
+    queryFn: () => getSubcategories({ limit: 0 }),
   });
 
   useEffect(() => {

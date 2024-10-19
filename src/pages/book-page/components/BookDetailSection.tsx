@@ -50,7 +50,7 @@ export default function BookDetailSection({
         <div className="flex flex-col gap-2 text-[12px] mobile:text-sm py-5 border-b-2">
           <h4 className="font-semibold text-base pb-2">ویژگی ها</h4>
           {features.map((feature) => (
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center" key={feature.key}>
               <span className="text-key-gray">{feature.key}</span>
               <span className="text-value-gray border-b-1 border-value-gray">
                 {feature.value}

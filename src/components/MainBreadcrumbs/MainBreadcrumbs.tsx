@@ -67,8 +67,8 @@ export default function MainBreadcrumbs({ product, type }: Props) {
           دیباچه
         </Link>
       </BreadcrumbItem>
-      {breadcrumbItems.map((item, index) => (
-        <BreadcrumbItem key={index}>
+      {breadcrumbItems.map((item) => (
+        <BreadcrumbItem key={item.label}>
           <Link to={item.to} className="text-[11px] tablet:text-[14px]">
             {item.label}
           </Link>

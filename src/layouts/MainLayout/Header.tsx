@@ -22,7 +22,7 @@ import { useLogout } from "../../hooks/useLogout";
 import { logout } from "../../queryhooks/auth";
 import { User } from "../../types/authResponse";
 import MainDropDown from "./components/MainDropDown";
-import MainMenu from "./components/mainMenu";
+import MainMenu from "./components/MainMenu";
 
 export default function Header() {
   const navigate = useNavigate();

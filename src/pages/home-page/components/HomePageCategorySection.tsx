@@ -28,7 +28,7 @@ export default function HomePageCategorySection({
           </span>
         </Link>
       </div>
-      <div className="flex justify-center flex-wrap items-center gap-4 py-8">
+      <div className="flex gap-4 px-6 py-8 overflow-x-auto scrollbar-hide">
         {isLoading ? (
           <Spinner size="lg" color="current" />
         ) : (

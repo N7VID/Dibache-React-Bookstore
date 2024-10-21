@@ -32,7 +32,7 @@ export default function NextUiCard({ item }: Props) {
   }
 
   return (
-    <Card className="py-5 w-48" isHoverable>
+    <Card className="py-5 w-48 min-w-[12rem]" isHoverable>
       <Link href={`/book/${item._id}`}>
         <CardBody className="overflow-visible py-2">
           <Badge

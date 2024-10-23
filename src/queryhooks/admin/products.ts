@@ -15,7 +15,7 @@ export const postProducts = async (data: AddProduct) => {
   formData.append("brand", data.brand);
   formData.append("description", data.description);
   if (data.thumbnail) {
-    formData.append("thumbnail", data.thumbnail[0]);
+    formData.append("thumbnail", data.thumbnail);
   }
   if (data.images && data.images.length > 0) {
     for (let i = 0; i < data.images.length; i++) {

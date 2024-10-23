@@ -156,9 +156,13 @@ export default function CartCard({
           </div>
           <div className="flex gap-4 items-center flex-col sm:flex-row tablet:flex-col">
             <div className="flex flex-col items-center justify-center gap-1">
-              <p className="text-persian-green font-semibold text-[11px]">
-                {toPersianNumber(+productsEntity?.discount * count)} تومان تخفیف
-              </p>
+              {productsEntity?.discount ? (
+                <p className="text-persian-green font-semibold text-[11px]">
+                  {toPersianNumber(+productsEntity?.discount * count)} تومان
+                  تخفیف
+                </p>
+              ) : null}
+
               <p>{toPersianNumber(+productsEntity?.price * count)} تومان</p>
             </div>
             <ButtonGroup variant="bordered">

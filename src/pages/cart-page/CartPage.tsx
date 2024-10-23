@@ -33,7 +33,7 @@ export default function CartPage() {
   );
 
   return (
-    <div className="LayoutContainer cursor-default py-8">
+    <div className="LayoutContainer cursor-default pt-0 mobile:py-8 pb-32 overflow-x-hidden md:overflow-visible">
       <ScrollRestoration />
       {cart?.products?.length === 0 || !cart.products ? (
         <div className="border-2 border-[#eee] rounded-lg flex flex-col items-center justify-center gap-4 py-12 px-4">

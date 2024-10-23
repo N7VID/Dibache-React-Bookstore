@@ -137,15 +137,26 @@ export default function BookPaymentCard({
             {product?.quantity > 0 ? (
               <>
                 <span className="text-sm mobile:text-base">قیمت:</span>
-                <Badge
-                  content={`${toPersianNumber(discountPercent)}%`}
-                  className="bg-red-500 text-white mobile:size-8 size-6 text-[10px] mobile:text-[13px]"
-                  placement="top-left"
-                >
-                  <div className="flex flex-col">
-                    <span className="text-key-gray line-through text-[10px] pl-6 mobile:text-[13px]">
-                      {toPersianNumber(totalPrice)}
-                    </span>
+                {totalPrice ? (
+                  <Badge
+                    content={`${toPersianNumber(discountPercent)}%`}
+                    className="bg-red-500 text-white mobile:size-8 size-6 text-[10px] mobile:text-[13px]"
+                    placement="top-left"
+                  >
+                    <div className="flex flex-col">
+                      <span className="text-key-gray line-through text-[10px] pl-6 mobile:text-[13px]">
+                        {toPersianNumber(totalPrice)}
+                      </span>
+                      <div>
+                        <span className="font-semibold text-base mobile:text-[18px]">
+                          {toPersianNumber(endPrice)}
+                        </span>{" "}
+                        <span className="text-[12px]">تومان</span>
+                      </div>
+                    </div>
+                  </Badge>
+                ) : (
+                  <div className="flex">
                     <div>
                       <span className="font-semibold text-base mobile:text-[18px]">
                         {toPersianNumber(endPrice)}
@@ -153,7 +164,7 @@ export default function BookPaymentCard({
                       <span className="text-[12px]">تومان</span>
                     </div>
                   </div>
-                </Badge>
+                )}
               </>
             ) : (
               <div className="w-full text-center">

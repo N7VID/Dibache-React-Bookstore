@@ -77,8 +77,8 @@ export default function SubcategoryPage() {
         handleSortOrder={handleSortOrder}
         currentParams={currentParams}
       />
-      <section className="py-4 flex flex-col justify-center items-center gap-6">
-        <div className="flex justify-center flex-wrap items-center gap-4 py-8">
+      <section className="flex flex-col gap-2 md:items-center md:justify-center">
+        <div className="flex gap-4 px-6 py-8 overflow-x-auto scrollbar-hide">
           {isLoading ? (
             <Spinner size="lg" color="current" />
           ) : (

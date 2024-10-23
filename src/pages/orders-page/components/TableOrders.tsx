@@ -13,8 +13,8 @@ import {
 import { useMemo, useState } from "react";
 import { OrdersEntity, OrdersResponse } from "../../../types/ordersResponse";
 import { renderItem } from "../../../utils/paginationRenderItem";
-import OrdersModal from "./OrdersModal";
 import { toPersianNumber } from "../../../utils/toPersianNumber";
+import OrdersModal from "./OrdersModal";
 
 interface Params {
   data: OrdersResponse | undefined;
@@ -23,12 +23,14 @@ interface Params {
   handlePageChange: (page: number) => void;
   handlePriceSorting: () => void;
   handleCreatedAtSorting: () => void;
+  refetch?: () => void;
 }
 
 export default function TableOrders({
   data,
   searchParams,
   isLoading,
+  refetch,
   handlePageChange,
   handlePriceSorting,
   handleCreatedAtSorting,
@@ -135,6 +137,7 @@ export default function TableOrders({
         isOpen={isOpen}
         onClose={onClose}
         onOpenChange={onOpenChange}
+        refetch={refetch}
       />
     </>
   );

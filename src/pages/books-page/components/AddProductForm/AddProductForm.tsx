@@ -50,7 +50,7 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
 
   const { data: subCategoryData } = useGetServices<SubcategoriesResponse>({
     queryKey: ["GetSubcategories"],
-    queryFn: getSubcategories,
+    queryFn: () => getSubcategories({ limit: 0 }),
   });
 
   const categoriesItem =
@@ -256,6 +256,7 @@ export default function AddProductForm({ onClose }: { onClose: () => void }) {
                 const file = e.target.files?.[0];
                 if (file) {
                   setSelectedThumbnail(URL.createObjectURL(file));
+                  setValue("thumbnail", file);
                 }
               },
             })}

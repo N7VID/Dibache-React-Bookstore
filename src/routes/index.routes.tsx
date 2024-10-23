@@ -1,8 +1,9 @@
+import { Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
+import Loading from "../components/Loading/Loading";
 import { PATHS } from "../configs/paths.config";
 import { AuthLayout, DashboardLayout, MainLayout } from "../layouts";
-import DashboardFooter from "../layouts/DashboardLayout/DashboardFooter";
-import Header from "../layouts/MainLayout/Header";
+import SecondaryLayout from "../layouts/SecondaryLayout/SecondaryLayout";
 import {
   AdminLoginPage,
   BookPage,
@@ -16,13 +17,12 @@ import {
   OrdersPage,
   PaymentPage,
   PaymentResultPage,
+  ProfilePage,
   RegisterPage,
   SubCategory,
 } from "../pages";
 import Providers from "../providers";
 import PrivateRoutes from "./Private.routes";
-import { Suspense } from "react";
-import Loading from "../components/Loading/Loading";
 
 export const router = createBrowserRouter([
   {
@@ -97,18 +97,16 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: PATHS.PAYMENT_RESULT,
+        path: PATHS.HOME,
         element: (
-          <PrivateRoutes>
-            <div className="flex flex-col min-h-screen overflow-hidden font-yekan">
-              <Header />
-              <main className="flex-grow bg-ghost-white pt-32">
-                <PaymentResultPage />
-              </main>
-              <DashboardFooter />
-            </div>
-          </PrivateRoutes>
+          <Suspense fallback={<Loading />}>
+            <SecondaryLayout />
+          </Suspense>
         ),
+        children: [
+          { path: PATHS.PAYMENT_RESULT, element: <PaymentResultPage /> },
+          { path: PATHS.PROFILE, element: <ProfilePage /> },
+        ],
       },
     ],
   },

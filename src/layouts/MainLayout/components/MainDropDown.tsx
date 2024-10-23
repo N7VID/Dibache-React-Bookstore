@@ -32,7 +32,7 @@ export default function MainDropDown({ onOpen }: props) {
   function handleDropDownItem(key: Key) {
     switch (key) {
       case "profile":
-        console.log(key);
+        navigate(PATHS.PROFILE);
         break;
       case "cart":
         navigate(PATHS.CART);
@@ -77,7 +77,7 @@ export default function MainDropDown({ onOpen }: props) {
       <DropdownMenu
         aria-label="Static Actions"
         onAction={(key: Key) => handleDropDownItem(key)}
-        disabledKeys={["profile", "orders", "wishlist"]}
+        disabledKeys={["wishlist"]}
       >
         <DropdownItem
           key="profile"

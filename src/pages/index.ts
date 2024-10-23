@@ -1,6 +1,7 @@
 export { default as HomePage } from "./home-page/HomePage";
 export { default as LoginPage } from "./login-page/LoginPage";
 export { default as RegisterPage } from "./register-page/RegisterPage";
+export { default as ProfilePage } from "./profile-page/ProfilePage";
 export { default as AdminLoginPage } from "./admin-login-page/AdminLoginPage";
 export { default as BookPage } from "./book-page/BookPage";
 export { default as CategoryPage } from "./category-page/CategoryPage";

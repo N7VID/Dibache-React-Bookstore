@@ -3,6 +3,7 @@ export const PATHS = {
   LOGIN: "/login",
   ADMIN: "admin",
   REGISTER: "/register",
+  PROFILE: "profile",
   BOOKS: "books",
   ORDERS: "orders",
   INVENTORY: "inventory",
@@ -12,6 +13,6 @@ export const PATHS = {
   PAYMENT: "/payment",
   CATEGORY: "/category/:id",
   SUBCATEGORY: "/subcategory/:id",
-  PAYMENT_RESULT: "/payment-result",
+  PAYMENT_RESULT: "payment-result",
   NOT_FOUND: "*",
 };

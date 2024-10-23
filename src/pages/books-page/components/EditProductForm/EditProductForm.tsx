@@ -1,55 +1,53 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Select, SelectItem, Spinner } from "@nextui-org/react";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import TextEditor from "../../../../components/TextEditor/TextEditor";
+import { RootContext } from "../../../../context/RootContextProvider";
 import { useGetServices } from "../../../../hooks/useGetServices";
 import { usePatchServices } from "../../../../hooks/usePatchServices";
 import { patchProducts } from "../../../../queryhooks/admin/products";
 import { getCategories } from "../../../../queryhooks/getCategories";
 import { getSubcategories } from "../../../../queryhooks/getSubcategories";
 import { CategoriesResponse } from "../../../../types/categoriesResponse";
-import { ProductsEntity } from "../../../../types/productType";
 import { SubcategoriesResponse } from "../../../../types/subCategoriesResponse";
 import { EditProduct, schema } from "./schema";
-import { toast } from "react-toastify";
 
 interface Params {
   onClose: () => void;
-  item: ProductsEntity | null | undefined;
 }
 
-export default function EditProductForm({ onClose, item }: Params) {
+export default function EditProductForm({ onClose }: Params) {
   const [subCategoriesItem, setSubCategoriesItem] = useState<
     { label: string; value: string }[]
   >([]);
+
+  const context = useContext(RootContext);
+  if (!context)
+    throw new Error("useCart must be used within a RootContextProvider");
+  const { selectedItemEditForm } = context;
+  const { item } = selectedItemEditForm;
 
   const {
     handleSubmit,
     formState: { errors },
     register,
     control,
-    setValue,
     reset,
+    setValue,
+    watch,
   } = useForm<EditProduct>({
     resolver: zodResolver(schema),
     defaultValues: {
       name: item?.name,
-      category: item?.category._id,
-      subcategory: item?.subcategory._id,
       brand: item?.brand,
       quantity: item?.quantity,
       price: item?.price,
       discount: item?.discount,
     },
   });
-
-  useEffect(() => {
-    if (item) {
-      setValue("category", item.category?._id);
-      setValue("subcategory", item.subcategory?._id);
-    }
-  }, [item, setValue]);
 
   const { data: categoryData } = useGetServices<CategoriesResponse>({
     queryKey: ["GetCategories"],
@@ -58,8 +56,19 @@ export default function EditProductForm({ onClose, item }: Params) {
 
   const { data: subCategoryData } = useGetServices<SubcategoriesResponse>({
     queryKey: ["GetSubcategories"],
-    queryFn: getSubcategories,
+    queryFn: () => getSubcategories({ limit: 0 }),
   });
+
+  useEffect(() => {
+    if (categoryData && subCategoryData && item) {
+      setValue("category", item?.category._id);
+      setValue("subcategory", item?.subcategory._id);
+      const filteredSubcategories = subCategoryData?.data.subcategories
+        ?.filter((categoryItem) => categoryItem.category === item.category._id)
+        .map((item) => ({ label: item.name, value: item._id }));
+      setSubCategoriesItem(filteredSubcategories || []);
+    }
+  }, [item, categoryData, subCategoryData]);
 
   const { mutate, isPending } = usePatchServices({
     mutationKey: ["PatchProducts"],
@@ -121,7 +130,8 @@ export default function EditProductForm({ onClose, item }: Params) {
         errorMessage={`${errors["category"]?.message}`}
         variant="bordered"
         className="max-w-xs"
-        value={item?.category._id}
+        value={watch("category")}
+        selectedKeys={[watch("category")]}
         {...register("category", {
           onChange: handleSubCategories,
         })}
@@ -139,12 +149,12 @@ export default function EditProductForm({ onClose, item }: Params) {
       <Select
         label="زیر مجموعه"
         size="sm"
-        isDisabled={subCategoriesItem.length === 0}
         isInvalid={!!errors["subcategory"]}
         errorMessage={`${errors["subcategory"]?.message}`}
         variant="bordered"
         className="max-w-xs"
-        value={item?.subcategory._id}
+        value={watch("subcategory")}
+        selectedKeys={[watch("subcategory")]}
         {...register("subcategory")}
       >
         {subCategoriesItem?.map((item) => (

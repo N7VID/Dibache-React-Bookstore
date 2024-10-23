@@ -10,7 +10,7 @@ import {
   Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
-import { useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { DeleteIcon } from "../../assets/svg/DeleteIcon";
 import { EditIcon } from "../../assets/svg/EditIcon";
@@ -25,20 +25,20 @@ import NextUiModal from "../../components/NextUiModal/NextUiModal";
 import { useDeleteServices } from "../../hooks/useDeleteServices";
 import { deleteProducts } from "../../queryhooks/admin/products";
 import { toast } from "react-toastify";
+import { useTableSort } from "../../hooks/useTableSort";
+import { RootContext } from "../../context/RootContextProvider";
 
 export default function BooksPage() {
   const [modalType, setModalType] = useState("");
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const { handlePageChange, handleCategoryOrderColumn, handleNameOrderColumn } =
+    useTableSort();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const [selectedItem, setSelectedItem] = useState<{
-    id: string;
-    name: string;
-    item?: ProductsEntity | null;
-  }>({
-    id: "",
-    name: "",
-    item: null,
-  });
+  const context = useContext(RootContext);
+  if (!context)
+    throw new Error("useCart must be used within a RootContextProvider");
+  const { selectedItemEditForm, setSelectedItemEditForm } = context;
+
   const {
     isOpen: isOpenDeleteModal,
     onOpen: onOpenDeleteModal,
@@ -58,7 +58,7 @@ export default function BooksPage() {
     sort,
   };
 
-  const { data, isLoading } = useGetServices<getProductsResponse>({
+  const { data, isLoading, refetch } = useGetServices<getProductsResponse>({
     queryKey: ["GetProducts", params],
     queryFn: () => getProducts(params),
   });
@@ -89,44 +89,34 @@ export default function BooksPage() {
     items = data.data.products;
   }
 
-  function handleNameOrderColumn() {
-    const currentParams = Object.fromEntries([...searchParams]);
-    const newSort = currentParams.sort === "name" ? "-name" : "name";
-    setSearchParams({ ...currentParams, sort: newSort });
-  }
-  function handleCategoryOrderColumn() {
-    const currentParams = Object.fromEntries([...searchParams]);
-    const newSort =
-      currentParams.sort === "category" ? "-category" : "category";
-    setSearchParams({ ...currentParams, sort: newSort });
-  }
-  function handlePageChange(page: number) {
-    const currentParams = Object.fromEntries([...searchParams]);
-    setSearchParams({ ...currentParams, page: page.toString(), limit });
-  }
-
   function handleActionModal() {
-    if (selectedItem) {
-      mutate(selectedItem.id);
+    if (selectedItemEditForm) {
+      mutate(selectedItemEditForm.id, {
+        onError: () => {
+          refetch();
+        },
+      });
     }
   }
   function handleDeleteButton(id: string, name: string) {
     onOpenDeleteModal();
-    setSelectedItem({ id, name });
+    setSelectedItemEditForm({ id, name });
   }
-
   function handleEditButton(item: ProductsEntity) {
     onOpen();
     setModalType("edit");
-    if (item) setSelectedItem((prev) => ({ ...prev, item }));
+    if (item) setSelectedItemEditForm((prev) => ({ ...prev, item }));
   }
 
   return (
-    <div className="LayoutContainer pt-[100px]">
+    <div className="LayoutContainer pt-[85px] md:px-16 cursor-default">
+      <h2 className="text-2xl text-value-gray font-semibold py-6">
+        مدیریت محصولات
+      </h2>
       <DropDown onOpen={onOpen} setModalType={setModalType} />
       <Table
         aria-label="Example static collection table"
-        className="py-6 cursor-default"
+        className="py-3 cursor-default"
         bottomContent={
           pages > 0 ? (
             <div className="flex w-full justify-center">
@@ -170,11 +160,10 @@ export default function BooksPage() {
                   className="w-16"
                 />
               </TableCell>
-              <TableCell>
-                {" "}
+              <TableCell className="text-[10px] mobile:text-sm px-1 mobile:px-3">
                 <Link to={`/book/${item._id}`}>{item.name}</Link>
               </TableCell>
-              <TableCell>{`${item.category.name} / ${item.subcategory.name}`}</TableCell>
+              <TableCell className="text-[10px] mobile:text-sm px-1 mobile:px-3">{`${item.category.name} / ${item.subcategory.name}`}</TableCell>
               <TableCell>
                 <div className="relative flex items-center gap-4 flex-col sm:flex-row">
                   <Tooltip
@@ -183,7 +172,7 @@ export default function BooksPage() {
                   >
                     <Link to={`/book/${item._id}`}>
                       <span className="text-lg text-default-900 cursor-pointer active:opacity-50">
-                        <EyeIcon />
+                        <EyeIcon className="size-3 mobile:size-auto" />
                       </span>
                     </Link>
                   </Tooltip>
@@ -195,7 +184,7 @@ export default function BooksPage() {
                       className="text-lg text-default-900 cursor-pointer active:opacity-50"
                       onClick={() => handleEditButton(item)}
                     >
-                      <EditIcon />
+                      <EditIcon className="size-3 mobile:size-auto" />
                     </span>
                   </Tooltip>
                   <Tooltip
@@ -207,7 +196,7 @@ export default function BooksPage() {
                       className="text-lg text-danger cursor-pointer active:opacity-50"
                       onClick={() => handleDeleteButton(item._id, item.name)}
                     >
-                      <DeleteIcon />
+                      <DeleteIcon className="size-3 mobile:size-auto" />
                     </span>
                   </Tooltip>
                 </div>
@@ -217,7 +206,6 @@ export default function BooksPage() {
         </TableBody>
       </Table>
       <FormModal
-        item={selectedItem?.item}
         isOpen={isOpen}
         onClose={onClose}
         onOpenChange={onOpenChange}
@@ -227,7 +215,7 @@ export default function BooksPage() {
         isOpen={isOpenDeleteModal}
         onOpenChange={onOpenChangeModal}
         onAction={handleActionModal}
-        modalTitle={`حذف ${selectedItem.name.split("اثر")[0]}؟`}
+        modalTitle={`حذف ${selectedItemEditForm.name.split("اثر")[0]}؟`}
         modalBody="این عملیات حذف دائمی داده‌ها را به همراه دارد و قابل برگشت نیست. همچنین تمامی اطلاعات مرتبط با این آیتم نیز از دست خواهند رفت."
         buttonContent={["انصراف", "حذف کتاب"]}
       />

@@ -7,12 +7,12 @@ import {
   DropdownTrigger,
 } from "@nextui-org/react";
 
-import { UserIcon } from "../../../assets/svg/UserIcon";
-import { User } from "../../../types/authResponse";
-import { useNavigate } from "react-router-dom";
-import { PATHS } from "../../../configs/paths.config";
 import { Key, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { UserIcon } from "../../../assets/svg/UserIcon";
+import { PATHS } from "../../../configs/paths.config";
 import { RootContext } from "../../../context/RootContextProvider";
+import { User } from "../../../types/authResponse";
 
 interface props {
   onOpen: () => void;
@@ -32,13 +32,10 @@ export default function MainDropDown({ onOpen }: props) {
   function handleDropDownItem(key: Key) {
     switch (key) {
       case "profile":
-        console.log(key);
+        navigate(PATHS.PROFILE);
         break;
       case "cart":
         navigate(PATHS.CART);
-        break;
-      case "orders":
-        console.log(key);
         break;
       case "dashboard":
         navigate(PATHS.DASHBOARD);
@@ -80,7 +77,7 @@ export default function MainDropDown({ onOpen }: props) {
       <DropdownMenu
         aria-label="Static Actions"
         onAction={(key: Key) => handleDropDownItem(key)}
-        disabledKeys={["profile", "orders", "wishlist"]}
+        disabledKeys={["wishlist"]}
       >
         <DropdownItem
           key="profile"
@@ -124,14 +121,6 @@ export default function MainDropDown({ onOpen }: props) {
               {cart?.products?.length}
             </div>
           )}
-        </DropdownItem>
-        <DropdownItem
-          key="orders"
-          startContent={
-            <img src="/src/assets/svg/cart-black.svg" className="w-4" />
-          }
-        >
-          سفارش ها
         </DropdownItem>
         <DropdownItem
           key="logout"

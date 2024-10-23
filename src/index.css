@@ -19,11 +19,6 @@
   src: url("./assets/font/iranyekan/Qs_Iranyekan.ttf");
 }
 
-@font-face {
-  font-family: "vazir";
-  src: url("./assets/font/vazirmatn/Vazirmatn-Regular.ttf");
-}
-
 .toastBody {
   font-family: "Yekan", sans-serif;
   color: #10171d;
@@ -40,4 +35,21 @@
   background-color: white;
   padding: 40px !important;
   color: #00a693 !important;
+}
+
+.custom-navbar header {
+  width: 100% !important;
+  padding-inline: 10px;
+}
+
+@media screen and (min-width: 480px) {
+  .custom-navbar header {
+    min-width: 100% !important;
+  }
+}
+
+@media screen and (min-width: 786px) {
+  .custom-navbar header {
+    padding-inline: 130px;
+  }
 }

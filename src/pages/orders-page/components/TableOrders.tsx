@@ -13,6 +13,7 @@ import {
 import { useMemo, useState } from "react";
 import { OrdersEntity, OrdersResponse } from "../../../types/ordersResponse";
 import { renderItem } from "../../../utils/paginationRenderItem";
+import { toPersianNumber } from "../../../utils/toPersianNumber";
 import OrdersModal from "./OrdersModal";
 
 interface Params {
@@ -22,12 +23,14 @@ interface Params {
   handlePageChange: (page: number) => void;
   handlePriceSorting: () => void;
   handleCreatedAtSorting: () => void;
+  refetch?: () => void;
 }
 
 export default function TableOrders({
   data,
   searchParams,
   isLoading,
+  refetch,
   handlePageChange,
   handlePriceSorting,
   handleCreatedAtSorting,
@@ -56,7 +59,7 @@ export default function TableOrders({
     <>
       <Table
         aria-label="Example static collection table"
-        className="py-6 cursor-default"
+        className="cursor-default"
         bottomContent={
           pages > 0 ? (
             <div className="flex w-full justify-center">
@@ -108,14 +111,16 @@ export default function TableOrders({
               : "";
             return (
               <TableRow key={item._id} className="border-b-1">
-                <TableCell className="text-center py-3">{`${item.user.firstname} ${item.user.lastname}`}</TableCell>
-                <TableCell className="text-center py-3">
-                  {item.totalPrice}
+                <TableCell className="text-[10px] mobile:text-sm text-center py-3 px-0 mobile:px-3">{`${item.user.firstname} ${item.user.lastname}`}</TableCell>
+                <TableCell className="text-[10px] mobile:text-sm text-center py-3 px-0 mobile:px-3">
+                  <span>{toPersianNumber(item.totalPrice)}</span>
                 </TableCell>
-                <TableCell className="text-center py-3">{faDate}</TableCell>
-                <TableCell className="text-center py-3">
+                <TableCell className="text-[10px] mobile:text-sm text-center py-3 px-0 mobile:px-3">
+                  {faDate}
+                </TableCell>
+                <TableCell className="text-center px-0 mobile:px-3" py-3>
                   <Link
-                    className="cursor-pointer"
+                    className="cursor-pointer text-[10px] mobile:text-sm"
                     size="sm"
                     onClick={() => handleDetailsModal(item._id)}
                   >
@@ -132,6 +137,7 @@ export default function TableOrders({
         isOpen={isOpen}
         onClose={onClose}
         onOpenChange={onOpenChange}
+        refetch={refetch}
       />
     </>
   );

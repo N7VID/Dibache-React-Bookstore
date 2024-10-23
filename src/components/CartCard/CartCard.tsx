@@ -81,9 +81,12 @@ export default function CartCard({
       const bill = {
         id: productsEntity?._id,
         image: productsEntity?.images?.[0],
+        name: productsEntity.name,
+        count: count,
         endPrice: productsEntity?.price * count,
         discount: productsEntity?.discount * count,
-        totalPrice: productsEntity?.price + productsEntity?.discount * count,
+        totalPrice:
+          productsEntity?.price * count + productsEntity?.discount * count,
       };
       setBillData((prev) => {
         const existingItem = prev.find(
@@ -105,24 +108,26 @@ export default function CartCard({
   }, [count, productsEntity, setBillData]);
 
   return (
-    <div className="p-4 flex flex-col gap-4 bg-white rounded-lg shadow-box min-h-52 justify-center">
+    <div className="px-8 tablet:py-4 py-8 flex tablet:flex-row flex-col gap-8 tablet:gap-4 bg-white rounded-lg shadow-box min-h-[200px] justify-between items-center">
       {isLoading ? (
-        <Spinner color="current" size="lg" />
+        <div className="flex items-center justify-center w-full">
+          <Spinner color="current" size="lg" />
+        </div>
       ) : (
         <>
           {" "}
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-6">
             <div>
               <Link to={`/book/${product?.product}`}>
                 <img
                   src={`http://${productsEntity?.images?.[0]}`}
                   alt={productsEntity?.name}
-                  className="w-32"
+                  className="w-32 h-32 object-contain"
                 />
               </Link>
             </div>
             <div className="flex flex-col gap-4">
-              <span className="font-semibold text-sm">
+              <span className="font-semibold text-sm tablet:text-base">
                 <Link to={`/book/${product?.product}`}>
                   {productsEntity?.name}
                 </Link>
@@ -142,14 +147,24 @@ export default function CartCard({
                 </div>
                 <div className="flex gap-2 items-center text-value-gray text-[12px]">
                   <span>
-                    <TruckIcon className="size-4 mobile:size-5" />
+                    <TruckIcon className="size-4 mobile:size-5 scale-x-[-1]" />
                   </span>
                   <span>امکان تحویل اکسپرس</span>
                 </div>
               </div>
             </div>
           </div>
-          <div className="px-4 flex gap-8">
+          <div className="flex gap-4 items-center flex-col sm:flex-row tablet:flex-col">
+            <div className="flex flex-col items-center justify-center gap-1">
+              {productsEntity?.discount ? (
+                <p className="text-persian-green font-semibold text-[11px]">
+                  {toPersianNumber(+productsEntity?.discount * count)} تومان
+                  تخفیف
+                </p>
+              ) : null}
+
+              <p>{toPersianNumber(+productsEntity?.price * count)} تومان</p>
+            </div>
             <ButtonGroup variant="bordered">
               <Button isIconOnly onClick={handleAddCount}>
                 <PlusIcon className="text-persian-green size-5 font-extrabold decoration-4" />
@@ -168,12 +183,6 @@ export default function CartCard({
                 )}
               </Button>
             </ButtonGroup>
-            <div className="flex flex-col items-center justify-center gap-1">
-              <p className="text-persian-green font-semibold text-[11px]">
-                {toPersianNumber(+productsEntity?.discount * count)} تومان تخفیف
-              </p>
-              <p>{toPersianNumber(+productsEntity?.price * count)} تومان</p>
-            </div>
           </div>
         </>
       )}

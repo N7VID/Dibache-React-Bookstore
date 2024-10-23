@@ -22,7 +22,7 @@ export const renderItem = ({
         className={cn(className, "bg-default-200/50 min-w-8 w-8 h-8")}
         onClick={onNext}
       >
-        <ChevronIcon className="rotate-0" />
+        <ChevronIcon className="rotate-180" />
       </button>
     );
   }
@@ -34,7 +34,7 @@ export const renderItem = ({
         className={cn(className, "bg-default-200/50 min-w-8 w-8 h-8")}
         onClick={onPrevious}
       >
-        <ChevronIcon className="rotate-180" />
+        <ChevronIcon className="rotate-0" />
       </button>
     );
   }

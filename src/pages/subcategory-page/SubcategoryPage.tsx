@@ -1,23 +1,16 @@
-import {
-  BreadcrumbItem,
-  Breadcrumbs,
-  Pagination,
-  Spinner,
-} from "@nextui-org/react";
+import { Pagination, Spinner } from "@nextui-org/react";
 import { ChangeEvent, useMemo } from "react";
 import {
-  Link,
   ScrollRestoration,
   useParams,
   useSearchParams,
 } from "react-router-dom";
+import MainBreadcrumbs from "../../components/MainBreadcrumbs/MainBreadcrumbs";
 import NextUiCard from "../../components/NextUiCard/NextUiCard";
 import SortCategory from "../../components/SortCategory/SortCategory";
 import { useGetServices } from "../../hooks/useGetServices";
 import { getProducts } from "../../queryhooks/product";
 import { getProductsResponse, ProductsEntity } from "../../types/productType";
-import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
-import { PATHS } from "../../configs/paths.config";
 import { renderItem } from "../../utils/paginationRenderItem";
 
 export default function SubcategoryPage() {
@@ -73,32 +66,7 @@ export default function SubcategoryPage() {
     <div className="LayoutContainer cursor-default pb-16">
       <ScrollRestoration />
       <div className="py-4">
-        <Breadcrumbs separator={<ChevronLeftIcon className="size-3" />}>
-          <BreadcrumbItem>
-            <Link
-              to={PATHS.HOME}
-              className="text-[11px] tablet:text-[14px] lg:text-base"
-            >
-              دیباچه
-            </Link>
-          </BreadcrumbItem>
-          <BreadcrumbItem>
-            <Link
-              to={`/category/${items[0]?.category._id}`}
-              className="text-[11px] tablet:text-[14px] lg:text-base"
-            >
-              {items[0]?.category.name}
-            </Link>
-          </BreadcrumbItem>
-          <BreadcrumbItem>
-            <Link
-              to={`/subcategory/${items[0]?.subcategory._id}`}
-              className="text-[11px] tablet:text-[14px] lg:text-base"
-            >
-              {items[0]?.subcategory.name}
-            </Link>
-          </BreadcrumbItem>
-        </Breadcrumbs>
+        <MainBreadcrumbs type="subcategory" product={items[0]} />
       </div>
       <SortCategory
         name={`زیر مجموعه ${items[0]?.subcategory?.name}`}
@@ -109,8 +77,8 @@ export default function SubcategoryPage() {
         handleSortOrder={handleSortOrder}
         currentParams={currentParams}
       />
-      <section className="py-4 flex flex-col justify-center items-center gap-6">
-        <div className="flex justify-center flex-wrap items-center gap-4 py-8">
+      <section className="flex flex-col gap-2 md:items-center md:justify-center">
+        <div className="flex gap-4 px-6 py-8 overflow-x-auto scrollbar-hide">
           {isLoading ? (
             <Spinner size="lg" color="current" />
           ) : (

@@ -1,5 +1,16 @@
-import { Button, useDisclosure } from "@nextui-org/react";
-import { Link, NavLink } from "react-router-dom";
+import {
+  Link,
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  NavbarMenu,
+  NavbarMenuItem,
+  NavbarMenuToggle,
+  useDisclosure,
+} from "@nextui-org/react";
+import { useEffect, useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import NextUiModal from "../../components/NextUiModal/NextUiModal";
 import { PATHS } from "../../configs/paths.config";
@@ -14,6 +25,12 @@ export default function DashboardHeader() {
     onOpenChange: onOpenChangeLogout,
   } = useDisclosure();
   const { refetch } = useLogout();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [navbarItems, setNavbarItems] = useState([
+    { name: "سفارشات", href: PATHS.DASHBOARD, isActive: false },
+    { name: "محصولات", href: PATHS.BOOKS, isActive: false },
+    { name: "موجودی", href: PATHS.INVENTORY, isActive: false },
+  ]);
 
   const handleActionModal = () => {
     refetch()
@@ -24,47 +41,93 @@ export default function DashboardHeader() {
       .catch((error) => toast.error(error, { rtl: false }));
   };
 
+  const menuItems = [
+    { name: "پروفایل", href: "/" },
+    { name: "سفارشات", href: "/dashboard" },
+    { name: "محصولات", href: "/dashboard/books" },
+    { name: "موجودی", href: "/dashboard/inventory" },
+    { name: "علاقه مندی ها", href: "/" },
+    { name: "سبد خرید", href: PATHS.CART },
+    { name: "خروج از حساب کاربری", href: "/" },
+  ];
+
+  const location = useLocation();
+  useEffect(() => {
+    setNavbarItems((prev) =>
+      prev.map((item) => {
+        if (location.pathname === "/dashboard") {
+          return item.href === "/dashboard"
+            ? { ...item, isActive: true }
+            : { ...item, isActive: false };
+        } else {
+          return location.pathname.includes(`/${item.href}`)
+            ? { ...item, isActive: true }
+            : { ...item, isActive: false };
+        }
+      })
+    );
+  }, [location.pathname]);
+
   return (
     <header>
-      <div className="shadow-header fixed w-full bg-white z-20">
-        <div className="LayoutContainer flex items-center justify-center md:justify-between gap-0 sm:gap-4">
-          <div className="flex items-center justify-between md:gap-4 gap-2">
-            <div className="flex items-center">
-              <Button
-                variant="bordered"
-                isIconOnly
-                aria-label="sidebar"
-                className="flex md:hidden"
-              >
-                <img
-                  src="/src/assets/svg/menu-ham-black.svg"
-                  className="w-7"
-                  alt="sidebar-icon"
-                />
-              </Button>
-              <Link to={PATHS.HOME}>
-                <img
-                  src="/Dibache-1.png"
-                  alt="Dibache-logo"
-                  className="w-32 my-2"
-                />
+      <Navbar
+        isMenuOpen={isMenuOpen}
+        onMenuOpenChange={setIsMenuOpen}
+        className="custom-navbar shadow-header bg-white fixed z-30 pt-[6px] pb-[10px] px-0"
+      >
+        <div className="flex LayoutContainer w-full items-center justify-between">
+          <NavbarContent justify="center">
+            <NavbarMenuToggle
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              className="sm:hidden"
+            />
+            <NavbarBrand>
+              <Link href={PATHS.HOME}>
+                <img src="/Dibache-1.png" alt="Dibache-logo" className="w-32" />
               </Link>
-            </div>
-            <ul className="flex gap-8 px-4">
-              <li>
-                <NavLink to={PATHS.DASHBOARD}>سفارشات</NavLink>
-              </li>
-              <li>
-                <NavLink to={PATHS.BOOKS}> محصولات</NavLink>
-              </li>
-              <li>
-                <NavLink to={PATHS.INVENTORY}>موجودی</NavLink>
-              </li>
-            </ul>
-          </div>
-          <MainDropDown onOpen={onOpenLogout} />
+            </NavbarBrand>
+          </NavbarContent>
+          <NavbarContent className="hidden sm:flex gap-4 px-4" justify="start">
+            {navbarItems.map((navbarItem) => (
+              <NavbarItem
+                key={navbarItem.name}
+                isActive={navbarItem.isActive}
+                onClick={() =>
+                  setNavbarItems((prev) =>
+                    prev.map((item) =>
+                      item.name === navbarItem.name
+                        ? { ...item, isActive: true }
+                        : { ...item, isActive: false }
+                    )
+                  )
+                }
+              >
+                <NavLink to={navbarItem.href}>{navbarItem.name}</NavLink>
+              </NavbarItem>
+            ))}
+          </NavbarContent>
+          <NavbarContent justify="center" className="hidden sm:block">
+            <MainDropDown onOpen={onOpenLogout} />
+          </NavbarContent>
         </div>
-      </div>
+        <NavbarMenu>
+          {menuItems.map((item, index) => (
+            <NavbarMenuItem
+              key={`${item.name}-${index}`}
+              className="font-yekan"
+            >
+              <Link
+                color={index === menuItems.length - 1 ? "danger" : "foreground"}
+                className="w-full"
+                href={item.href}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {item.name}
+              </Link>
+            </NavbarMenuItem>
+          ))}
+        </NavbarMenu>
+      </Navbar>
       <NextUiModal
         isOpen={isOpenLogout}
         onOpenChange={onOpenChangeLogout}

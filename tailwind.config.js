@@ -23,7 +23,6 @@ module.exports = {
     extend: {
       fontFamily: {
         yekan: ["yekan", "sans"],
-        vazir: ["vazir", "sans"],
       },
       colors: {
         "main-gray": "#EEE",

@@ -1,4 +1,4 @@
-import { BreadcrumbItem, Breadcrumbs, Spinner } from "@nextui-org/react";
+import { Spinner } from "@nextui-org/react";
 import { ChangeEvent } from "react";
 import {
   Link,
@@ -7,12 +7,12 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import ChevronLeftIcon from "../../assets/svg/ChevronLeftIcon";
+import MainBreadcrumbs from "../../components/MainBreadcrumbs/MainBreadcrumbs";
 import NextUiCard from "../../components/NextUiCard/NextUiCard";
 import SortCategory from "../../components/SortCategory/SortCategory";
 import { useGetServices } from "../../hooks/useGetServices";
 import { getProducts } from "../../queryhooks/product";
 import { getProductsResponse, ProductsEntity } from "../../types/productType";
-import { PATHS } from "../../configs/paths.config";
 
 export default function CategoryPage() {
   const { id } = useParams();
@@ -63,24 +63,7 @@ export default function CategoryPage() {
     <div className="LayoutContainer cursor-default pb-16">
       <ScrollRestoration />
       <div className="py-4">
-        <Breadcrumbs separator={<ChevronLeftIcon className="size-3" />}>
-          <BreadcrumbItem>
-            <Link
-              to={PATHS.HOME}
-              className="text-[11px] tablet:text-[14px] lg:text-base"
-            >
-              دیباچه
-            </Link>
-          </BreadcrumbItem>
-          <BreadcrumbItem>
-            <Link
-              to={`/category/${items[0]?.category._id}`}
-              className="text-[11px] tablet:text-[14px] lg:text-base"
-            >
-              {items[0]?.category.name}
-            </Link>
-          </BreadcrumbItem>
-        </Breadcrumbs>
+        <MainBreadcrumbs type="category" product={items[0]} />
       </div>
       <SortCategory
         name={`دسته بندی ${categoryName}`}
@@ -106,7 +89,7 @@ export default function CategoryPage() {
                 </span>
               </Link>
             </div>
-            <div className="flex justify-center flex-wrap items-center gap-4 py-8">
+            <div className="flex gap-4 px-6 py-8 overflow-x-auto scrollbar-hide">
               {isLoading ? (
                 <Spinner size="lg" color="current" />
               ) : (

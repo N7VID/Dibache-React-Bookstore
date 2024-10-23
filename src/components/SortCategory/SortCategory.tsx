@@ -26,7 +26,7 @@ export default function SortCategory({
 }: Params) {
   return (
     <section className="w-full py-8 shadow-box bg-white rounded-lg my-4 px-10 flex justify-between items-center flex-col gap-8 md:flex-row">
-      <h3 className="font-bold text-xl font-vazir">{name}</h3>
+      <h3 className="font-bold text-xl font-yekan">{name}</h3>
       <div className="flex items-center flex-col gap-4 md:flex-row">
         <Input
           isClearable

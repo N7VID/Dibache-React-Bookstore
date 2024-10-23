@@ -19,11 +19,6 @@
   src: url("./assets/font/iranyekan/Qs_Iranyekan.ttf");
 }
 
-@font-face {
-  font-family: "vazir";
-  src: url("./assets/font/vazirmatn/Vazirmatn-Regular.ttf");
-}
-
 .toastBody {
   font-family: "Yekan", sans-serif;
   color: #10171d;

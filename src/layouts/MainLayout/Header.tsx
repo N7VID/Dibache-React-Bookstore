@@ -38,7 +38,7 @@ export default function Header() {
   ];
 
   const userMenuItems = [
-    { name: "پروفایل", href: "/" },
+    { name: "پروفایل", href: "/profile" },
     { name: "علاقه مندی ها", href: "/" },
     { name: "سبد خرید", href: PATHS.CART },
     { name: "خروج از حساب کاربری", href: "/" },

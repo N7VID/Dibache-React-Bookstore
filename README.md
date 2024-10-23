@@ -20,6 +20,7 @@ Welcome to **Dibache**, an online bookstore specializing in selling physical boo
   - Add books to the cart and manage purchases.
   - View detailed information about each book, including price, availability, and description.
   - Checkout and payment system for completing orders.
+  - Dynamic shopping cart stored in local storage.
 
 - **Admin Features**:
 
@@ -28,9 +29,6 @@ Welcome to **Dibache**, an online bookstore specializing in selling physical boo
   - Toggle the status of orders.
   - Pagination and sorting for product and order lists.
 
-- **Additional Features**:
-  - Multilingual weekly calendar (supports Gregorian and Jalali calendars).
-  - Dynamic shopping cart stored in local storage.
 
 ## Tech Stack
 
@@ -76,7 +74,7 @@ To get started with **Dibache**, follow these steps:
   Build the project for production and serve it.
   ```bash
   npm run build
-  npm start
+  npm run preview
   ```
 
 ### Environment Variables
